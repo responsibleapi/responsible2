@@ -10,22 +10,25 @@ import {
   unknown,
 } from "../responsible.ts"
 
-const AppID = () => string({ pattern: "^app_[a-zA-Z0-9]+$" })
+const AppID = () =>
+  string({
+    pattern: /^app_\w+$/,
+    example: "app_123",
+  })
 
-const ErrorID = () => string({ pattern: "^err_[a-zA-Z0-9]+$" })
+const ErrID = () =>
+  string({
+    pattern: /^err_\w+$/,
+    example: "err_123",
+  })
 
-const NewError = () =>
+const NonEmptyStr = () => string({ minLength: 1 })
+
+const NewErr = () =>
   anyOf([
-    object({
-      stack: string({ minLength: 1 }),
-      message: string({ minLength: 1 }),
-    }),
-    object({
-      message: string({ minLength: 1 }),
-    }),
-    object({
-      stack: string({ minLength: 1 }),
-    }),
+    object({ stack: NonEmptyStr, message: NonEmptyStr }),
+    object({ stack: NonEmptyStr }),
+    object({ message: NonEmptyStr }),
   ])
 
 const UnixMillis = () =>
@@ -34,12 +37,19 @@ const UnixMillis = () =>
     example: 1739982555384,
   })
 
-const AppError = () =>
+const OneErr = () =>
   object({
-    id: ErrorID,
-    "stack?": string({ minLength: 1 }),
-    "message?": string({ minLength: 1 }),
+    id: ErrID,
+    "stack?": NonEmptyStr,
+    "message?": NonEmptyStr,
     "resolvedAt?": UnixMillis,
+  })
+
+const ErrLog = () =>
+  object({
+    id: string({ format: "uuid" }),
+    errID: ErrID,
+    ts: UnixMillis,
   })
 
 export const exceptionsAPI = openAPI(
@@ -48,6 +58,7 @@ export const exceptionsAPI = openAPI(
     info: {
       title: "Exceptions API",
       version: "1",
+      description: "Sentry.io clone",
     },
   },
   {
@@ -68,19 +79,20 @@ export const exceptionsAPI = openAPI(
 
       POST: {
         name: "newError",
-        req: NewError,
+        req: NewErr,
         res: { 201: unknown() },
       },
       GET: {
         name: "appErrors",
-        res: { 200: array(AppError) },
+        res: { 200: array(OneErr) },
       },
     }),
     "/errors/:errorID": scope({
-      params: { errorID: ErrorID },
+      params: { errorID: ErrID },
 
       GET: {
         name: "errorOccurrences",
+        res: { 200: array(ErrLog) },
       },
     }),
   },

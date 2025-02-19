@@ -1,10 +1,11 @@
 import type { oas31 } from "openapi3-ts"
 
-type StringFormat = "email" | "uri" | "uuid"
+type StringFormat = "email" | "uri" | "uuid" | "date" | "date-time" | "binary"
 
 type SchemaOpts = Readonly<{
   default?: unknown
   description?: string
+  deprecated?: boolean
 }>
 
 interface StringsOpts extends SchemaOpts {
@@ -14,6 +15,7 @@ interface StringsOpts extends SchemaOpts {
   pattern?: string | RegExp
   enum?: readonly string[]
   const?: string
+  example?: string
 }
 
 interface Str extends StringsOpts {
@@ -41,37 +43,34 @@ export type Obj = Readonly<{
 
 type Unknown = Record<string, never>
 
-type ArrayOpts = SchemaOpts &
-  Readonly<{
-    minItems?: number
-    maxItems?: number
-  }>
+interface ArrayOpts extends SchemaOpts {
+  minItems?: number
+  maxItems?: number
+}
 
-type Arr = ArrayOpts &
-  Readonly<{
-    type: "array"
-    items: Schema
-    minItems?: number
-  }>
+interface Arr extends ArrayOpts {
+  type: "array"
+  items: Schema
+}
 
-interface Bool {
+interface Bool extends SchemaOpts {
   type: "boolean"
 }
 
-type Dict = Readonly<{
+interface Dict {
   type: "object"
   propertyNames: PropKeySchema
   additionalProperties: Schema
   example?: Record<PropertyKey, unknown>
-}>
+}
 
-type OneOf = Readonly<{
+interface OneOf {
   oneOf: readonly Schema[]
-}>
+}
 
-type AnyOf = Readonly<{
+interface AnyOf {
   anyOf: readonly Schema[]
-}>
+}
 
 type Num = Int
 
@@ -97,7 +96,11 @@ export const dict = (k: PropKeySchema, v: Schema): Dict => ({
 
 const isOptional = (k: string): k is `${string}?` => k.endsWith("?")
 
-export const object = (props: Record<string, Schema> = {}): Obj => ({
+export const object = (
+  props: Record<string, Schema> = {},
+  opts?: SchemaOpts,
+): Obj => ({
+  ...opts,
   type: "object",
   properties: Object.fromEntries(
     Object.entries(props).map(([k, v]) => [
@@ -109,15 +112,15 @@ export const object = (props: Record<string, Schema> = {}): Obj => ({
 })
 
 export const int64 = (opts?: IntOpts): Int => ({
+  ...opts,
   type: "integer",
   format: "int64",
-  ...opts,
 })
 
 export const int32 = (opts?: IntOpts): Int => ({
+  ...opts,
   type: "integer",
   format: "int32",
-  ...opts,
 })
 
 export const httpURL = (): Str =>
@@ -138,7 +141,10 @@ export const oneOf = (oneOf: readonly Schema[]): OneOf => ({ oneOf })
 
 export const anyOf = (anyOf: readonly Schema[]): AnyOf => ({ anyOf })
 
-export const boolean = (): Bool => ({ type: "boolean" })
+export const boolean = (opts?: SchemaOpts): Bool => ({
+  type: "boolean",
+  ...opts,
+})
 
 export const array = (items: Schema, opts?: ArrayOpts): Arr => ({
   type: "array",
@@ -153,49 +159,79 @@ export const email = (): Str => string({ format: "email" })
 type Mime = `${string}/${string}`
 
 type Response = Readonly<{
-  body: Schema | Record<Mime, Schema>
+  body?: Schema | Record<Mime, Schema>
   description?: string
   headers?: Record<string, Schema>
+  cookies?: Record<string, Schema>
 }>
+
+export const response = (param: Response): Response => param
 
 type QuerySecurity = Readonly<{
   type: "query"
   name: string
 }>
 
-type Security = QuerySecurity | (() => Security)
-
-type Middleware = Readonly<{
-  req?: {
-    mime?: Mime
-    security?: Security
-  }
-  res?: {
-    mime?: Mime
-    headers?: Record<string, Schema>
-    /**
-     * add responses in this scope
-     */
-    add?: Record<number, Schema | Response>
-  }
-}>
-
-type Path = `/${string}`
-
-type Req = Readonly<{
-  query?: Record<string, Schema>
-}>
-
-type Op = Readonly<{
-  name?: string
-  req?: Schema | Req
-  res?: Record<number, Schema | Response>
+type HeaderSecurity = Readonly<{
+  type: "header"
+  name: string
 }>
 
 export const querySecurity = (param: { name: string }): QuerySecurity => ({
   type: "query",
   ...param,
 })
+
+export const headerSecurity = (param: { name: string }): HeaderSecurity => ({
+  type: "header",
+  ...param,
+})
+
+type Security = (() => Security) | QuerySecurity | HeaderSecurity
+
+type MatchStatus = number | `${number}..${number}`
+
+interface MiddlewareResponse extends Response {
+  mime?: Mime
+}
+
+type Res = Schema | Response | (() => Response)
+
+type Middleware = Readonly<{
+  req?: MiddlewareReq
+  res?: {
+    mime?: Mime
+    headers?: Record<string, Schema>
+    /**
+     * add responses in this scope
+     */
+    add?: Record<number, Res>
+    match?: Record<MatchStatus, MiddlewareResponse>
+  }
+}>
+
+type Path = `/${string}`
+
+type Req = Readonly<{
+  params?: Record<string, Schema>
+  query?: Record<string, Schema>
+  headers?: Record<string, Schema>
+  security?: Security
+  "security?"?: Security
+  body?: Schema | Record<Mime, Schema>
+}>
+
+interface MiddlewareReq extends Req {
+  mime?: Mime
+}
+
+type Op = Readonly<{
+  name?: string
+  req?: Schema | Req
+  res?: Record<number, Res>
+  deprecated?: boolean
+  description?: string
+}>
 
 type V2 =
   | { type: "middleware"; middleware: Middleware }
@@ -210,8 +246,10 @@ interface OuterV2 {
 interface ScopeOpts extends OuterV2 {
   params?: Record<string, Schema>
 
-  POST?: Op
   GET?: Op
+  POST?: Op
+  PUT?: Op
+  DELETE?: Op
 }
 
 export function middleware(opts: Middleware): V2 {
@@ -219,6 +257,10 @@ export function middleware(opts: Middleware): V2 {
 }
 
 export function scope(opts: ScopeOpts): V2 {
+  throw new Error("TODO")
+}
+
+export function scope2(middleware: Middleware, endpoints: ScopeOpts): V2 {
   throw new Error("TODO")
 }
 
@@ -232,7 +274,7 @@ export function POST(op: Op): V2 {
 
 export function openAPI(
   doc: Partial<oas31.OpenAPIObject>,
-  scope: OuterV2,
+  scope: ScopeOpts,
 ): Readonly<oas31.OpenAPIObject> {
   throw new Error("TODO")
 }
