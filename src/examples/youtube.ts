@@ -8,7 +8,7 @@ import {
   object,
   openAPI,
   querySecurity,
-  scope, scope2,
+  scope,
   string,
   unknown,
 } from "../responsible.ts"
