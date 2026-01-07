@@ -1,15 +1,5 @@
-import {
-  array,
-  dict,
-  email,
-  int32,
-  int64,
-  middleware,
-  object,
-  openAPI,
-  POST,
-  string,
-} from "../responsible.ts"
+import { middleware, openAPI, POST } from "../responsible.ts"
+import { array, dict, email, int32, int64, object, string } from "../schema.ts"
 
 const PostID = () => int64({ minimum: 1 })
 
@@ -62,13 +52,11 @@ export const httpBenchmark = openAPI(
         },
       },
     }),
-    "/posts": POST({
-      id: "newPost",
+    "/posts": POST("newPost", {
       req: NewPost,
       res: { 201: Post },
     }),
-    "/echo": POST({
-      id: "echo",
+    "/echo": POST("echo", {
       req: NewPost,
       res: { 200: Post },
     }),

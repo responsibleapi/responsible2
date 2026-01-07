@@ -1,0 +1,83 @@
+import { oas30 } from "openapi3-ts"
+import { describe, expect, test } from "vitest"
+import { responsibleAPI } from "./actual.ts"
+import { POST } from "./responsible.ts"
+import { int32, object, string } from "./schema.ts"
+
+const Err = object({ messsage: string() })
+
+const SomeSuccess = object({ one: int32() })
+
+describe("dslish", () => {
+  test("tst", () => {
+    const rapi = responsibleAPI(
+      {
+        openapi: "3.1.0",
+        info: {
+          title: "HTTP benchmarks",
+          version: "1",
+        },
+      },
+      {
+        req: { mime: "application/json" },
+        res: {
+          match: {
+            "100..499": {
+              mime: "application/json",
+              headers: { "Content-Length": int32({ minimum: 1 }) },
+            },
+          },
+          add: {
+            400: {
+              body: Err,
+            },
+          },
+        },
+      },
+      {
+        "/map": POST({
+          req: Err,
+          res: {
+            200: SomeSuccess,
+          },
+        }),
+      },
+    )
+
+    expect(rapi).toEqual({
+      openapi: "3.1.0",
+      info: {
+        title: "HTTP benchmarks",
+        version: "1",
+      },
+      paths: {
+        "/map": {
+          post: {
+            responses: {
+              ["200"]: {
+                headers: {
+                  ["Content-Length"]: {
+                    required: true,
+                    schema: { type: "integer", minimum: 1 },
+                  },
+                },
+                content: {
+                  ["application/json"]: {
+                    schema: "#/components/schemas/SomeSuccess",
+                  },
+                },
+              },
+              ["400"]: {
+                content: {
+                  ["application/json"]: {
+                    schema: "#/components/schemas/Err",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    } satisfies oas30.OpenAPIObject)
+  })
+})

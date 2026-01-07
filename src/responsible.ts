@@ -1,172 +1,10 @@
 import type { oas31 } from "openapi3-ts"
+import type { Route } from "./actual.ts"
+import type { Schema } from "./schema.ts"
 
-type StringFormat = "email" | "uri" | "uuid" | "date" | "date-time" | "binary"
+export type Mime = `${string}/${string}`
 
-type SchemaOpts = Readonly<{
-  default?: unknown
-  description?: string
-  deprecated?: boolean
-}>
-
-interface StringsOpts extends SchemaOpts {
-  format?: StringFormat
-  minLength?: number
-  maxLength?: number
-  pattern?: string | RegExp
-  enum?: readonly string[]
-  const?: string
-  example?: string
-}
-
-interface Str extends StringsOpts {
-  type: "string"
-}
-
-type IntFormat = "int64" | "int32"
-
-interface IntOpts extends SchemaOpts {
-  minimum?: number
-  maximum?: number
-  example?: number
-}
-
-interface Int extends IntOpts {
-  type: "integer"
-  format: IntFormat
-}
-
-export type Obj = Readonly<{
-  type: "object"
-  properties: Record<string, Schema>
-  required?: readonly string[]
-}>
-
-type Unknown = Record<string, never>
-
-interface ArrayOpts extends SchemaOpts {
-  minItems?: number
-  maxItems?: number
-  example?: readonly unknown[]
-}
-
-interface Arr extends ArrayOpts {
-  type: "array"
-  items: Schema
-}
-
-interface Bool extends SchemaOpts {
-  type: "boolean"
-}
-
-type Dict = Readonly<{
-  type: "object"
-  propertyNames: PropKeySchema
-  additionalProperties: Schema
-  example?: Record<PropertyKey, unknown>
-}>
-
-type OneOf = Readonly<{
-  oneOf: readonly Schema[]
-}>
-
-interface AnyOf {
-  anyOf: readonly Schema[]
-}
-
-interface AllOf {
-  allOf: readonly Schema[]
-}
-
-type Num = Int
-
-type Schema =
-  | (() => Schema)
-  | Str
-  | Num
-  | Bool
-  | Unknown
-  | Obj
-  | Arr
-  | Dict
-  | OneOf
-  | AnyOf
-  | AllOf
-
-type PropKeySchema = (() => PropKeySchema) | Str | Num
-
-export const dict = (k: PropKeySchema, v: Schema): Dict => ({
-  type: "object",
-  propertyNames: k,
-  additionalProperties: v,
-})
-
-const isOptional = (key: string): key is `${string}?` => key.endsWith("?")
-
-export const object = (
-  props: Readonly<Record<string, Schema>> = {},
-  opts?: SchemaOpts,
-): Obj => ({
-  ...opts,
-  type: "object",
-  properties: Object.fromEntries(
-    Object.entries(props).map(([k, v]) => [
-      isOptional(k) ? k.slice(0, -1) : k,
-      v,
-    ]),
-  ),
-  required: Object.keys(props).filter(k => !isOptional(k)),
-})
-
-export const int64 = (opts?: IntOpts): Int => ({
-  ...opts,
-  type: "integer",
-  format: "int64",
-})
-
-export const int32 = (opts?: IntOpts): Int => ({
-  ...opts,
-  type: "integer",
-  format: "int32",
-})
-
-export const httpURL = (): Str =>
-  string({
-    format: "uri",
-    pattern: "^https?://\\S+$",
-  })
-
-export const unixMillis = (): Int =>
-  int64({ description: "UNIX epoch milliseconds" })
-
-export const string = (opts?: StringsOpts): Str => ({
-  type: "string",
-  ...opts,
-})
-
-export const oneOf = (oneOf: readonly Schema[]): OneOf => ({ oneOf })
-
-export const anyOf = (anyOf: readonly Schema[]): AnyOf => ({ anyOf })
-
-export const allOf = (allOf: readonly Schema[]): AllOf => ({ allOf })
-
-export const boolean = (opts?: SchemaOpts): Bool => ({
-  type: "boolean",
-  ...opts,
-})
-
-export const array = (items: Schema, opts?: ArrayOpts): Arr => ({
-  type: "array",
-  items,
-  ...opts,
-})
-
-export const unknown = (): Unknown => ({})
-
-export const email = (): Str => string({ format: "email" })
-
-type Mime = `${string}/${string}`
-
-type Response = Readonly<{
+export type Response = Readonly<{
   body?: Schema | Record<Mime, Schema>
   description?: string
   headers?: Record<string, Schema>
@@ -185,6 +23,8 @@ type HeaderSecurity = Readonly<{
   name: string
 }>
 
+type Security = (() => Security) | QuerySecurity | HeaderSecurity
+
 export const querySecurity = (param: { name: string }): QuerySecurity => ({
   type: "query",
   ...param,
@@ -194,8 +34,6 @@ export const headerSecurity = (param: { name: string }): HeaderSecurity => ({
   type: "header",
   ...param,
 })
-
-type Security = (() => Security) | QuerySecurity | HeaderSecurity
 
 type MatchStatus = number | `${number}..${number}`
 
@@ -281,7 +119,7 @@ export function middleware(opts: Middleware): V2 {
   throw new Error("TODO")
 }
 
-export function scope(opts: ScopeOpts): V2 {
+export function responsible(opts: ScopeOpts): V2 {
   throw new Error("TODO")
 }
 
@@ -293,8 +131,20 @@ export function GET(op: Op): V2 {
   throw new Error("TODO")
 }
 
-export function POST(op: Op): V2 {
-  throw new Error("TODO")
+export function POST(op: Op): Route
+export function POST(id: string, op: Op): Route
+export function POST(idOrOp: string | Op, maybeOp?: Op): Route {
+  if (typeof idOrOp === "string" && maybeOp) {
+    return {
+      method: "POST",
+      id: idOrOp,
+      op: { id: idOrOp, ...maybeOp },
+    }
+  }
+  return {
+    method: "POST",
+    op: idOrOp as Op,
+  }
 }
 
 export function openAPI(

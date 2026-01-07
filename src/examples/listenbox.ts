@@ -1,20 +1,22 @@
 import {
-  array,
-  boolean,
-  dict,
   GET,
   headerSecurity,
-  int32,
-  int64,
   middleware,
-  object,
   openAPI,
   POST,
   response,
-  scope,
+  responsible,
+} from "../responsible.ts"
+import {
+  array,
+  boolean,
+  dict,
+  int32,
+  int64,
+  object,
   string,
   unknown,
-} from "../responsible.ts"
+} from "../schema.ts"
 
 const Email = () => string({ format: "email" })
 
@@ -85,29 +87,29 @@ const YouTubeFeedType = () => string({ enum: ["video", "playlist", "channel"] })
 
 const Show = () =>
   object({
-    id: ShowID,
+    "?analyticsPrefix": HttpURL,
+    "?author": string(),
+    "?copyright": string(),
+    "?explicit": boolean(),
+    "?image": HttpURL,
+    "?keywords": string(),
+    "?owner": string(),
+    "?ownerEmail": Email,
+    "?primaryCategory": ITunesCategory,
+    "?refreshedUTC": UnixMillis,
+    "?reverse": boolean(),
+    "?secondaryCategory": ITunesCategory,
+    "?type": YouTubeFeedType,
+    "?website": HttpURL,
     audioFeedURL: HttpURL,
-    feed_id: FeedID,
     description: string(),
     episodes: int32({ minimum: 0 }),
+    feed_id: FeedID,
+    id: ShowID,
     language: string(),
     title: string(),
     videoFeedURL: HttpURL,
     youtubeURL: HttpURL,
-    "analyticsPrefix?": HttpURL,
-    "author?": string(),
-    "copyright?": string(),
-    "explicit?": boolean(),
-    "image?": HttpURL,
-    "keywords?": string(),
-    "owner?": string(),
-    "ownerEmail?": Email,
-    "primaryCategory?": ITunesCategory,
-    "refreshedUTC?": UnixMillis,
-    "reverse?": boolean(),
-    "secondaryCategory?": ITunesCategory,
-    "type?": YouTubeFeedType,
-    "website?": HttpURL,
   })
 
 const PaginationResp = () =>
@@ -147,6 +149,26 @@ const EditShowReq = () =>
     "subcategory2?": string(),
     "title?": string(),
     "website?": HttpURL,
+  })
+
+const EditShowReq2 = () =>
+  object({
+    "?analyticsPrefix": HttpURL,
+    "?author": string(),
+    "?category1": string(),
+    "?category2": string(),
+    "?copyright": string(),
+    "?description": string(),
+    "?image": HttpURL,
+    "?keywords": string(),
+    "?subcategory1": string(),
+    "?subcategory2": string(),
+    "?title": string(),
+    "?website": HttpURL,
+    explicit: boolean(),
+    language: string(),
+    owner: string(),
+    ownerEmail: Email,
   })
 
 const Mime = () => string({ pattern: /^\w+\/[-+.\w]+$/ })
@@ -227,7 +249,7 @@ const ReverseResp = () => object({ value: boolean() })
 const NotYourShow = () =>
   response({ description: "You can't edit somebody else's show" })
 
-const authenticatedOps = scope({
+const authenticatedOps = responsible({
   "/*": middleware({
     req: { security: AuthorizationHeader },
     res: { add: { 401: unknown() } },
@@ -240,7 +262,7 @@ const authenticatedOps = scope({
     res: { 200: unknown() },
   }),
 
-  "/user": scope({
+  "/user": responsible({
     GET: {
       id: "getUser",
       res: { 200: UserResp },
@@ -297,7 +319,7 @@ const authenticatedOps = scope({
     res: { 201: UrlResp },
   }),
 
-  "/show/:show_id": scope({
+  "/show/:show_id": responsible({
     params: { show_id: ShowID },
 
     "/*": middleware({
@@ -344,7 +366,7 @@ const authenticatedOps = scope({
     }),
   }),
 
-  "/later": scope({
+  "/later": responsible({
     GET: {
       id: "getLater",
       deprecated: true,
@@ -371,7 +393,7 @@ const authenticatedOps = scope({
       res: { 200: Show2 },
     }),
 
-    "/:itemID": scope({
+    "/:itemID": responsible({
       params: { itemID: ItemID },
 
       POST: {
@@ -412,7 +434,7 @@ const authenticatedOps = scope({
   }),
 })
 
-const jsonAPI = scope({
+const jsonAPI = responsible({
   "/*": middleware({
     req: { mime: "application/json" },
     res: {
@@ -467,7 +489,7 @@ const jsonAPI = scope({
     },
   }),
 
-  "/show/:showID": scope({
+  "/show/:showID": responsible({
     params: { showID: ShowID },
 
     "/*": middleware({
@@ -542,7 +564,7 @@ const jsonAPI = scope({
   "/auth": authenticatedOps,
 })
 
-const googleAuth = scope({
+const googleAuth = responsible({
   GET: {
     id: "googleSlash",
     res: {
@@ -574,11 +596,22 @@ const googleAuth = scope({
   }),
 })
 
-const RedirectRSS = () => response({ headers: { Location: HttpURL } })
+const RedirectRSS = () =>
+  response({
+    headers: {
+      Location: HttpURL,
+    },
+  })
 
-const NonEmptyString = () => string({ minLength: 1 })
+const NonEmptyString = () =>
+  string({
+    minLength: 1,
+  })
 
-const ItemNotFound = () => response({ description: "Item not found" })
+const ItemNotFound = () =>
+  response({
+    description: "Item not found",
+  })
 
 export const listenboxAPI = openAPI(
   {

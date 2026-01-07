@@ -1,14 +1,5 @@
-import {
-  anyOf,
-  array,
-  int64,
-  middleware,
-  object,
-  openAPI,
-  scope,
-  string,
-  unknown,
-} from "../responsible.ts"
+import { middleware, openAPI, responsible } from "../responsible.ts"
+import { anyOf, array, int64, object, string, unknown } from "../schema.ts"
 
 const AppID = () =>
   string({
@@ -74,7 +65,7 @@ export const exceptionsAPI = openAPI(
         },
       },
     }),
-    "/app_errors/:app_id": scope({
+    "/app_errors/:app_id": responsible({
       params: { app_id: AppID },
 
       POST: {
@@ -87,7 +78,7 @@ export const exceptionsAPI = openAPI(
         res: { 200: array(OneErr) },
       },
     }),
-    "/errors/:err_id": scope({
+    "/errors/:err_id": responsible({
       params: { err_id: ErrID },
 
       GET: {

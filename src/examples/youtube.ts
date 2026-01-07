@@ -1,17 +1,19 @@
 import {
-  array,
-  dict,
   GET,
-  int32,
-  int64,
   middleware,
-  object,
   openAPI,
   querySecurity,
-  scope,
+  responsible,
+} from "../responsible.ts"
+import {
+  array,
+  dict,
+  int32,
+  int64,
+  object,
   string,
   unknown,
-} from "../responsible.ts"
+} from "../schema.ts"
 
 const VideoID = () => string({ minLength: 1 })
 const ChannelID = () => string({ minLength: 1 })
@@ -25,9 +27,9 @@ const HttpURL = () =>
 
 const Thumbnail = () =>
   object({
-    "height?": int32({ minimum: 1 }),
-    "url?": HttpURL,
-    "width?": int32({ minimum: 1 }),
+    "?height": int32({ minimum: 1 }),
+    "?url": HttpURL,
+    "?width": int32({ minimum: 1 }),
   })
 
 const Localized = () => object()
@@ -40,18 +42,18 @@ const Snippet = () =>
   object({
     title: string,
     publishedAt: UnixMillis,
-    "country?": string,
-    "customUrl?": string,
-    "description?": string,
-    "localized?": Localized,
-    "thumbnails?": dict(string, Thumbnail),
+    "?country": string,
+    "?customUrl": string,
+    "?description": string,
+    "?localized": Localized,
+    "?thumbnails": dict(string, Thumbnail),
   })
 
 const RelatedPlaylists = () =>
   object({
     uploads: PlaylistID,
-    "watchHistory?": PlaylistID,
-    "watchLater?": PlaylistID,
+    "?watchHistory": PlaylistID,
+    "?watchLater": PlaylistID,
   })
 
 const ContentDetails = () =>
@@ -108,7 +110,7 @@ export const YouTubeAPI = openAPI(
         add: { 401: unknown },
       },
     }),
-    "/videos": scope({
+    "/videos": responsible({
       POST: {},
       GET: {
         req: {
