@@ -5,7 +5,7 @@ import {
   openAPI,
   POST,
   response,
-  responsible,
+  scope,
 } from "../responsible.ts"
 import {
   array,
@@ -249,7 +249,7 @@ const ReverseResp = () => object({ value: boolean() })
 const NotYourShow = () =>
   response({ description: "You can't edit somebody else's show" })
 
-const authenticatedOps = responsible({
+const authenticatedOps = scope({
   "/*": middleware({
     req: { security: AuthorizationHeader },
     res: { add: { 401: unknown() } },
@@ -262,7 +262,7 @@ const authenticatedOps = responsible({
     res: { 200: unknown() },
   }),
 
-  "/user": responsible({
+  "/user": scope({
     GET: {
       id: "getUser",
       res: { 200: UserResp },
@@ -319,7 +319,7 @@ const authenticatedOps = responsible({
     res: { 201: UrlResp },
   }),
 
-  "/show/:show_id": responsible({
+  "/show/:show_id": scope({
     params: { show_id: ShowID },
 
     "/*": middleware({
@@ -366,7 +366,7 @@ const authenticatedOps = responsible({
     }),
   }),
 
-  "/later": responsible({
+  "/later": scope({
     GET: {
       id: "getLater",
       deprecated: true,
@@ -393,7 +393,7 @@ const authenticatedOps = responsible({
       res: { 200: Show2 },
     }),
 
-    "/:itemID": responsible({
+    "/:itemID": scope({
       params: { itemID: ItemID },
 
       POST: {
@@ -434,7 +434,7 @@ const authenticatedOps = responsible({
   }),
 })
 
-const jsonAPI = responsible({
+const jsonAPI = scope({
   "/*": middleware({
     req: { mime: "application/json" },
     res: {
@@ -489,7 +489,7 @@ const jsonAPI = responsible({
     },
   }),
 
-  "/show/:showID": responsible({
+  "/show/:showID": scope({
     params: { showID: ShowID },
 
     "/*": middleware({
@@ -564,7 +564,7 @@ const jsonAPI = responsible({
   "/auth": authenticatedOps,
 })
 
-const googleAuth = responsible({
+const googleAuth = scope({
   GET: {
     id: "googleSlash",
     res: {

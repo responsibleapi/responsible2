@@ -1,4 +1,4 @@
-import { responsibleAPI } from "../actual.ts"
+import { responsibleAPI, responsibleApi2 } from "../actual.ts"
 import { POST } from "../responsible.ts"
 import { float, int32, object, string, unknown } from "../schema.ts"
 
@@ -30,6 +30,55 @@ const Err = () =>
   object({
     message: string({ minLength: 1 }),
   })
+
+const smells2 = responsibleApi2({
+  partialDoc: {
+    openapi: "3.1.0",
+    info: {
+      title: "HTTP benchmarks",
+      version: "1",
+    },
+  },
+  forAll: {
+    req: {
+      mime: "application/json",
+    },
+    res: {
+      match: {
+        "100..499": {
+          mime: "application/json",
+          headers: { "Content-Length": int32({ minimum: 1 }) },
+        },
+      },
+      add: {
+        400: {
+          body: Err,
+        },
+      },
+    },
+  },
+  routes: {
+    "/smells": POST({
+      req: {
+        headers: {
+          Authorization: string({ pattern: /^Bearer \S+$/ }),
+        },
+        body: NewSmell,
+      },
+      res: {
+        201: {
+          body: object({}),
+        },
+      },
+    }),
+    "/map": POST({
+      req: GeoBBox,
+      res: {
+        200: SmellMap,
+      },
+    }),
+  },
+})
 
 // noinspection JSUnusedGlobalSymbols
 export default responsibleAPI(

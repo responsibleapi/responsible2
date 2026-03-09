@@ -1,15 +1,16 @@
-import { oas30 } from "openapi3-ts"
+import { oas31 } from "openapi3-ts"
 import { describe, expect, test } from "vitest"
 import { responsibleAPI } from "./actual.ts"
 import { POST } from "./responsible.ts"
 import { int32, object, string } from "./schema.ts"
+import { validate } from "./validate.ts"
 
 const Err = object({ messsage: string() })
 
 const SomeSuccess = object({ one: int32() })
 
 describe("dslish", () => {
-  test("tst", () => {
+  test("tst", async () => {
     const rapi = responsibleAPI(
       {
         openapi: "3.1.0",
@@ -43,6 +44,8 @@ describe("dslish", () => {
         }),
       },
     )
+
+    expect(await validate(rapi)).toEqual(true)
 
     expect(rapi).toEqual({
       openapi: "3.1.0",
@@ -78,6 +81,6 @@ describe("dslish", () => {
           },
         },
       },
-    } satisfies oas30.OpenAPIObject)
+    } satisfies oas31.OpenAPIObject)
   })
 })

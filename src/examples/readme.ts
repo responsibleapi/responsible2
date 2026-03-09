@@ -1,4 +1,4 @@
-import { openAPI, responsible } from "../responsible.ts"
+import { openAPI, scope } from "../responsible.ts"
 import { allOf, array, object, string } from "../schema.ts"
 
 const baseError = () =>
@@ -112,7 +112,7 @@ const error_VERSION_NOTFOUND = () =>
 export const readmeAPI = openAPI(
   {},
   {
-    "/apply": responsible({
+    "/apply": scope({
       GET: {},
     }),
   },

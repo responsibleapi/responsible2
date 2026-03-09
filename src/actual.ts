@@ -1,9 +1,12 @@
-import { oas30 } from "openapi3-ts"
-import type { Mime, Response } from "./responsible.ts"
+import { oas31 } from "openapi3-ts"
+import { typesafeLowercase } from "./lib.ts"
+import type { Mime, Response, Security } from "./responsible.ts"
 import type { Schema } from "./schema.ts"
 
 interface ScopeReq {
-  mime: Mime
+  mime?: Mime
+  security?: Security
+  "security?"?: Security
 }
 
 interface StatusMatch {
@@ -12,8 +15,9 @@ interface StatusMatch {
 }
 
 interface ScopeRes {
-  match: Record<string, StatusMatch>
-  add: Record<number, Response>
+  mime?: Mime
+  match?: Record<string, StatusMatch>
+  add?: Record<number, Response>
 }
 
 interface RealReq {}
@@ -29,12 +33,28 @@ export interface Route {
 
 type ScopeOrRoute = Route | Scope
 
+export function isScope(s: ScopeOrRoute): s is Scope {
+  throw new Error(
+    "we have not figured out how ScopeOrRoute is even constructed to start distinguishing them",
+  )
+}
+
 type Routes = Record<`/${string}`, ScopeOrRoute>
 
 interface ScopeOpts {
   req: ScopeReq
   res: ScopeRes
 }
+
+export function responsibleApi2({
+  partialDoc,
+  forAll,
+  routes,
+}: {
+  partialDoc: Partial<oas31.OpenAPIObject>
+  forAll: ScopeOpts
+  routes: Routes
+}): oas31.OpenAPIObject {}
 
 interface Scope {
   opts: ScopeOpts
@@ -46,19 +66,34 @@ export const scope = (opts: ScopeOpts, routes: Routes): Scope => ({
   routes,
 })
 
-function scopeToPaths(s: Scope): oas30.PathsObject {
-  throw new Error("TODO")
+function scopeToPaths(s: Scope): oas31.PathsObject {
+  const paths: Record<string, oas31.PathItemObject> = {}
+
+  for (const k in s.routes) {
+    const path = k as keyof typeof s.routes
+    const route = s.routes[path]
+    if (isScope(route)) {
+      // depth first search
+    } else {
+      paths[k] = paths[k] || {}
+
+      const lkMethod = typesafeLowercase(route.method)
+      paths[k][lkMethod] = paths[k][lkMethod] || {}
+    }
+  }
+
+  return paths
 }
 
 export function responsibleAPI(
-  doc: Partial<oas30.OpenAPIObject>,
+  doc: Partial<oas31.OpenAPIObject>,
   opts: ScopeOpts,
   routes: Routes,
-): oas30.OpenAPIObject {
+): oas31.OpenAPIObject {
   const s = scope(opts, routes)
 
   return {
     ...doc,
     paths: scopeToPaths(s),
-  }
+  } as oas31.OpenAPIObject
 }

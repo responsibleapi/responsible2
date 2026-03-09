@@ -57,6 +57,12 @@ interface Arr extends ArrayOpts {
   items: Schema
 }
 
+export const array = (items: Schema, opts?: ArrayOpts): Arr => ({
+  type: "array",
+  items,
+  ...opts,
+})
+
 interface Bool extends SchemaOpts {
   type: "boolean"
 }
@@ -160,12 +166,6 @@ export const allOf = (allOf: readonly Schema[]): AllOf => ({ allOf })
 
 export const boolean = (opts?: SchemaOpts): Bool => ({
   type: "boolean",
-  ...opts,
-})
-
-export const array = (items: Schema, opts?: ArrayOpts): Arr => ({
-  type: "array",
-  items,
   ...opts,
 })
 

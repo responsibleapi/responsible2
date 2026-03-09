@@ -2,14 +2,27 @@ import type { oas31 } from "openapi3-ts"
 import type { Route } from "./actual.ts"
 import type { Schema } from "./schema.ts"
 
+type Nameable<T> = (() => T) | T
+
+function decodeNameable<T>(n: Nameable<T>): { name?: string; value: T } {
+  if (typeof n === "function") {
+    const fn = n as () => T
+    return { name: fn.name, value: fn() }
+  }
+
+  return { value: n }
+}
+
 export type Mime = `${string}/${string}`
 
-export type Response = Readonly<{
-  body?: Schema | Record<Mime, Schema>
-  description?: string
-  headers?: Record<string, Schema>
-  cookies?: Record<string, Schema>
-}>
+export type Response = Nameable<
+  Readonly<{
+    body?: Schema | Record<Mime, Schema>
+    description?: string
+    headers?: Record<string, Schema>
+    cookies?: Record<string, Schema>
+  }>
+>
 
 export const response = (param: Response): Response => param
 
@@ -23,7 +36,7 @@ type HeaderSecurity = Readonly<{
   name: string
 }>
 
-type Security = (() => Security) | QuerySecurity | HeaderSecurity
+export type Security = Nameable<QuerySecurity | HeaderSecurity>
 
 export const querySecurity = (param: { name: string }): QuerySecurity => ({
   type: "query",
@@ -119,7 +132,7 @@ export function middleware(opts: Middleware): V2 {
   throw new Error("TODO")
 }
 
-export function responsible(opts: ScopeOpts): V2 {
+export function scope(opts: ScopeOpts): V2 {
   throw new Error("TODO")
 }
 

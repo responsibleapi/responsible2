@@ -3,7 +3,6 @@ import { path } from "./responsible.ts"
 import { httpURL, string } from "./schema.ts"
 
 describe("responsible", () => {
-
   test("httpURL", () => {
     const re = new RegExp(httpURL().pattern!)
     expect("https://www.google.com").toMatch(re)
