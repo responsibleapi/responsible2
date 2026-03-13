@@ -1,4 +1,5 @@
-import { middleware, openAPI, POST } from "../responsible.ts"
+import { responsibleAPI } from "../final.ts"
+import { POST } from "../responsible.ts"
 import { array, dict, email, int32, int64, object, string } from "../schema.ts"
 
 const PostID = () => int64({ minimum: 1 })
@@ -23,35 +24,35 @@ const NewPost = () =>
     content: string({ minLength: 1 }),
   })
 
-export const httpBenchmark = openAPI(
-  {
+export const httpBenchmark = responsibleAPI({
+  partialDoc: {
     openapi: "3.1.0",
     info: {
       title: "HTTP benchmarks",
       version: "1",
     },
   },
-  {
-    "/*": middleware({
-      req: { mime: "application/json" },
-      res: {
-        match: {
-          "100..599": {
-            mime: "application/json",
-            headers: { "Content-Length": int32({ minimum: 1 }) },
-          },
-        },
-        add: {
-          400: {
-            description: "Bad Request",
-            body: dict(
-              string({ minLength: 1 }),
-              array(string({ minLength: 1 }), { minItems: 1 }),
-            ),
-          },
+  forAll: {
+    req: { mime: "application/json" },
+    res: {
+      match: {
+        "100..599": {
+          mime: "application/json",
+          headers: { "Content-Length": int32({ minimum: 1 }) },
         },
       },
-    }),
+      add: {
+        400: {
+          description: "Bad Request",
+          body: dict(
+            string({ minLength: 1 }),
+            array(string({ minLength: 1 }), { minItems: 1 }),
+          ),
+        },
+      },
+    },
+  },
+  routes: {
     "/posts": POST("newPost", {
       req: NewPost,
       res: { 201: Post },
@@ -61,4 +62,4 @@ export const httpBenchmark = openAPI(
       res: { 200: Post },
     }),
   },
-)
+})
