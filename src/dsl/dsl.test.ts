@@ -1,9 +1,9 @@
 import { oas31 } from "openapi3-ts"
 import { describe, expect, test } from "vitest"
+import { validate } from "../validate.ts"
 import { responsibleAPI } from "./dsl.ts"
 import { POST } from "./methods.ts"
 import { int32, object, string } from "./schema.ts"
-import { validate } from "../validate.ts"
 
 const Err = object({ messsage: string() })
 
