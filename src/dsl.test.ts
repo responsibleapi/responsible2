@@ -11,15 +11,15 @@ const SomeSuccess = object({ one: int32() })
 
 describe("dslish", () => {
   test("tst", async () => {
-    const rapi = responsibleAPI(
-      {
+    const rapi = responsibleAPI({
+      partialDoc: {
         openapi: "3.1.0",
         info: {
           title: "HTTP benchmarks",
           version: "1",
         },
       },
-      {
+      forAll: {
         req: { mime: "application/json" },
         res: {
           match: {
@@ -35,7 +35,7 @@ describe("dslish", () => {
           },
         },
       },
-      {
+      routes: {
         "/map": POST({
           req: Err,
           res: {
@@ -43,9 +43,9 @@ describe("dslish", () => {
           },
         }),
       },
-    )
+    })
 
-    expect(await validate(rapi)).toEqual(true)
+    expect(await validate(rapi)).toEqual(rapi)
 
     expect(rapi).toEqual({
       openapi: "3.1.0",
