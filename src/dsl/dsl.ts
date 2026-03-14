@@ -64,7 +64,19 @@ interface Scope {
   routes: Routes
 }
 
-export function scope(opts: ScopeOpts, routes: Routes): Scope {
+export function scope(routes: Routes): Scope
+export function scope(opts: ScopeOpts, routes: Routes): Scope
+export function scope(
+  ...args: [routes: Routes] | [opts: ScopeOpts, routes: Routes]
+): Scope {
+  if (args.length === 1) {
+    return {
+      routes: args[0],
+    }
+  }
+
+  const [opts, routes] = args
+
   return {
     opts,
     routes,

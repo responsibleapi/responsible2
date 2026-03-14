@@ -1,3 +1,4 @@
+import { responsibleAPI, scope } from "../dsl/dsl.ts"
 import { GET, headerSecurity, POST, response } from "../dsl/methods.ts"
 import {
   array,
@@ -242,10 +243,8 @@ const NotYourShow = () =>
   response({ description: "You can't edit somebody else's show" })
 
 const authenticatedOps = scope({
-  "/*": middleware({
-    req: { security: AuthorizationHeader },
-    res: { add: { 401: unknown() } },
-  }),
+  req: { security: AuthorizationHeader },
+  res: { add: { 401: unknown() } },
 
   "/unsubscribe": POST({
     id: "unsubscribe",
@@ -313,15 +312,12 @@ const authenticatedOps = scope({
 
   "/show/:show_id": scope({
     params: { show_id: ShowID },
-
-    "/*": middleware({
-      res: {
-        add: {
-          403: NotYourShow,
-          404: unknown(),
-        },
+    res: {
+      add: {
+        403: NotYourShow,
+        404: unknown(),
       },
-    }),
+    },
 
     PUT: {
       id: "editShow",
@@ -427,17 +423,15 @@ const authenticatedOps = scope({
 })
 
 const jsonAPI = scope({
-  "/*": middleware({
-    req: { mime: "application/json" },
-    res: {
-      match: {
-        "200..299": {
-          mime: "application/json",
-          headers: { "Content-Length": int32({ minimum: 1 }) },
-        },
+  req: { mime: "application/json" },
+  res: {
+    match: {
+      "200..299": {
+        mime: "application/json",
+        headers: { "Content-Length": int32({ minimum: 1 }) },
       },
     },
-  }),
+  },
 
   "/login": POST({
     id: "requestOtp",
@@ -483,14 +477,11 @@ const jsonAPI = scope({
 
   "/show/:showID": scope({
     params: { showID: ShowID },
-
-    "/*": middleware({
-      res: {
-        add: {
-          404: unknown(),
-        },
+    res: {
+      add: {
+        404: unknown(),
       },
-    }),
+    },
 
     GET: {
       deprecated: true,
@@ -605,9 +596,9 @@ const ItemNotFound = () =>
     description: "Item not found",
   })
 
-export const listenboxAPI = openAPI(
-  {
-    openapi: "3.0.0",
+export const listenboxAPI = responsibleAPI({
+  partialDoc: {
+    openapi: "3.1.0",
     info: {
       title: "Listenbox",
       version: "0.1",
@@ -618,18 +609,17 @@ export const listenboxAPI = openAPI(
       { url: "https://api.listenbox.app" },
     ],
   },
-  {
-    "/*": middleware({
-      res: {
-        add: {
-          400: {
-            headers: { "Content-Length": int32({ minimum: 1 }) },
-            body: { "application/json": ErrorStruct },
-          },
+  forAll: {
+    res: {
+      add: {
+        400: {
+          headers: { "Content-Length": int32({ minimum: 1 }) },
+          body: { "application/json": ErrorStruct },
         },
       },
-    }),
-
+    },
+  },
+  routes: {
     "/japi": jsonAPI,
 
     "/oauth/google": googleAuth,
@@ -725,4 +715,4 @@ export const listenboxAPI = openAPI(
       },
     }),
   },
-)
+})
