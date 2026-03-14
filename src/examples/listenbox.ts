@@ -1,12 +1,4 @@
-import {
-  GET,
-  headerSecurity,
-  middleware,
-  openAPI,
-  POST,
-  response,
-  scope,
-} from "../dsl/methods.ts"
+import { GET, headerSecurity, POST, response } from "../dsl/methods.ts"
 import {
   array,
   boolean,
