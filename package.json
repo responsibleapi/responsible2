@@ -2,16 +2,16 @@
   "name": "responsibleapi",
   "type": "module",
   "dependencies": {
-    "@seriousme/openapi-schema-validator": "^2.7.0",
+    "@seriousme/openapi-schema-validator": "^2.8.0",
     "openapi3-ts": "^4.5.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
+    "@types/bun": "^1.3.10",
     "eslint": "^10.0.3",
-    "prettier": "^3.6.2",
-    "prettier-plugin-organize-imports": "^4.2.0",
-    "prettier-plugin-packagejson": "^2.5.19",
-    "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "prettier": "^3.8.1",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "prettier-plugin-packagejson": "^2.5.22",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   }
 }
