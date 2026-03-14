@@ -4,7 +4,7 @@ import type { Schema } from "./schema.ts"
 /**
  * either named reference in `#components/` or an actual inline thing
  */
-type Nameable<T> = (() => T) | T
+export type Nameable<T> = (() => T) | T
 
 function decodeNameable<T>(n: Nameable<T>): { name?: string; value: T } {
   if (typeof n === "function") {

@@ -1,3 +1,5 @@
+import type { Nameable } from "./methods"
+
 type StringFormat = "email" | "uri" | "uuid" | "date" | "date-time" | "binary"
 
 type SchemaOpts = Readonly<{
@@ -88,18 +90,9 @@ interface AllOf {
 
 type Num = Int | Float
 
-export type Schema =
-  | (() => Schema)
-  | Str
-  | Num
-  | Bool
-  | Unknown
-  | Obj
-  | Arr
-  | Dict
-  | OneOf
-  | AnyOf
-  | AllOf
+export type Schema = Nameable<
+  Str | Num | Bool | Unknown | Obj | Arr | Dict | OneOf | AnyOf | AllOf
+>
 
 type PropKeySchema = (() => PropKeySchema) | Str | Num
 

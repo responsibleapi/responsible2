@@ -381,22 +381,27 @@ const authenticatedOps = scope({
       res: { 200: Show2 },
     }),
 
-    "/:itemID": scope({
-      params: { itemID: ItemID },
-
-      POST: {
-        id: "addLater",
-        res: {
-          200: unknown(),
-          402: UpgradeToAddMoreToListenLater,
+    "/:itemID": scope(
+      {
+        req: {
+          params: { itemID: ItemID },
         },
       },
+      {
+        POST: {
+          id: "addLater",
+          res: {
+            200: unknown(),
+            402: UpgradeToAddMoreToListenLater,
+          },
+        },
 
-      DELETE: {
-        id: "removeLater",
-        res: { 200: unknown() },
+        DELETE: {
+          id: "removeLater",
+          res: { 200: unknown() },
+        },
       },
-    }),
+    ),
   }),
 
   "/s3_presign_image": GET({

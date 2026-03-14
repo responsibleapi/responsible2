@@ -7,6 +7,7 @@ interface ScopeReq {
   mime?: Mime
   security?: Security
   "security?"?: Security
+  params: Record<string, Schema>
 }
 
 interface StatusMatch {
@@ -43,8 +44,8 @@ export function isScope(s: ScopeOrRoute): s is Scope {
 type Routes = Record<`/${string}`, ScopeOrRoute>
 
 interface ScopeOpts {
-  req: ScopeReq
-  res: ScopeRes
+  req?: ScopeReq
+  res?: ScopeRes
 }
 
 interface ResponsibleAPI {
