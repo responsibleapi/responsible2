@@ -3,15 +3,30 @@
 import type { Route } from "./dsl.ts"
 import type { Schema } from "./schema.ts"
 
+type NonFunctionValue =
+  | bigint
+  | boolean
+  | null
+  | number
+  | object
+  | string
+  | symbol
+  | undefined
+
 /**
  * either named reference in `#components/` or an actual inline thing
  */
-export type Nameable<T> = (() => T) | T
+export type Nameable<T extends NonFunctionValue> = (() => T) | T
 
-function _decodeNameable<T>(n: Nameable<T>): { name?: string; value: T } {
-  if (typeof n === "function") {
-    const fn = n as () => T
-    return { name: fn.name, value: fn() }
+function isNamed<T extends NonFunctionValue>(n: Nameable<T>): n is () => T {
+  return typeof n === "function"
+}
+
+function _decodeNameable<T extends NonFunctionValue>(
+  n: Nameable<T>,
+): { name?: string; value: T } {
+  if (isNamed(n)) {
+    return { name: n.name, value: n() }
   }
 
   return { value: n }
@@ -61,8 +76,10 @@ export function path(
   strings: TemplateStringsArray,
   ...params: readonly Schema[]
 ): [Path, Record<string, Schema>] {
-  if (!isPath(strings[0])) {
-    throw new Error(`${strings[0]} must start with /`)
+  const [pathStart] = strings
+
+  if (!isPath(pathStart)) {
+    throw new Error(`${pathStart ?? "path"} must start with /`)
   }
 
   void params

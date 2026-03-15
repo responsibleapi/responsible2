@@ -3,13 +3,10 @@ import tseslint from "typescript-eslint"
 
 export default tseslint.config(
   {
-    ignores: ["src/examples/readme.yaml"],
+    files: ["src/**/*.ts", "src/**/*.mts", "src/**/*.cts"],
     linterOptions: {
       reportUnusedDisableDirectives: "error",
     },
-  },
-  {
-    files: ["src/**/*.ts", "src/**/*.mts", "src/**/*.cts"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
@@ -42,6 +39,7 @@ export default tseslint.config(
           ignoreArrowShorthand: true,
         },
       ],
+      "@typescript-eslint/no-unsafe-type-assertion": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {

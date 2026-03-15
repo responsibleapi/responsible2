@@ -12,5 +12,6 @@ export async function validate(
     throw new Error(JSON.stringify(vld.errors, null, 2))
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
   return doc as oas31.OpenAPIObject
 }
