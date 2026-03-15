@@ -57,19 +57,6 @@ type MiddlewareResponse = Response & { mime?: Mime }
 
 type Res = Schema | Response | (() => Response)
 
-type _Middleware = Readonly<{
-  req?: MiddlewareReq
-  res?: {
-    mime?: Mime
-    headers?: Record<string, Schema>
-    /**
-     * add responses in this scope
-     */
-    add?: Record<number, Res>
-    match?: Record<MatchStatus, MiddlewareResponse>
-  }
-}>
-
 type Path = `/${string}`
 
 const isPath = (x: unknown): x is Path =>

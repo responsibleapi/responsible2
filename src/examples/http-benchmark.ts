@@ -1,6 +1,14 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { POST } from "../dsl/methods.ts"
-import { array, dict, email, int32, int64, object, string } from "../dsl/schema.ts"
+import {
+  array,
+  dict,
+  email,
+  int32,
+  int64,
+  object,
+  string,
+} from "../dsl/schema.ts"
 
 const PostID = () => int64({ minimum: 1 })
 

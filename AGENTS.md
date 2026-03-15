@@ -1,5 +1,11 @@
 # AGENTS.md
 
+## Current state of things
+
+The compiler itself isn't implemented yet, so running tests won't be too useful.
+Rely on code, typechecking and linting for now. Once the examples are in good
+shape, we can start implementing the compiler and use them as test cases.
+
 ## Tools
 
 - use `bun` for everything
@@ -7,12 +13,6 @@
 - never use `node` to eval js/ts, use `bun` instead
 - don't waste time formatting files
 
-## Current state of things
-
-Migrating [examples](src/examples/) to the new [DSL](src/dsl/). Trying to move
-away from `middleware` DSL to `forAll` prop in both `scope` and `responsibleAPI`
-param obj.
-
-## Notes
+## Docs
 
 - field-by-field `package.json` rationale lives in `docs/package.jsonc`

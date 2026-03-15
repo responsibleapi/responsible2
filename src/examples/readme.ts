@@ -1,4 +1,4 @@
-import { openAPI, scope } from "../dsl/methods.ts"
+import { responsibleAPI, scope } from "../dsl/dsl.ts"
 import { allOf, array, object, string } from "../dsl/schema.ts"
 
 const baseError = () =>
@@ -109,7 +109,7 @@ const _error_VERSION_NOTFOUND = () =>
     }),
   ])
 
-export const readmeAPI = openAPI(
+export default responsibleAPI(
   {},
   {
     "/apply": scope({

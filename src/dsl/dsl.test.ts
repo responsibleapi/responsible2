@@ -56,24 +56,70 @@ describe("dslish", () => {
       paths: {
         "/map": {
           post: {
+            requestBody: {
+              content: {
+                ["application/json"]: {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      messsage: {
+                        type: "string",
+                      },
+                    },
+                    required: ["messsage"],
+                  },
+                },
+              },
+            },
             responses: {
               ["200"]: {
                 headers: {
                   ["Content-Length"]: {
                     required: true,
-                    schema: { type: "integer", minimum: 1 },
+                    schema: {
+                      type: "integer",
+                      format: "int32",
+                      minimum: 1,
+                    },
                   },
                 },
                 content: {
                   ["application/json"]: {
-                    schema: "#/components/schemas/SomeSuccess",
+                    schema: {
+                      type: "object",
+                      properties: {
+                        one: {
+                          type: "integer",
+                          format: "int32",
+                        },
+                      },
+                      required: ["one"],
+                    },
                   },
                 },
               },
               ["400"]: {
+                headers: {
+                  ["Content-Length"]: {
+                    required: true,
+                    schema: {
+                      type: "integer",
+                      format: "int32",
+                      minimum: 1,
+                    },
+                  },
+                },
                 content: {
                   ["application/json"]: {
-                    schema: "#/components/schemas/Err",
+                    schema: {
+                      type: "object",
+                      properties: {
+                        messsage: {
+                          type: "string",
+                        },
+                      },
+                      required: ["messsage"],
+                    },
                   },
                 },
               },
