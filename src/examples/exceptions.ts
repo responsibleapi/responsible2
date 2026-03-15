@@ -43,8 +43,8 @@ const ErrLog = () =>
     ts: UnixMillis,
   })
 
-export const exceptionsAPI = responsibleAPI(
-  {
+export const exceptionsAPI = responsibleAPI({
+  partialDoc: {
     openapi: "3.1.0",
     info: {
       title: "Exceptions API",
@@ -52,39 +52,49 @@ export const exceptionsAPI = responsibleAPI(
       description: "Sentry.io clone",
     },
   },
-  {
-    "/*": middleware({
-      req: {
-        mime: "application/json",
+  forAll: {
+    req: {
+      mime: "application/json",
+    },
+    res: {
+      mime: "application/json",
+      add: {
+        /** TODO describe your validation lib err schema */
+        400: unknown(),
       },
-      res: {
-        mime: "application/json",
-        add: {
-          /** TODO describe your validation lib err schema */
-          400: unknown(),
+    },
+  },
+  routes: {
+    "/app_errors/:app_id": scope(
+      {
+        req: {
+          params: { app_id: AppID },
         },
       },
-    }),
-    "/app_errors/:app_id": scope({
-      params: { app_id: AppID },
-
-      POST: {
-        id: "newError",
-        req: NewErr,
-        res: { 201: unknown() },
+      {
+        POST: {
+          id: "newError",
+          req: NewErr,
+          res: { 201: unknown() },
+        },
+        GET: {
+          id: "appErrors",
+          res: { 200: array(OneErr) },
+        },
       },
-      GET: {
-        id: "appErrors",
-        res: { 200: array(OneErr) },
+    ),
+    "/errors/:err_id": scope(
+      {
+        req: {
+          params: { err_id: ErrID },
+        },
       },
-    }),
-    "/errors/:err_id": scope({
-      params: { err_id: ErrID },
-
-      GET: {
-        id: "errorOccurrences",
-        res: { 200: array(ErrLog) },
+      {
+        GET: {
+          id: "errorOccurrences",
+          res: { 200: array(ErrLog) },
+        },
       },
-    }),
+    ),
   },
-)
+})

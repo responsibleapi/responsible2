@@ -1,5 +1,5 @@
 import type { oas31 } from "openapi3-ts"
-import type { Mime, Response, Security } from "./methods.ts"
+import type { Mime, Resp, Security } from "./methods.ts"
 import type { Schema } from "./schema.ts"
 
 interface ScopeReq {
@@ -8,6 +8,8 @@ interface ScopeReq {
   "security?"?: Security
   params?: Record<string, Schema>
   query?: Record<string, Schema>
+  headers?: Record<string, Schema>
+  body?: Schema
 }
 
 interface StatusMatch {
@@ -21,15 +23,15 @@ type ScopeRes =
   | {
       mime?: Mime
       match?: Record<MatchStatus, StatusMatch>
-      add?: Record<number, Response | Schema>
+      add?: Record<number, Resp | Schema>
     }
-  | Record<number, Response | Schema>
+  | Record<number, Resp | Schema>
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 
 export interface Route {
   id?: string
-  req: ScopeReq
+  req?: ScopeReq | Schema
   res: ScopeRes
   deprecated?: boolean
   description?: string

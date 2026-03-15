@@ -106,7 +106,7 @@ export default responsibleAPI({
   },
   routes: {
     "/videos": scope({
-      POST: {},
+      // POST: {},
       GET: {
         req: {
           query: {

@@ -441,130 +441,138 @@ const authenticatedOps = scope(
   },
 )
 
-const jsonAPI = scope({
-  req: { mime: "application/json" },
-  res: {
-    match: {
-      "200..299": {
-        mime: "application/json",
-        headers: { "Content-Length": int32({ minimum: 1 }) },
+const jsonAPI = scope(
+  {
+    req: { mime: "application/json" },
+    res: {
+      match: {
+        "200..299": {
+          mime: "application/json",
+          headers: { "Content-Length": int32({ minimum: 1 }) },
+        },
       },
     },
   },
-
-  "/login": POST({
-    id: "requestOtp",
-    req: LoginReq,
-    res: {
-      200: object({
-        login: string({ enum: ["NEW", "EXISTING"] }),
-      }),
-    },
-  }),
-
-  "/otp": POST({
-    id: "submitOtp",
-    req: object({
-      email: Email,
-      otp: string({ minLength: 1 }),
-      "updates?": boolean(),
+  {
+    "/login": POST({
+      id: "requestOtp",
+      req: LoginReq,
+      res: {
+        200: object({
+          login: string({ enum: ["NEW", "EXISTING"] }),
+        }),
+      },
     }),
-    res: {
-      201: object({
-        jwt: string({ minLength: 1 }),
-      }),
-      401: {
-        description: "Incorrect OTP",
-      },
-    },
-  }),
 
-  "/submit": POST({
-    id: "submitUrl",
-    req: SubmitReq,
-    res: {
-      200: object({
-        showID: ShowID,
-        "plan?": Plan,
+    "/otp": POST({
+      id: "submitOtp",
+      req: object({
+        email: Email,
+        otp: string({ minLength: 1 }),
+        "updates?": boolean(),
       }),
-      401: {
-        description: "Submitting playlists requires a login",
+      res: {
+        201: object({
+          jwt: string({ minLength: 1 }),
+        }),
+        401: {
+          description: "Incorrect OTP",
+        },
       },
-      404: unknown(),
-    },
-  }),
+    }),
 
-  "/show/:showID": scope({
-    params: { showID: ShowID },
-    res: {
-      add: {
+    "/submit": POST({
+      id: "submitUrl",
+      req: SubmitReq,
+      res: {
+        200: object({
+          showID: ShowID,
+          "plan?": Plan,
+        }),
+        401: {
+          description: "Submitting playlists requires a login",
+        },
         404: unknown(),
       },
-    },
-
-    GET: {
-      deprecated: true,
-      id: "getShow",
-      res: { 200: Show },
-    },
-
-    "/v2": GET({
-      id: "getShow2",
-      req: {
-        "security?": AuthorizationHeader,
-        query: {
-          "before?": ItemID,
-          "after?": ItemID,
-        },
-      },
-      res: { 200: Show2 },
     }),
 
-    "/items2": GET({
-      id: "getItems2",
-      req: {
-        query: {
-          "before?": ItemID,
-          "after?": ItemID,
+    "/show/:showID": scope(
+      {
+        req: {
+          params: { showID: ShowID },
+        },
+        res: {
+          add: {
+            404: unknown(),
+          },
         },
       },
-      res: { 200: ItemsResp2 },
+      {
+        GET: {
+          deprecated: true,
+          id: "getShow",
+          res: { 200: Show },
+        },
+
+        "/v2": GET({
+          id: "getShow2",
+          req: {
+            "security?": AuthorizationHeader,
+            query: {
+              "before?": ItemID,
+              "after?": ItemID,
+            },
+          },
+          res: { 200: Show2 },
+        }),
+
+        "/items2": GET({
+          id: "getItems2",
+          req: {
+            query: {
+              "before?": ItemID,
+              "after?": ItemID,
+            },
+          },
+          res: { 200: ItemsResp2 },
+        }),
+
+        "/items": GET({
+          id: "getItems",
+          deprecated: true,
+          req: {
+            query: {
+              "before?": string({ format: "date-time" }),
+              "limit?": int32({ minimum: 1 }),
+            },
+          },
+          res: { 200: ItemsResp },
+        }),
+      },
+    ),
+
+    "/cdn_log": POST({
+      id: "logCDN",
+      req: {
+        body: {
+          "application/json": WorkerEvent,
+          /** workaround for a current worker to avoid redeploying it 😏 */
+          "text/plain": WorkerEvent,
+        },
+      },
+      res: {
+        201: {
+          headers: {
+            /** wtf is this */
+            "Content-Length?": int32({ minimum: 0, maximum: 0 }),
+          },
+        },
+      },
     }),
 
-    "/items": GET({
-      id: "getItems",
-      deprecated: true,
-      req: {
-        query: {
-          "before?": string({ format: "date-time" }),
-          "limit?": int32({ minimum: 1 }),
-        },
-      },
-      res: { 200: ItemsResp },
-    }),
-  }),
-
-  "/cdn_log": POST({
-    id: "logCDN",
-    req: {
-      body: {
-        "application/json": WorkerEvent,
-        /** workaround for a current worker to avoid redeploying it 😏 */
-        "text/plain": WorkerEvent,
-      },
-    },
-    res: {
-      201: {
-        headers: {
-          /** wtf is this */
-          "Content-Length?": int32({ minimum: 0, maximum: 0 }),
-        },
-      },
-    },
-  }),
-
-  "/auth": authenticatedOps,
-})
+    "/auth": authenticatedOps,
+  },
+)
 
 const googleAuth = scope({
   GET: {

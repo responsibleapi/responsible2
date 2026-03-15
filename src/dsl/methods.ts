@@ -19,14 +19,16 @@ function _decodeNameable<T>(n: Nameable<T>): { name?: string; value: T } {
 
 export type Mime = `${string}/${string}`
 
-export type Response = Nameable<{
+interface RespParams {
   body?: Schema | Record<Mime, Schema>
   description?: string
   headers?: Record<string, Schema>
   cookies?: Record<string, Schema>
-}>
+}
 
-export const response = (param: Response): Response => param
+export type Resp = Nameable<RespParams>
+
+export const response = (param: RespParams): RespParams => param
 
 type QuerySecurity = Readonly<{
   type: "query"
@@ -50,13 +52,6 @@ export const headerSecurity = (param: { name: string }): HeaderSecurity => ({
   ...param,
 })
 
-/**
- * `type` because {@link Response} is nameable
- */
-type MiddlewareResponse = Response & { mime?: Mime }
-
-type Res = Schema | Response | (() => Response)
-
 type Path = `/${string}`
 
 const isPath = (x: unknown): x is Path =>
@@ -73,15 +68,6 @@ export function path(
   void params
   throw new Error("TODO")
 }
-
-type Req = Readonly<{
-  params?: Record<string, Schema>
-  query?: Record<string, Schema>
-  headers?: Record<string, Schema>
-  security?: Security
-  "security?"?: Security
-  body?: Schema | Record<Mime, Schema>
-}>
 
 export function GET(_op: Route): Route {
   throw new Error("TODO")
