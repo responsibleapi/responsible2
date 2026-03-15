@@ -8,6 +8,7 @@ interface ScopeReq {
   security?: Security
   "security?"?: Security
   params?: Record<string, Schema>
+  query?: Record<string, Schema>
 }
 
 interface StatusMatch {
@@ -21,9 +22,11 @@ interface ScopeRes {
   add?: Record<number, Response>
 }
 
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
+
 export interface Route {
   id?: string
-  method: "GET" | "POST" | "PUT" | "DELETE"
+  method: HttpMethod
   req: ScopeReq
   res: ScopeRes
   op?: Op
@@ -38,6 +41,8 @@ export function isScope(s: ScopeOrRoute): s is Scope {
 }
 
 type Routes = Record<`/${string}`, ScopeOrRoute>
+type MethodRoutes = Record<HttpMethod, Route>
+type ScopeRoutes = Routes | MethodRoutes
 
 interface ScopeOpts {
   req?: ScopeReq
@@ -50,9 +55,7 @@ interface ResponsibleAPI {
   routes: Routes
 }
 
-export function responsibleAPI(
-  _api: ResponsibleAPI,
-): oas31.OpenAPIObject {
+export function responsibleAPI(_api: ResponsibleAPI): oas31.OpenAPIObject {
   throw new Error("TODO")
 }
 
@@ -61,10 +64,10 @@ interface Scope {
   routes: Routes
 }
 
-export function scope(routes: Routes): Scope
-export function scope(forAll: ScopeOpts, routes: Routes): Scope
+export function scope(routes: ScopeRoutes): Scope
+export function scope(forAll: ScopeOpts, routes: ScopeRoutes): Scope
 export function scope(
-  ...args: [routes: Routes] | [opts: ScopeOpts, routes: Routes]
+  ...args: [routes: ScopeRoutes] | [opts: ScopeOpts, routes: ScopeRoutes]
 ): Scope {
   if (args.length === 1) {
     return {
