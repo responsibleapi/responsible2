@@ -65,13 +65,13 @@ export const exceptionsAPI = responsibleAPI({
     },
   },
   routes: {
-    "/app_errors/:app_id": scope(
-      {
+    "/app_errors/:app_id": scope({
+      forAll: {
         req: {
           params: { app_id: AppID },
         },
       },
-      {
+      routes: {
         POST: {
           id: "newError",
           req: NewErr,
@@ -82,19 +82,19 @@ export const exceptionsAPI = responsibleAPI({
           res: { 200: array(OneErr) },
         },
       },
-    ),
-    "/errors/:err_id": scope(
-      {
+    }),
+    "/errors/:err_id": scope({
+      forAll: {
         req: {
           params: { err_id: ErrID },
         },
       },
-      {
+      routes: {
         GET: {
           id: "errorOccurrences",
           res: { 200: array(ErrLog) },
         },
       },
-    ),
+    }),
   },
 })
