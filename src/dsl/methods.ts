@@ -71,6 +71,10 @@ export function GET(_op: Op): Op {
   throw new Error("TODO")
 }
 
+export function HEAD(_op: Op): Op {
+  throw new Error("TODO")
+}
+
 export function POST(op: Op): Op
 export function POST(id: string, op: Op): Op
 export function POST(_idOrOp: string | Op, _maybeOp?: Op): Op {

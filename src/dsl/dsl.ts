@@ -41,6 +41,7 @@ type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "HEAD"
 
 export interface Op {
   id?: string
+  headID?: string
   req?: OpReq | Schema
   res: OpRes
   deprecated?: boolean
