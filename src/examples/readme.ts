@@ -99,22 +99,20 @@ export default responsibleAPI({
   },
   forAll: {},
   routes: {
-    "/apply": scope(
-      {
+    "/apply": scope({
+      forAll: {
         req: { mime: "application/json" },
         res: { mime: "application/json" },
       },
-      {
+      routes: {
         GET: {
           id: "getOpenRoles",
           description: "Returns all the roles we're hiring for at ReadMe!",
           res: {
-            add: {
-              200: response({
-                description: "All the roles that we're hiring for.",
-                body: array(jobOpening),
-              }),
-            },
+            200: response({
+              description: "All the roles that we're hiring for.",
+              body: array(jobOpening),
+            }),
           },
         },
         POST: {
@@ -125,15 +123,13 @@ export default responsibleAPI({
             body: apply,
           },
           res: {
-            add: {
-              200: response({
-                description: "You did it!",
-              }),
-            },
+            200: response({
+              description: "You did it!",
+            }),
           },
         },
       },
-    ),
+    }),
     "/api-specification": POST({
       id: "uploadAPISpecification",
       description:
