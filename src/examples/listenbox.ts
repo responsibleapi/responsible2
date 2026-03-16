@@ -184,13 +184,10 @@ const JsonItem = () =>
   })
 
 const ItemsResp = () =>
-  object(
-    {
-      items: array(JsonItem, { minItems: 0 }),
-      total: int32({ minimum: 0 }),
-    },
-    { deprecated: true },
-  )
+  object({
+    items: array(JsonItem, { minItems: 0 }),
+    total: int32({ minimum: 0 }),
+  })
 
 const ItemsResp2 = () =>
   object({
@@ -281,7 +278,6 @@ const authenticatedOps = scope({
 
       "/:email/shows": GET({
         id: "showsByEmail",
-        deprecated: true,
         req: { params: { email: Email } },
         res: {
           200: array(
@@ -380,6 +376,7 @@ const authenticatedOps = scope({
         res: {
           200: Show,
           402: UpgradeToAddMoreToListenLater,
+          403: NotYourShow,
         },
       },
 
@@ -426,7 +423,7 @@ const authenticatedOps = scope({
       },
       res: {
         200: PreSignedUploadURL,
-        402: { description: "Only Creators can upload images" },
+        402: response({ description: "402" }),
       },
     }),
 
@@ -483,7 +480,10 @@ const jsonAPI = scope({
 
     "/submit": POST({
       id: "submitUrl",
-      req: SubmitReq,
+      req: {
+        "security?": AuthorizationHeader,
+        body: SubmitReq,
+      },
       res: {
         200: object({
           showID: ShowID,
