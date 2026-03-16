@@ -108,11 +108,14 @@ const Show = () =>
 
 const PaginationResp = () =>
   object({
-    hasBefore: boolean({
+    "hasBefore?": boolean({
       deprecated: true,
       description: "newBefore is enough",
     }),
-    hasAfter: boolean({ deprecated: true, description: "newAfter is enough" }),
+    "hasAfter?": boolean({
+      deprecated: true,
+      description: "newAfter is enough",
+    }),
     "newBefore?": ItemID,
     "newAfter?": ItemID,
   })
