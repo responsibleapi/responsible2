@@ -93,12 +93,12 @@ interface Scope {
 }
 
 export function scope(arg: ScopeRoutes | Scope): Scope {
-  if ("forAll" in arg) {
+  if ("routes" in arg) {
     return arg
   }
 
   return {
-    routes: arg.routes,
+    routes: arg,
   }
 }
 

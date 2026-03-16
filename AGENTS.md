@@ -17,6 +17,9 @@ shape, we can start implementing the compiler and use examples as tests
 
 - never create multiple signatures to fix type/lint errors
 - never use `Reflect`. Adjust types instead
+- when asked to fix something inside a function, fix the function body without
+  adjusting types/signatures. If the error is still there, ask if you can adjust
+  types/signatures
 
 ## Docs
 
