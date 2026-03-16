@@ -5,7 +5,26 @@ import type { Schema } from "./schema.ts"
 interface ScopeReq {
   mime?: Mime
   security?: Security
+
+  /**
+   * optional security means something OR `no authentication`
+   */
   "security?"?: Security
+
+  params?: Record<string, Schema>
+  query?: Record<string, Schema>
+  headers?: Record<string, Schema>
+  body?: Schema | Record<Mime, Schema>
+}
+
+interface LeafReq {
+  security?: Security
+
+  /**
+   * optional security means something OR `no authentication`
+   */
+  "security?"?: Security
+
   params?: Record<string, Schema>
   query?: Record<string, Schema>
   headers?: Record<string, Schema>

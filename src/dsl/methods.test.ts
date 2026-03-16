@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import { path } from "./methods.ts"
-import { httpURL, string } from "./schema.ts"
+import { httpURL } from "./schema.ts"
 
 describe("responsible", () => {
   test("httpURL", () => {
@@ -13,10 +12,5 @@ describe("responsible", () => {
     expect("https://www.google.com").toMatch(re)
     expect("htps://www.google.com").not.toMatch(re)
     expect("https://www. google.com/").not.toMatch(re)
-  })
-
-  test("custom tag", () => {
-    expect(() => path`/foo/${string()}/bar`).toThrow("TODO")
-    expect(() => path`/${string()}`).toThrow("TODO")
   })
 })

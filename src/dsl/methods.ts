@@ -67,25 +67,6 @@ export const headerSecurity = (param: { name: string }): HeaderSecurity => ({
   ...param,
 })
 
-type Path = `/${string}`
-
-const isPath = (x: unknown): x is Path =>
-  typeof x === "string" && x.startsWith("/")
-
-export function path(
-  strings: TemplateStringsArray,
-  ...params: readonly Schema[]
-): [Path, Record<string, Schema>] {
-  const [pathStart] = strings
-
-  if (!isPath(pathStart)) {
-    throw new Error(`${pathStart ?? "path"} must start with /`)
-  }
-
-  void params
-  throw new Error("TODO")
-}
-
 export function GET(_op: Route): Route {
   throw new Error("TODO")
 }
