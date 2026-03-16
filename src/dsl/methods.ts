@@ -1,6 +1,6 @@
 // TODO: Merge this file into `src/dsl/dsl.ts`.
 
-import type { Route } from "./dsl.ts"
+import type { Op } from "./dsl.ts"
 import type { Schema } from "./schema.ts"
 
 type NonFunctionValue =
@@ -67,12 +67,12 @@ export const headerSecurity = (param: { name: string }): HeaderSecurity => ({
   ...param,
 })
 
-export function GET(_op: Route): Route {
+export function GET(_op: Op): Op {
   throw new Error("TODO")
 }
 
-export function POST(op: Route): Route
-export function POST(id: string, op: Route): Route
-export function POST(_idOrOp: string | Route, _maybeOp?: Route): Route {
+export function POST(op: Op): Op
+export function POST(id: string, op: Op): Op
+export function POST(_idOrOp: string | Op, _maybeOp?: Op): Op {
   throw new Error("TODO")
 }
