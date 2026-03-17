@@ -14,7 +14,7 @@ type NonFunctionValue =
   | undefined
 
 /**
- * either named reference in `#components/` or an actual inline thing
+ * if it's a function, then the name of the function is used as a $ref in OpenAPI, otherwise the value is inlined
  */
 export type Nameable<T extends NonFunctionValue> = (() => T) | T
 
