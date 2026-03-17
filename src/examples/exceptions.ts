@@ -1,4 +1,5 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
+import { GET } from "../dsl/methods.ts"
 import { anyOf, array, int64, object, string, unknown } from "../dsl/schema.ts"
 import { scope } from "../dsl/scope.ts"
 
@@ -84,18 +85,12 @@ export const exceptionsAPI = responsibleAPI({
         },
       },
     }),
-    "/errors/:errID": scope({
-      forAll: {
-        req: {
-          pathParams: { errID: ErrID },
-        },
+    "/errors/:errID": GET({
+      id: "errorOccurrences",
+      req: {
+        pathParams: { errID: ErrID },
       },
-      routes: {
-        GET: {
-          id: "errorOccurrences",
-          res: { 200: array(ErrLog) },
-        },
-      },
+      res: { 200: array(ErrLog) },
     }),
   },
 })

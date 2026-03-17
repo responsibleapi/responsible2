@@ -97,7 +97,7 @@ type ValidScopeRoutes<T extends ScopeRoutes> =
  * nested `routes` property in the wrapped form.
  */
 type ValidScopeArg<T extends ScopeArg> = T extends Scope
-  ? Omit<T, "routes"> & { routes: ValidScopeRoutes<T["routes"] & ScopeRoutes> }
+  ? Omit<T, "routes"> & { routes: ValidScopeRoutes<T["routes"]> }
   : T extends ScopeRoutes
     ? ValidScopeRoutes<T>
     : never
