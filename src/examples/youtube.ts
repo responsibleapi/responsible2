@@ -1,4 +1,4 @@
-import { responsibleAPI, scope } from "../dsl/dsl.ts"
+import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET, querySecurity } from "../dsl/methods.ts"
 import {
   array,
@@ -105,18 +105,15 @@ export default responsibleAPI({
     },
   },
   routes: {
-    "/videos": scope({
-      // POST: {},
-      GET: {
-        req: {
-          query: {
-            id: VideoIDs,
-            maxResults: int32({ minimum: 1, default: 50 }),
-            part: Parts,
-          },
+    "/videos": GET({
+      req: {
+        query: {
+          id: VideoIDs,
+          maxResults: int32({ minimum: 1, default: 50 }),
+          part: Parts,
         },
-        res: { 200: Videos },
       },
+      res: { 200: Videos },
     }),
     "/playlistItems": GET({
       req: {

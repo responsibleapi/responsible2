@@ -1,5 +1,5 @@
 import { responsibleAPI, scope } from "../dsl/dsl.ts"
-import { GET, headerSecurity, POST, response } from "../dsl/methods.ts"
+import { GET, HEAD, headerSecurity, POST, response } from "../dsl/methods.ts"
 import {
   array,
   boolean,
@@ -659,41 +659,35 @@ export const listenboxAPI = responsibleAPI({
     },
   },
   routes: {
-    "/api/health": scope({
-      GET: {
-        id: "getHealth",
-        headID: "headHealth",
-        res: { 200: response({ description: "200" }) },
+    "/api/health": GET({
+      id: "getHealth",
+      headID: "headHealth",
+      res: { 200: response({ description: "200" }) },
+    }),
+
+    "/status/info": HEAD({
+      id: "infoStatus",
+      req: {
+        query: {
+          url: HttpURL,
+        },
+      },
+      res: {
+        200: response({ description: "200" }),
+        500: response({ description: "500" }),
       },
     }),
 
-    "/status/info": scope({
-      HEAD: {
-        id: "infoStatus",
-        req: {
-          query: {
-            url: HttpURL,
-          },
-        },
-        res: {
-          200: response({ description: "200" }),
-          500: response({ description: "500" }),
+    "/status/download": HEAD({
+      id: "downloadStatus",
+      req: {
+        query: {
+          url: HttpURL,
         },
       },
-    }),
-
-    "/status/download": scope({
-      HEAD: {
-        id: "downloadStatus",
-        req: {
-          query: {
-            url: HttpURL,
-          },
-        },
-        res: {
-          200: response({ description: "200" }),
-          500: response({ description: "500" }),
-        },
+      res: {
+        200: response({ description: "200" }),
+        500: response({ description: "500" }),
       },
     }),
 
@@ -701,89 +695,83 @@ export const listenboxAPI = responsibleAPI({
 
     "/oauth/google": googleAuth,
 
-    "/rss/:show_id/:type.rss": scope({
-      GET: {
-        id: "getRss",
-        headID: "headRss",
-        req: {
-          params: {
-            show_id: ShowID,
-            type: AudioVideo,
+    "/rss/:show_id/:type.rss": GET({
+      id: "getRss",
+      headID: "headRss",
+      req: {
+        params: {
+          show_id: ShowID,
+          type: AudioVideo,
+        },
+      },
+      res: {
+        200: {
+          headers: {
+            "content-length": int32({ minimum: 1 }),
+            etag: string({ minLength: 1 }),
+            "cache-control": string({ const: "no-cache" }),
+            "cdn-cache-control": string({ const: "max-age=2147483647" }),
+            "last-modified?": string({ minLength: 1 }),
+          },
+          body: {
+            "application/rss+xml": string({ minLength: 1 }),
           },
         },
-        res: {
-          200: {
-            headers: {
-              "content-length": int32({ minimum: 1 }),
-              etag: string({ minLength: 1 }),
-              "cache-control": string({ const: "no-cache" }),
-              "cdn-cache-control": string({ const: "max-age=2147483647" }),
-              "last-modified?": string({ minLength: 1 }),
-            },
-            body: {
-              "application/rss+xml": string({ minLength: 1 }),
-            },
-          },
-          302: RedirectRSS,
-          403: response({ description: "403" }),
-          404: response({ description: "404" }),
-        },
+        302: RedirectRSS,
+        403: response({ description: "403" }),
+        404: response({ description: "404" }),
       },
     }),
 
-    "/a/:item_id.:ext": scope({
-      GET: {
-        id: "getAudio",
-        headID: "headAudio",
-        req: {
-          params: {
-            item_id: ItemID,
-            ext: NonEmptyString,
-          },
+    "/a/:item_id.:ext": GET({
+      id: "getAudio",
+      headID: "headAudio",
+      req: {
+        params: {
+          item_id: ItemID,
+          ext: NonEmptyString,
+        },
+        headers: {
+          "cf-connecting-ip?": string({ minLength: 1 }),
+        },
+      },
+      res: {
+        200: {
           headers: {
-            "cf-connecting-ip?": string({ minLength: 1 }),
+            "cache-control": string({ minLength: 1 }),
+            "content-length": int32({ minimum: 1 }),
+          },
+          body: {
+            "audio/*": string({ format: "binary" }),
           },
         },
-        res: {
-          200: {
-            headers: {
-              "cache-control": string({ minLength: 1 }),
-              "content-length": int32({ minimum: 1 }),
-            },
-            body: {
-              "audio/*": string({ format: "binary" }),
-            },
-          },
-          404: ItemNotFound,
-          429: response({ description: "429" }),
-          503: response({ description: "503" }),
-        },
+        404: ItemNotFound,
+        429: response({ description: "429" }),
+        503: response({ description: "503" }),
       },
     }),
 
-    "/w/:item_id.:ext": scope({
-      GET: {
-        id: "getVideo",
-        headID: "headVideo",
-        req: {
-          params: {
-            item_id: ItemID,
-            ext: NonEmptyString,
-          },
+    "/w/:item_id.:ext": GET({
+      id: "getVideo",
+      headID: "headVideo",
+      req: {
+        params: {
+          item_id: ItemID,
+          ext: NonEmptyString,
+        },
+        headers: {
+          "cf-connecting-ip?": string({ minLength: 1 }),
+        },
+      },
+      res: {
+        302: {
           headers: {
-            "cf-connecting-ip?": string({ minLength: 1 }),
+            location: HttpURL,
+            "cache-control": string({ minLength: 1 }),
           },
         },
-        res: {
-          302: {
-            headers: {
-              location: HttpURL,
-              "cache-control": string({ minLength: 1 }),
-            },
-          },
-          404: ItemNotFound,
-          429: response({ description: "429" }),
-        },
+        404: ItemNotFound,
+        429: response({ description: "429" }),
       },
     }),
 
