@@ -61,14 +61,10 @@ export function isScope(s: ScopeOrOp): s is Scope {
   )
 }
 
-/* root level routes, only paths */
+/* for root level, only paths */
 type Routes = Record<`/${string}`, ScopeOrOp>
 
-/*
- * Method keys must stay optional because mixed scopes can contain child paths
- * and only one local method. A plain intersection with required method fields
- * would incorrectly demand every HTTP method on every scope.
- */
+/* Supports scopes that declare HTTP handlers alongside nested path routes. */
 type MethodRoutes = Partial<Record<HttpMethod, Op>>
 
 /*
