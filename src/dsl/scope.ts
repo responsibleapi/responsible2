@@ -122,7 +122,7 @@ export function scope<const T extends ScopeArg>(arg: ValidScopeArg<T>): Scope {
   }
 }
 
-export function isScope(s: ScopeOrOp): s is Scope {
+export function isScope(_s: ScopeOrOp): _s is Scope {
   throw new Error(
     "we have not figured out how ScopeOrOp is even constructed to start distinguishing them",
   )
