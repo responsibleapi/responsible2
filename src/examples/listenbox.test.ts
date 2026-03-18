@@ -5,8 +5,8 @@ import { listenboxAPI } from "./listenbox.ts"
 
 describe("listenbox example", () => {
   test("listenbox.json validates as OpenAPI", async () => {
-    expect(await validate(listenboxAPI)).toEqual(
-      listenboxJSON as typeof listenboxAPI,
+    expect(await validate(listenboxAPI)).toEqual<typeof listenboxJSON>(
+      listenboxJSON,
     )
   })
 })
