@@ -1,19 +1,24 @@
 # AGENTS.md
 
-[//]: # "webstorm workaround:"
-[//]: # ([Global skills]&#40;~/.codex/skills&#41;)
-
 ## Current state of things
 
 - DO NOT attempt to run tests.
 - Use typechecking and linting for guidance
+
+## Lang rules
+
+### JSONC
+
+- never use `//` comments
+- never use `/*` for multiline comments, use `/**` instead, where each line
+  starts with a `*`
 
 ## Tools
 
 - use `bun` for everything
 - never use `bunx`, if a package is missing, ask to add it to `package.json`
 - never use `node`
-- do not run formatting unless the task actually requires it
+- never run formatting unless the task actually requires it
 
 ## Docs
 

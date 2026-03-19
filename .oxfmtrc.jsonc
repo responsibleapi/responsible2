@@ -6,25 +6,35 @@
   "trailingComma": "all",
   "printWidth": 80,
 
-  // Closest built-in replacement for prettier-plugin-organize-imports.
-  // Oxfmt sorts imports and specifiers, but it does not remove unused imports.
+  /**
+   * Closest built-in replacement for prettier-plugin-organize-imports.
+   * Oxfmt sorts imports and specifiers, but it does not remove unused imports.
+   */
   "sortImports": {
     "newlinesBetween": false,
-    "partitionByNewline": true,
+    "partitionByNewline": true
   },
 
-  // Closest built-in replacement for prettier-plugin-packagejson.
-  // Oxfmt's package.json ordering is opinionated, not byte-for-byte identical.
+  /**
+   * Closest built-in replacement for prettier-plugin-packagejson.
+   * Oxfmt's package.json ordering is opinionated, not byte-for-byte identical.
+   */
   "sortPackageJson": {
-    "sortScripts": true,
+    "sortScripts": true
   },
 
   "overrides": [
     {
+      "files": ["*.jsonc"],
+      "options": {
+        "trailingComma": "none"
+      }
+    },
+    {
       "files": ["*.yml", "*.yaml"],
       "options": {
-        "proseWrap": "preserve",
-      },
-    },
-  ],
+        "proseWrap": "preserve"
+      }
+    }
+  ]
 }
