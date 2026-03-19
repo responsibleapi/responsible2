@@ -1,4 +1,4 @@
-import { describe, test } from "bun:test"
+import { describe, test } from "vitest"
 import type { Assert, IsSubtypeOf, IsNever } from "../type-assertions.ts"
 import type { scope } from "./scope.ts"
 

@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test"
+import { describe, expect, test } from "vitest"
 import { validate } from "../validate.ts"
 import exceptionsJSON from "./exceptions.json"
 import { exceptionsAPI } from "./exceptions.ts"

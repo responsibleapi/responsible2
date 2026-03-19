@@ -2,6 +2,7 @@
 
 ## Current state of things
 
+- 100% typescript codebase
 - DO NOT attempt to run tests.
 - Use typechecking and linting for guidance
 

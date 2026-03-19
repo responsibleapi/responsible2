@@ -1,4 +1,4 @@
-import { describe, test } from "bun:test"
+import { describe, test } from "vitest"
 import type { Assert, IsEqual, IsSubtypeOf } from "./type-assertions.ts"
 
 describe("typelevel", () => {

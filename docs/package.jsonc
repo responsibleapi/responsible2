@@ -5,10 +5,26 @@
 {
   "scripts": {
     /**
-     * Why not `--no-exit-on-error`:
-     * - That is better for a full-sweep debugging pass.
-     * - It is worse as the default when we want the fastest signal.
+     * Why not `--parallel --no-exit-on-error`: to fail faster
      */
-    "check": ""
+    "check": "",
+
+    /**
+     * We keep `bun test` as the script entrypoint because it is faster for
+     * local runs in this project.
+     *
+     * Test files still import from `vitest` because WebStorm still does not
+     * support `bun:test` properly as of March 2026.
+     */
+    "test": ""
+  },
+  "devDependencies": {
+    /**
+     * Provides the test API import surface for editor tooling and TypeScript.
+     *
+     * We use `vitest` because WebStorm still does not support `bun:test`
+     * properly as of March 2026.
+     */
+    "vitest": ""
   }
 }

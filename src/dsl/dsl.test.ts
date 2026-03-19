@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test"
+import { describe, expect, test } from "vitest"
 import type { oas31 } from "openapi3-ts"
 import { validate } from "../validate.ts"
 import { responsibleAPI } from "./dsl.ts"
