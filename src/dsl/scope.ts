@@ -46,6 +46,8 @@ export interface Op {
   deprecated?: boolean
   description?: string
   summary?: string
+
+  /* TODO this is possible to make more typesafe */
   tags?: string[]
 }
 
