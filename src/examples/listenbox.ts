@@ -631,7 +631,7 @@ const ItemNotFound = () =>
     description: "404",
   })
 
-export const listenboxAPI = responsibleAPI({
+export default responsibleAPI({
   partialDoc: {
     openapi: "3.1.0",
     info: {
