@@ -1,5 +1,5 @@
 import { describe, test } from "bun:test"
-import type { Assert, IsAssignable, IsNever } from "../typelevel.ts"
+import type { Assert, IsSubtypeOf, IsNever } from "../type-assertions.ts"
 import type { scope } from "./scope.ts"
 
 type Op = {
@@ -30,7 +30,7 @@ type ScopeArg<T extends (...args: never[]) => unknown> = Parameters<T>[0]
 describe("scope", () => {
   test("accepts a pure scope with at least two methods", () => {
     type _Test = Assert<
-      IsAssignable<PureScope, ScopeArg<typeof scope<PureScope>>>
+      IsSubtypeOf<PureScope, ScopeArg<typeof scope<PureScope>>>
     >
   })
 
@@ -40,7 +40,7 @@ describe("scope", () => {
 
   test("accepts a wrapped pure scope with at least two methods", () => {
     type _Test = Assert<
-      IsAssignable<WrappedPureScope, ScopeArg<typeof scope<WrappedPureScope>>>
+      IsSubtypeOf<WrappedPureScope, ScopeArg<typeof scope<WrappedPureScope>>>
     >
   })
 

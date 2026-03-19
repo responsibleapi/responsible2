@@ -1,8 +1,7 @@
 # AGENTS.md
 
 [//]: # "webstorm workaround:"
-
-[Global skills](~/.codex/skills)
+[//]: # ([Global skills]&#40;~/.codex/skills&#41;)
 
 ## Current state of things
 
