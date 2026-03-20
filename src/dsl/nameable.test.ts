@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest"
 import type { Assert, IsEqual, IsNever } from "../type-assertions.ts"
+import type { Nameable } from "./nameable.ts"
 import { named } from "./nameable.ts"
 
 type NamedArg<T extends Parameters<typeof named>[1]> = Parameters<
@@ -33,5 +34,9 @@ describe("nameable", () => {
     type _Test = Assert<
       IsNever<NamedArg<() => { type: "string"; minLength: 1 }>>
     >
+  })
+
+  test("rejects function-valued nameables", () => {
+    type _Test = Assert<IsNever<Nameable<() => string>>>
   })
 })
