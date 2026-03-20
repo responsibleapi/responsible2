@@ -3,7 +3,8 @@
 ## Current state of things
 
 - 100% typescript codebase
-- DO NOT attempt to run tests.
+- never run the whole test suite (the compiler is still TODO), run individual
+  test files instead
 - Use typechecking and linting for guidance
 
 ## Lang rules

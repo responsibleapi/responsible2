@@ -1,5 +1,6 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET } from "../dsl/methods.ts"
+import { named } from "../dsl/nameable.ts"
 import {
   array,
   dict,
@@ -9,8 +10,8 @@ import {
   string,
   unknown,
 } from "../dsl/schema.ts"
-import { querySecurity } from "../dsl/security.ts"
 import { queryParam } from "../dsl/scope.ts"
+import { querySecurity } from "../dsl/security.ts"
 
 const VideoID = () => string({ minLength: 1 })
 const ChannelID = () => string({ minLength: 1 })
@@ -90,10 +91,15 @@ const Videos = () => object()
 
 const security = () => querySecurity({ name: "key" })
 
-// const _.xgafv = () => queryParam({
-//   description: "V1 error format.",
-//   schema: string({enum:["1","2"]})
-// })
+const xgafv = named(
+  "_.xgafv",
+  queryParam({
+    description: "V1 error format.",
+    in: "query",
+    name: "$.xgafv",
+    schema: string({ enum: ["1", "2"] }),
+  }),
+)
 
 export default responsibleAPI({
   partialDoc: {
@@ -105,7 +111,10 @@ export default responsibleAPI({
     servers: [{ url: "https://www.googleapis.com/youtube/v3" }],
   },
   forAll: {
-    req: { security },
+    req: {
+      security,
+      params: [xgafv],
+    },
     res: {
       mime: "application/json",
       add: { 401: unknown },

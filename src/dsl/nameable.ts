@@ -12,10 +12,19 @@ type NonFunction =
  * this is pretty much core of this DSL. {@link Function.name} is used as
  * $ref in OpenAPI "#/components/.../$name", otherwise the value is inlined
  *
- * now the big question is, when we need to name something weird like
- * "#/components/parameters/_.xgafv",
+ * `named()` exists for component keys that are not valid TypeScript
+ * identifiers, for example `named("_.xgafv", queryParam(...))`.
  */
 export type Nameable<T extends NonFunction> = (() => T) | T
+
+export const named = <T extends NonFunction>(
+  componentName: string,
+  value: T,
+): (() => T) =>
+  Object.defineProperty(() => value, "name", {
+    configurable: true,
+    value: componentName,
+  })
 
 const isNamed = <T extends NonFunction>(n: Nameable<T>): n is () => T =>
   typeof n === "function"
