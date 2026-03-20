@@ -6,7 +6,7 @@ type NamedArg<T extends Parameters<typeof named>[1]> = Parameters<
   typeof named<T>
 >[1]
 
-describe("named", () => {
+describe("nameable", () => {
   test("assigns a component name to value-based definitions", () => {
     const xgafv = named("_.xgafv", {
       in: "query",
