@@ -3,20 +3,20 @@
  * concrete values. Callable inputs are therefore rejected by collapsing them
  * to `never`.
  */
-type NamedValue<T> = T extends (...args: any[]) => unknown ? never : T
+type NonFunction<T> = T extends (...args: any[]) => unknown ? never : T
 
 /**
  * this is pretty much core of this DSL. {@link Function.name} is used as
  * $ref in OpenAPI "#/components/.../$name", otherwise the value is inlined.
  *
- * This reuses {@link NamedValue} so callable values are rejected consistently
+ * This reuses {@link NonFunction} so callable values are rejected consistently
  * in both raw and thunk-wrapped forms.
  */
-type NamedThunk<T> = [NamedValue<T>] extends [never]
+type NamedThunk<T> = [NonFunction<T>] extends [never]
   ? never
-  : () => NamedValue<T>
+  : () => NonFunction<T>
 
-export type Nameable<T> = NamedThunk<T> | NamedValue<T>
+export type Nameable<T> = NamedThunk<T> | NonFunction<T>
 
 /**
  * Use this for component keys that are not valid TypeScript identifiers,
@@ -24,8 +24,8 @@ export type Nameable<T> = NamedThunk<T> | NamedValue<T>
  */
 export const named = <T>(
   componentName: string,
-  value: NamedValue<T>,
-): (() => NamedValue<T>) =>
+  value: NonFunction<T>,
+): (() => NonFunction<T>) =>
   Object.defineProperty(() => value, "name", {
     configurable: true,
     value: componentName,
@@ -36,7 +36,7 @@ const isNamed = <T>(n: Nameable<T>): n is NamedThunk<T> =>
 
 function _decodeNameable<T>(n: Nameable<T>): {
   name?: string
-  value: NamedValue<T>
+  value: NonFunction<T>
 } {
   if (isNamed(n)) {
     return { name: n.name, value: n() }
