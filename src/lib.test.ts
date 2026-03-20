@@ -1,6 +1,6 @@
 import { describe, test } from "vitest"
 import type { RequireAtLeastTwo } from "./lib.ts"
-import type { Assert, IsSubtypeOf, IsNever } from "./type-assertions.ts"
+import type { Assert, OneExtendsTwo, IsNever } from "./type-assertions.ts"
 
 type Example = {
   a: string
@@ -11,11 +11,11 @@ type Example = {
 describe("RequireAtLeastTwo", () => {
   test("accepts objects with at least two properties", () => {
     type _ExactTwo = Assert<
-      IsSubtypeOf<{ a: string; b: number }, RequireAtLeastTwo<Example>>
+      OneExtendsTwo<{ a: string; b: number }, RequireAtLeastTwo<Example>>
     >
 
     type _AllThree = Assert<
-      IsSubtypeOf<
+      OneExtendsTwo<
         { a: string; b: number; c: boolean },
         RequireAtLeastTwo<Example>
       >

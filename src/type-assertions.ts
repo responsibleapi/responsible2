@@ -3,7 +3,7 @@ export type Assert<T extends true> = T
 /**
  * `One` extends `Two`
  */
-export type IsSubtypeOf<One, Two> = [One] extends [Two] ? true : false
+export type OneExtendsTwo<One, Two> = [One] extends [Two] ? true : false
 
 /*
  * This compares types by checking whether they behave identically across all

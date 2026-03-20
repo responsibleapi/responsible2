@@ -1,18 +1,18 @@
 import { describe, test } from "vitest"
-import type { Assert, IsEqual, IsSubtypeOf } from "./type-assertions.ts"
+import type { Assert, IsEqual, OneExtendsTwo } from "./type-assertions.ts"
 
 describe("typelevel", () => {
   test("accepts subtype relationships", () => {
-    type _LiteralToPrimitive = Assert<IsSubtypeOf<"a", string>>
+    type _LiteralToPrimitive = Assert<OneExtendsTwo<"a", string>>
     type _ObjectExtension = Assert<
-      IsSubtypeOf<{ a: string; b: number }, { a: string }>
+      OneExtendsTwo<{ a: string; b: number }, { a: string }>
     >
   })
 
   test("rejects non-subtype relationships", () => {
-    type _PrimitiveToLiteral = Assert<IsEqual<IsSubtypeOf<string, "a">, false>>
+    type _PrimitiveToLiteral = Assert<IsEqual<OneExtendsTwo<string, "a">, false>>
     type _UnionToMember = Assert<
-      IsEqual<IsSubtypeOf<string | number, string>, false>
+      IsEqual<OneExtendsTwo<string | number, string>, false>
     >
   })
 

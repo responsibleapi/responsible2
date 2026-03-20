@@ -1,5 +1,5 @@
 import { describe, test } from "vitest"
-import type { Assert, IsSubtypeOf, IsNever } from "../type-assertions.ts"
+import type { Assert, OneExtendsTwo, IsNever } from "../type-assertions.ts"
 import type { scope } from "./scope.ts"
 
 type Op = {
@@ -30,7 +30,7 @@ type ScopeArg<T extends (...args: never[]) => unknown> = Parameters<T>[0]
 describe("scope", () => {
   test("accepts a pure scope with at least two methods", () => {
     type _Test = Assert<
-      IsSubtypeOf<PureScope, ScopeArg<typeof scope<PureScope>>>
+      OneExtendsTwo<PureScope, ScopeArg<typeof scope<PureScope>>>
     >
   })
 
@@ -40,7 +40,7 @@ describe("scope", () => {
 
   test("accepts a wrapped pure scope with at least two methods", () => {
     type _Test = Assert<
-      IsSubtypeOf<WrappedPureScope, ScopeArg<typeof scope<WrappedPureScope>>>
+      OneExtendsTwo<WrappedPureScope, ScopeArg<typeof scope<WrappedPureScope>>>
     >
   })
 

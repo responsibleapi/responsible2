@@ -1,5 +1,10 @@
 import { describe, expect, test } from "vitest"
+import type { Assert, IsEqual, IsNever } from "../type-assertions.ts"
 import { named } from "./nameable.ts"
+
+type NamedArg<T extends Parameters<typeof named>[1]> = Parameters<
+  typeof named<T>
+>[1]
 
 describe("named", () => {
   test("assigns a component name to value-based definitions", () => {
@@ -15,13 +20,18 @@ describe("named", () => {
     })
   })
 
-  test("preserves thunk-based definitions for lazy values", () => {
-    const schema = named("VideoID", () => ({ type: "string", minLength: 1 }))
+  test("accepts object values", () => {
+    type _Test = Assert<
+      IsEqual<
+        { type: "string"; minLength: 1 },
+        NamedArg<{ type: "string"; minLength: 1 }>
+      >
+    >
+  })
 
-    expect(schema.name).toBe("VideoID")
-    expect(schema()).toEqual({
-      type: "string",
-      minLength: 1,
-    })
+  test("rejects thunk-based definitions", () => {
+    type _Test = Assert<
+      IsNever<NamedArg<() => { type: "string"; minLength: 1 }>>
+    >
   })
 })
