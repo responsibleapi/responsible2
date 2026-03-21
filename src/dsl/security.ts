@@ -1,5 +1,5 @@
 import type { oas31 } from "openapi3-ts"
-import { decodeNameable, type Nameable } from "./nameable.ts"
+import type { Nameable } from "./nameable.ts"
 
 type SecurityScheme = Nameable<oas31.SecuritySchemeObject>
 
@@ -14,11 +14,17 @@ type OAuth2SecurityScheme<
   TFlows extends oas31.OAuthFlowsObject = oas31.OAuthFlowsObject,
 > = Nameable<OAuth2SecuritySchemeObject<TFlows>>
 
+/*
+ * Security requirements reference component names, so composition helpers need
+ * the named thunk branch of {@link Nameable} rather than inline scheme values.
+ */
+type NamedSecurityScheme<
+  TScheme extends oas31.SecuritySchemeObject = oas31.SecuritySchemeObject,
+> = Extract<Nameable<TScheme>, () => TScheme>
+
 type NamedOAuth2SecurityScheme<
   TFlows extends oas31.OAuthFlowsObject = oas31.OAuthFlowsObject,
-> = Nameable<OAuth2SecuritySchemeObject<TFlows>>
-
-type NamedSecurityScheme = Nameable<oas31.SecuritySchemeObject>
+> = NamedSecurityScheme<OAuth2SecuritySchemeObject<TFlows>>
 
 type SecurityOperand = NamedSecurityScheme | oas31.SecurityRequirementObject
 
@@ -41,21 +47,31 @@ type DecodeSecurityScheme<T extends SecurityScheme> =
   T extends Nameable<infer Value> ? Value : T
 
 /*
+ * Each OAuth2 flow contributes its own scope map, so absent flows collapse to
+ * `never` while declared scope keys remain available for requirement typing.
+ */
+type OAuth2FlowScopeName<TFlow> =
+  TFlow extends Readonly<{
+    scopes: infer Scopes
+  }>
+    ? Extract<keyof Scopes, string>
+    : never
+
+/*
  * OAuth2 scopes can be declared across multiple flows, so this unions the
  * scope keys from every configured flow into one requirement-time scope set.
  */
-export type OAuth2ScopeName<T extends OAuth2SecurityScheme> = Extract<
-  {
-    [K in keyof DecodeSecurityScheme<T>["flows"]]-?: NonNullable<
-      DecodeSecurityScheme<T>["flows"][K]
-    > extends Readonly<{
-      scopes: infer Scopes
-    }>
-      ? Extract<keyof Scopes, string>
-      : never
-  }[keyof DecodeSecurityScheme<T>["flows"]],
-  string
->
+export type OAuth2ScopeName<T extends OAuth2SecurityScheme> =
+  DecodeSecurityScheme<T> extends Readonly<{
+    flows: infer Flows extends oas31.OAuthFlowsObject
+  }>
+    ? Extract<
+        {
+          [K in keyof Flows]-?: OAuth2FlowScopeName<NonNullable<Flows[K]>>
+        }[keyof Flows],
+        string
+      >
+    : never
 
 export const querySecurity = (param: {
   name: string
@@ -85,8 +101,8 @@ export const oauth2Security = <
   ...param,
 })
 
-function getSecuritySchemeName(scheme: SecurityScheme): string {
-  const { name } = decodeNameable(scheme)
+function getSecuritySchemeName(scheme: NamedSecurityScheme): string {
+  const { name } = scheme
 
   if (typeof name !== "string" || name.length === 0) {
     // OAS 3.1 security requirement keys must match component security scheme
