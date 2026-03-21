@@ -1,13 +1,16 @@
+import type { oas31 } from "openapi3-ts"
 import type { Nameable } from "./nameable.ts"
 
 type QuerySecurity = Readonly<{
-  type: "query"
+  type: "apiKey"
+  in: "query"
   name: string
   description?: string
 }>
 
 type HeaderSecurity = Readonly<{
-  type: "header"
+  type: "apiKey"
+  in: "header"
   name: string
   description?: string
 }>
@@ -52,42 +55,22 @@ type OAuth2Security<TFlows extends OAuth2Flows = OAuth2Flows> = Readonly<{
   flows: TFlows
 }>
 
-export type SecurityScheme = Nameable<
-  QuerySecurity | HeaderSecurity | OAuth2Security
->
+type SecurityScheme = Nameable<QuerySecurity | HeaderSecurity | OAuth2Security>
 
-/**
- * An OAuth2 scheme declares what flows and scopes exist.
- *
- * An OAuth2 requirement is the operation-level use of that scheme:
- * it points at the declared scheme and selects the scopes that must be
- * granted for that operation.
- */
-type OAuth2Requirement = Readonly<{
-  type: "requirement"
-  scheme: OAuth2SecurityScheme
-  scopes: readonly string[]
-}>
+type OAuth2SecurityScheme = Nameable<OAuth2Security>
+type NamedOAuth2SecurityScheme = Nameable<OAuth2Security>
+type SecurityOperand = SecurityScheme | oas31.SecurityRequirementObject
 
-type SecurityOperands = readonly [Security, Security, ...Security[]]
-
-type SecurityAnd = Readonly<{
-  type: "and"
-  items: SecurityOperands
-}>
-
-type SecurityOr = Readonly<{
-  type: "or"
-  items: SecurityOperands
-}>
+type SecurityOperands = readonly [
+  SecurityOperand,
+  SecurityOperand,
+  ...SecurityOperand[],
+]
 
 export type Security =
   | SecurityScheme
-  | OAuth2Requirement
-  | SecurityAnd
-  | SecurityOr
-
-type OAuth2SecurityScheme = Nameable<OAuth2Security>
+  | oas31.SecurityRequirementObject
+  | readonly oas31.SecurityRequirementObject[]
 
 /*
  * This unwraps {@link Nameable} so scope inference works for both inline
@@ -117,7 +100,8 @@ export const querySecurity = (param: {
   name: string
   description?: string
 }): QuerySecurity => ({
-  type: "query",
+  type: "apiKey",
+  in: "query",
   ...param,
 })
 
@@ -125,7 +109,8 @@ export const headerSecurity = (param: {
   name: string
   description?: string
 }): HeaderSecurity => ({
-  type: "header",
+  type: "apiKey",
+  in: "header",
   ...param,
 })
 
@@ -137,23 +122,66 @@ export const oauth2Security = <const TFlows extends OAuth2Flows>(param: {
   ...param,
 })
 
-export function oauth2Requirement<T extends OAuth2SecurityScheme>(
+function getSecuritySchemeName(scheme: SecurityScheme): string {
+  if (scheme.name.length === 0) {
+    throw new Error(
+      "security requirements need a named scheme; use a named function or named()",
+    )
+  }
+
+  return scheme.name
+}
+
+function toSecurityRequirement(
+  security: SecurityOperand,
+): oas31.SecurityRequirementObject {
+  if (typeof security === "function") {
+    return { [getSecuritySchemeName(security)]: [] }
+  }
+
+  return security
+}
+
+export function oauth2Requirement<T extends NamedOAuth2SecurityScheme>(
   scheme: T,
   scopes: readonly OAuth2ScopeName<T>[],
-): OAuth2Requirement {
+): oas31.SecurityRequirementObject {
   return {
-    type: "requirement",
-    scheme,
-    scopes,
+    [getSecuritySchemeName(scheme)]: [...scopes],
   }
 }
 
-export const securityAND = (...items: SecurityOperands): SecurityAnd => ({
-  type: "and",
-  items,
-})
+export const securityAND = (
+  ...items: SecurityOperands
+): oas31.SecurityRequirementObject => {
+  const merged: oas31.SecurityRequirementObject = {}
 
-export const securityOR = (...items: SecurityOperands): SecurityOr => ({
-  type: "or",
-  items,
-})
+  for (const item of items) {
+    for (const [scheme, scopes] of Object.entries(
+      toSecurityRequirement(item),
+    )) {
+      const existingScopes = merged[scheme] ?? []
+      const nextScopes = scopes.filter(scope => !existingScopes.includes(scope))
+
+      merged[scheme] = [...existingScopes, ...nextScopes]
+    }
+  }
+
+  return merged
+}
+
+export const securityOR = (
+  ...items: SecurityOperands
+): readonly [
+  oas31.SecurityRequirementObject,
+  oas31.SecurityRequirementObject,
+  ...oas31.SecurityRequirementObject[],
+] => {
+  const [first, second, ...rest] = items
+
+  return [
+    toSecurityRequirement(first),
+    toSecurityRequirement(second),
+    ...rest.map(toSecurityRequirement),
+  ]
+}

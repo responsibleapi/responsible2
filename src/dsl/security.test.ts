@@ -20,13 +20,15 @@ describe("security", () => {
         description: "API key auth",
       }),
     ).toEqual({
-      type: "query",
+      type: "apiKey",
+      in: "query",
       name: "key",
       description: "API key auth",
     })
 
     expect(headerSecurity({ name: "authorization" })).toEqual({
-      type: "header",
+      type: "apiKey",
+      in: "header",
       name: "authorization",
     })
   })
@@ -117,41 +119,16 @@ describe("security", () => {
           oauth2Requirement(Oauth2c, ["scope:write"]),
         ),
       ),
-    ).toEqual({
-      type: "or",
-      items: [
-        {
-          type: "and",
-          items: [
-            {
-              type: "requirement",
-              scheme: Oauth2,
-              scopes: ["scope:read"],
-            },
-            {
-              type: "requirement",
-              scheme: Oauth2c,
-              scopes: ["scope:read"],
-            },
-          ],
-        },
-        {
-          type: "and",
-          items: [
-            {
-              type: "requirement",
-              scheme: Oauth2,
-              scopes: ["scope:write"],
-            },
-            {
-              type: "requirement",
-              scheme: Oauth2c,
-              scopes: ["scope:write"],
-            },
-          ],
-        },
-      ],
-    })
+    ).toEqual([
+      {
+        Oauth2: ["scope:read"],
+        Oauth2c: ["scope:read"],
+      },
+      {
+        Oauth2: ["scope:write"],
+        Oauth2c: ["scope:write"],
+      },
+    ])
   })
 
   test("types oauth2 scopes from declared flows", () => {
@@ -185,19 +162,17 @@ describe("security", () => {
     >
 
     expect(oauth2Requirement(Oauth2, ["scope:admin"])).toEqual({
-      type: "requirement",
-      scheme: Oauth2,
-      scopes: ["scope:admin"],
+      Oauth2: ["scope:admin"],
     })
   })
 
-  test("keeps bare schemes as security values", () => {
+  test("keeps named schemes as security values", () => {
     const AuthorizationHeader = named(
       "Authorization",
       headerSecurity({ name: "authorization" }),
     )
 
-    expect(AuthorizationHeader().type).toBe("header")
+    expect(AuthorizationHeader().type).toBe("apiKey")
 
     type _HeaderIsSecurity = Assert<
       OneExtendsTwo<typeof AuthorizationHeader, Security>
