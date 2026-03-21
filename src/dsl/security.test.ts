@@ -1,3 +1,4 @@
+import type { oas31 } from "openapi3-ts"
 import { describe, expect, test } from "vitest"
 import type { Assert, IsEqual, OneExtendsTwo } from "../type-assertions.ts"
 import { named } from "./nameable.ts"
@@ -177,5 +178,16 @@ describe("security", () => {
     type _HeaderIsSecurity = Assert<
       OneExtendsTwo<typeof AuthorizationHeader, Security>
     >
+  })
+
+  test("accepts raw oas security schemes as security values", () => {
+    const BearerAuth = named("BearerAuth", {
+      type: "http",
+      scheme: "bearer",
+    } satisfies oas31.SecuritySchemeObject)
+
+    expect(BearerAuth().type).toBe("http")
+
+    type _HttpIsSecurity = Assert<OneExtendsTwo<typeof BearerAuth, Security>>
   })
 })

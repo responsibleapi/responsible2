@@ -1,65 +1,26 @@
 import type { oas31 } from "openapi3-ts"
 import type { Nameable } from "./nameable.ts"
 
-type QuerySecurity = Readonly<{
-  type: "apiKey"
-  in: "query"
-  name: string
-  description?: string
-}>
+type SecurityScheme = Nameable<oas31.SecuritySchemeObject>
 
-type HeaderSecurity = Readonly<{
-  type: "apiKey"
-  in: "header"
-  name: string
-  description?: string
-}>
-
-type OAuthScopes = Readonly<Record<string, string>>
-
-type OAuthImplicitFlow = Readonly<{
-  authorizationUrl: string
-  refreshUrl?: string
-  scopes: OAuthScopes
-}>
-
-type OAuthPasswordFlow = Readonly<{
-  tokenUrl: string
-  refreshUrl?: string
-  scopes: OAuthScopes
-}>
-
-type OAuthClientCredentialsFlow = Readonly<{
-  tokenUrl: string
-  refreshUrl?: string
-  scopes: OAuthScopes
-}>
-
-type OAuthAuthorizationCodeFlow = Readonly<{
-  authorizationUrl: string
-  tokenUrl: string
-  refreshUrl?: string
-  scopes: OAuthScopes
-}>
-
-type OAuth2Flows = Readonly<{
-  implicit?: OAuthImplicitFlow
-  password?: OAuthPasswordFlow
-  clientCredentials?: OAuthClientCredentialsFlow
-  authorizationCode?: OAuthAuthorizationCodeFlow
-}>
-
-type OAuth2Security<TFlows extends OAuth2Flows = OAuth2Flows> = Readonly<{
+type OAuth2SecuritySchemeObject<
+  TFlows extends oas31.OAuthFlowsObject = oas31.OAuthFlowsObject,
+> = Omit<oas31.SecuritySchemeObject, "type" | "flows"> & {
   type: "oauth2"
-  description?: string
   flows: TFlows
-}>
+}
 
-type SecurityScheme = Nameable<QuerySecurity | HeaderSecurity | OAuth2Security>
+type OAuth2SecurityScheme<
+  TFlows extends oas31.OAuthFlowsObject = oas31.OAuthFlowsObject,
+> = Nameable<OAuth2SecuritySchemeObject<TFlows>>
 
-type OAuth2SecurityScheme = Nameable<OAuth2Security>
-type NamedOAuth2SecurityScheme = Nameable<OAuth2Security>
-type SecurityOperand = SecurityScheme | oas31.SecurityRequirementObject
+type NamedOAuth2SecurityScheme<
+  TFlows extends oas31.OAuthFlowsObject = oas31.OAuthFlowsObject,
+> = () => OAuth2SecuritySchemeObject<TFlows>
+
+type NamedSecurityScheme = () => oas31.SecuritySchemeObject
+
+type SecurityOperand = NamedSecurityScheme | oas31.SecurityRequirementObject
 
 type SecurityOperands = readonly [
   SecurityOperand,
@@ -88,9 +49,9 @@ export type OAuth2ScopeName<T extends OAuth2SecurityScheme> = Extract<
     [K in keyof DecodeSecurityScheme<T>["flows"]]-?: NonNullable<
       DecodeSecurityScheme<T>["flows"][K]
     > extends Readonly<{
-      scopes: infer Scopes extends OAuthScopes
+      scopes: infer Scopes
     }>
-      ? keyof Scopes
+      ? Extract<keyof Scopes, string>
       : never
   }[keyof DecodeSecurityScheme<T>["flows"]],
   string
@@ -99,7 +60,7 @@ export type OAuth2ScopeName<T extends OAuth2SecurityScheme> = Extract<
 export const querySecurity = (param: {
   name: string
   description?: string
-}): QuerySecurity => ({
+}): oas31.SecuritySchemeObject => ({
   type: "apiKey",
   in: "query",
   ...param,
@@ -108,22 +69,24 @@ export const querySecurity = (param: {
 export const headerSecurity = (param: {
   name: string
   description?: string
-}): HeaderSecurity => ({
+}): oas31.SecuritySchemeObject => ({
   type: "apiKey",
   in: "header",
   ...param,
 })
 
-export const oauth2Security = <const TFlows extends OAuth2Flows>(param: {
+export const oauth2Security = <
+  const TFlows extends oas31.OAuthFlowsObject,
+>(param: {
   description?: string
   flows: TFlows
-}): OAuth2Security<TFlows> => ({
+}): OAuth2SecuritySchemeObject<TFlows> => ({
   type: "oauth2",
   ...param,
 })
 
 function getSecuritySchemeName(scheme: SecurityScheme): string {
-  if (scheme.name.length === 0) {
+  if (typeof scheme.name !== "string" || scheme.name.length === 0) {
     throw new Error(
       "security requirements need a named scheme; use a named function or named()",
     )

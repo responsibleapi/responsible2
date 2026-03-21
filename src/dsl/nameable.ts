@@ -42,7 +42,7 @@ const isNamed = <T>(n: Nameable<T>): n is NamedThunk<T> =>
 const _isNonFunction = <T>(n: Nameable<T>): n is NonFunction<T> =>
   typeof n !== "function"
 
-function _decodeNameable<T>(n: Nameable<T>): {
+export function decodeNameable<T>(n: Nameable<T>): {
   name?: string
   value: NonFunction<T>
 } {
