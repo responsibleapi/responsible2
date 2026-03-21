@@ -64,7 +64,7 @@ export type SecurityScheme = Nameable<
  * granted for that operation.
  */
 type OAuth2Requirement = Readonly<{
-  kind: "scheme"
+  type: "scheme"
   scheme: OAuth2SecurityScheme
   scopes: readonly string[]
 }>
@@ -72,12 +72,12 @@ type OAuth2Requirement = Readonly<{
 type SecurityOperands = readonly [Security, Security, ...Security[]]
 
 type SecurityAnd = Readonly<{
-  kind: "and"
+  type: "and"
   items: SecurityOperands
 }>
 
 type SecurityOr = Readonly<{
-  kind: "or"
+  type: "or"
   items: SecurityOperands
 }>
 
@@ -142,18 +142,18 @@ export function oauth2Requirement<T extends OAuth2SecurityScheme>(
   scopes: readonly OAuth2ScopeName<T>[],
 ): OAuth2Requirement {
   return {
-    kind: "scheme",
+    type: "scheme",
     scheme,
     scopes,
   }
 }
 
 export const AND = (...items: SecurityOperands): SecurityAnd => ({
-  kind: "and",
+  type: "and",
   items,
 })
 
 export const OR = (...items: SecurityOperands): SecurityOr => ({
-  kind: "or",
+  type: "or",
   items,
 })

@@ -118,33 +118,33 @@ describe("security", () => {
         ),
       ),
     ).toEqual({
-      kind: "or",
+      type: "or",
       items: [
         {
-          kind: "and",
+          type: "and",
           items: [
             {
-              kind: "scheme",
+              type: "scheme",
               scheme: Oauth2,
               scopes: ["scope:read"],
             },
             {
-              kind: "scheme",
+              type: "scheme",
               scheme: Oauth2c,
               scopes: ["scope:read"],
             },
           ],
         },
         {
-          kind: "and",
+          type: "and",
           items: [
             {
-              kind: "scheme",
+              type: "scheme",
               scheme: Oauth2,
               scopes: ["scope:write"],
             },
             {
-              kind: "scheme",
+              type: "scheme",
               scheme: Oauth2c,
               scopes: ["scope:write"],
             },
@@ -185,7 +185,7 @@ describe("security", () => {
     >
 
     expect(oauth2Requirement(Oauth2, ["scope:admin"])).toEqual({
-      kind: "scheme",
+      type: "scheme",
       scheme: Oauth2,
       scopes: ["scope:admin"],
     })

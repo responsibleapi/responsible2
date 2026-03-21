@@ -25,9 +25,9 @@ const HttpURL = () =>
 
 const Thumbnail = () =>
   object({
-    "?height": int32({ minimum: 1 }),
-    "?url": HttpURL,
-    "?width": int32({ minimum: 1 }),
+    "height?": int32({ minimum: 1 }),
+    "url?": HttpURL,
+    "width?": int32({ minimum: 1 }),
   })
 
 const Localized = () => object()
@@ -40,18 +40,18 @@ const Snippet = () =>
   object({
     title: string,
     publishedAt: UnixMillis,
-    "?country": string,
-    "?customUrl": string,
-    "?description": string,
-    "?localized": Localized,
-    "?thumbnails": dict(string, Thumbnail),
+    "country?": string,
+    "customUrl?": string,
+    "description?": string,
+    "localized?": Localized,
+    "thumbnails?": dict(string, Thumbnail),
   })
 
 const RelatedPlaylists = () =>
   object({
     uploads: PlaylistID,
-    "?watchHistory": PlaylistID,
-    "?watchLater": PlaylistID,
+    "watchHistory?": PlaylistID,
+    "watchLater?": PlaylistID,
   })
 
 const ContentDetails = () =>
