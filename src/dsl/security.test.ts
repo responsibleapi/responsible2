@@ -4,11 +4,11 @@ import { named } from "./nameable.ts"
 import {
   type OAuth2ScopeName,
   type Security,
-  AND,
+  securityAND,
   headerSecurity,
   oauth2Security,
   oauth2Requirement,
-  OR,
+  securityOR,
   querySecurity,
 } from "./security.ts"
 
@@ -107,12 +107,12 @@ describe("security", () => {
     )
 
     expect(
-      OR(
-        AND(
+      securityOR(
+        securityAND(
           oauth2Requirement(Oauth2, ["scope:read"]),
           oauth2Requirement(Oauth2c, ["scope:read"]),
         ),
-        AND(
+        securityAND(
           oauth2Requirement(Oauth2, ["scope:write"]),
           oauth2Requirement(Oauth2c, ["scope:write"]),
         ),
@@ -124,12 +124,12 @@ describe("security", () => {
           type: "and",
           items: [
             {
-              type: "scheme",
+              type: "requirement",
               scheme: Oauth2,
               scopes: ["scope:read"],
             },
             {
-              type: "scheme",
+              type: "requirement",
               scheme: Oauth2c,
               scopes: ["scope:read"],
             },
@@ -139,12 +139,12 @@ describe("security", () => {
           type: "and",
           items: [
             {
-              type: "scheme",
+              type: "requirement",
               scheme: Oauth2,
               scopes: ["scope:write"],
             },
             {
-              type: "scheme",
+              type: "requirement",
               scheme: Oauth2c,
               scopes: ["scope:write"],
             },
@@ -185,7 +185,7 @@ describe("security", () => {
     >
 
     expect(oauth2Requirement(Oauth2, ["scope:admin"])).toEqual({
-      type: "scheme",
+      type: "requirement",
       scheme: Oauth2,
       scopes: ["scope:admin"],
     })

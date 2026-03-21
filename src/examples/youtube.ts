@@ -11,7 +11,12 @@ import {
   unknown,
 } from "../dsl/schema.ts"
 import { queryParam } from "../dsl/scope.ts"
-import { AND, OR, oauth2Requirement, oauth2Security } from "../dsl/security.ts"
+import {
+  securityAND,
+  securityOR,
+  oauth2Requirement,
+  oauth2Security,
+} from "../dsl/security.ts"
 
 const VideoID = () => string({ minLength: 1 })
 const ChannelID = () => string({ minLength: 1 })
@@ -131,7 +136,10 @@ const Oauth2c = () =>
   })
 
 const youtubeScope = (scope: keyof typeof youtubeAuthScopes) =>
-  AND(oauth2Requirement(Oauth2, [scope]), oauth2Requirement(Oauth2c, [scope]))
+  securityAND(
+    oauth2Requirement(Oauth2, [scope]),
+    oauth2Requirement(Oauth2c, [scope]),
+  )
 
 const youtubeScopes = (
   ...scopes: readonly [
@@ -142,7 +150,7 @@ const youtubeScopes = (
 ) => {
   const [first, second, ...rest] = scopes
 
-  return OR(
+  return securityOR(
     youtubeScope(first),
     youtubeScope(second),
     ...rest.map(youtubeScope),
