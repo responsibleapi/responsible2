@@ -14,6 +14,14 @@
     "reportUnusedDisableDirectives": "error",
     "typeAware": true
   },
+  "settings": {
+    "jsdoc": {
+      "tagNamePreference": {
+        /* core DSL stuff */
+        "dsl": "dsl"
+      }
+    }
+  },
   "overrides": [
     {
       "files": ["src/**/*.ts", "src/**/*.mts", "src/**/*.cts"],

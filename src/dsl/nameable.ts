@@ -11,6 +11,8 @@ type NonFunction<T> = T extends (...args: any[]) => unknown ? never : T
  *
  * This reuses {@link NonFunction} so callable values are rejected consistently
  * in both raw and thunk-wrapped forms.
+ *
+ * @dsl
  */
 type NamedThunk<T> = () => NonFunction<T>
 
