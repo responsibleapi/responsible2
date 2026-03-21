@@ -9,16 +9,14 @@ type NamedArg<T extends Parameters<typeof named>[1]> = Parameters<
 
 describe("nameable", () => {
   test("assigns a component name to value-based definitions", () => {
-    const xgafv = named("_.xgafv", {
+    const inp = {
       in: "query",
       name: "$.xgafv",
-    })
+    } as const
 
+    const xgafv = named("_.xgafv", inp)
     expect(xgafv.name).toBe("_.xgafv")
-    expect(xgafv()).toEqual({
-      in: "query",
-      name: "$.xgafv",
-    })
+    expect(xgafv()).toEqual(inp)
   })
 
   test("accepts object values", () => {

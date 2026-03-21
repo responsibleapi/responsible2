@@ -12,9 +12,7 @@ type NonFunction<T> = T extends (...args: any[]) => unknown ? never : T
  * This reuses {@link NonFunction} so callable values are rejected consistently
  * in both raw and thunk-wrapped forms.
  */
-type NamedThunk<T> = [NonFunction<T>] extends [never]
-  ? never
-  : () => NonFunction<T>
+type NamedThunk<T> = () => NonFunction<T>
 
 export type Nameable<T> = NamedThunk<T> | NonFunction<T>
 
@@ -25,7 +23,7 @@ export type Nameable<T> = NamedThunk<T> | NonFunction<T>
 export const named = <T>(
   componentName: string,
   value: NonFunction<T>,
-): (() => NonFunction<T>) =>
+): NamedThunk<T> =>
   Object.defineProperty(() => value, "name", {
     configurable: true,
     value: componentName,
@@ -33,6 +31,9 @@ export const named = <T>(
 
 const isNamed = <T>(n: Nameable<T>): n is NamedThunk<T> =>
   typeof n === "function"
+
+const _isNonFunction = <T>(n: Nameable<T>): n is NonFunction<T> =>
+  typeof n !== "function"
 
 function _decodeNameable<T>(n: Nameable<T>): {
   name?: string
