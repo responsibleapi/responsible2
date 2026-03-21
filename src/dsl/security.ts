@@ -1,5 +1,5 @@
 import type { oas31 } from "openapi3-ts"
-import type { Nameable } from "./nameable.ts"
+import type { Nameable, NamedThunk } from "./nameable.ts"
 
 type SecurityScheme = Nameable<oas31.SecuritySchemeObject>
 
@@ -14,7 +14,7 @@ type OAuth2SecurityScheme<
   TFlows extends oas31.OAuthFlowsObject = oas31.OAuthFlowsObject,
 > = Nameable<OAuth2SecuritySchemeObject<TFlows>>
 
-/*
+/**
  * Security requirements reference component names, so composition helpers need
  * the named thunk branch of {@link Nameable} rather than inline scheme values.
  */
@@ -39,14 +39,14 @@ export type Security =
   | oas31.SecurityRequirementObject
   | readonly oas31.SecurityRequirementObject[]
 
-/*
+/**
  * This unwraps {@link Nameable} so scope inference works for both inline
  * objects and named thunks.
  */
 type DecodeSecurityScheme<T extends SecurityScheme> =
-  T extends Nameable<infer Value> ? Value : T
+  T extends NamedThunk<infer Value> ? Value : T
 
-/*
+/**
  * Each OAuth2 flow contributes its own scope map, so absent flows collapse to
  * `never` while declared scope keys remain available for requirement typing.
  */
@@ -57,7 +57,7 @@ type OAuth2FlowScopeName<TFlow> =
     ? Extract<keyof Scopes, string>
     : never
 
-/*
+/**
  * OAuth2 scopes can be declared across multiple flows, so this unions the
  * scope keys from every configured flow into one requirement-time scope set.
  */
@@ -101,13 +101,11 @@ export const oauth2Security = <
   ...param,
 })
 
-function formatErrorDetail(value: unknown): string {
-  return JSON.stringify(value) ?? String(value)
-}
+const formatErrorDetail = (value: unknown): string =>
+  JSON.stringify(value) ?? String(value)
 
-function describeUnnamedSecurityScheme(scheme: NamedSecurityScheme): string {
-  return `inline value ${formatErrorDetail(scheme())}`
-}
+const describeUnnamedSecurityScheme = (scheme: NamedSecurityScheme): string =>
+  `inline value ${formatErrorDetail(scheme())}`
 
 function getSecuritySchemeName(scheme: NamedSecurityScheme): string {
   const { name } = scheme

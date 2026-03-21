@@ -14,7 +14,7 @@ type NonFunction<T> = T extends (...args: any[]) => unknown ? never : T
  *
  * @dsl
  */
-type NamedThunk<T> =
+export type NamedThunk<T> =
   /**
    * Collapse named thunks entirely when {@link NonFunction} rejects `T`,
    * otherwise `Nameable<Fn>` would degrade to `() => never` instead of `never`.
