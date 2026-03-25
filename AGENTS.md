@@ -6,7 +6,8 @@
 - never run the whole test suite (the compiler is still TODO), run individual
   test files instead
 - Use typechecking and linting for guidance
-- currently designing the DSL
+- currently finalizing the DSL
+- have not started implementing the compiler
 
 ## DSL design
 

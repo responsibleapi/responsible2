@@ -1,6 +1,6 @@
 import type { oas31 } from "openapi3-ts"
 import type { RequireAtLeastTwo } from "../lib.ts"
-import type { Mime, Resp } from "./methods.ts"
+import type { HttpMethod, Mime, Resp } from "./methods.ts"
 import type { Nameable } from "./nameable.ts"
 import type { Schema } from "./schema.ts"
 import type { Security } from "./security.ts"
@@ -53,8 +53,6 @@ type ScopeRes =
       add?: OpRes
     }
   | OpRes
-
-export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "HEAD"
 
 export interface Op {
   id?: string
