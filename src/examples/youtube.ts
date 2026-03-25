@@ -10,7 +10,7 @@ import {
   string,
   unknown,
 } from "../dsl/schema.ts"
-import { queryParam } from "../dsl/scope.ts"
+import { opTags, queryParam, tag } from "../dsl/scope.ts"
 import {
   securityAND,
   securityOR,
@@ -93,6 +93,11 @@ const PlaylistItems = () => object()
 const Playlists = () => object()
 
 const Videos = () => object()
+
+const videosTag = tag({ name: "videos" })
+const playlistItemsTag = tag({ name: "playlistItems" })
+const playlistsTag = tag({ name: "playlists" })
+const channelsTag = tag({ name: "channels" })
 
 const youtubeAuthScopes = {
   "https://www.googleapis.com/auth/youtube": "Manage your YouTube account",
@@ -186,6 +191,7 @@ export default responsibleAPI({
       version: "3",
     },
     servers: [{ url: "https://www.googleapis.com/youtube/v3" }],
+    tags: [videosTag, playlistItemsTag, playlistsTag, channelsTag],
   },
   forAll: {
     req: {
@@ -198,6 +204,7 @@ export default responsibleAPI({
   },
   routes: {
     "/videos": GET({
+      tags: opTags(videosTag),
       req: {
         security: youtubeScopes(
           "https://www.googleapis.com/auth/youtube",
@@ -214,6 +221,7 @@ export default responsibleAPI({
       res: { 200: Videos },
     }),
     "/playlistItems": GET({
+      tags: opTags(playlistItemsTag),
       req: {
         security: youtubeScopes(
           "https://www.googleapis.com/auth/youtube",
@@ -230,6 +238,7 @@ export default responsibleAPI({
       res: { 200: PlaylistItems },
     }),
     "/playlists": GET({
+      tags: opTags(playlistsTag),
       req: {
         security: youtubeScopes(
           "https://www.googleapis.com/auth/youtube",
@@ -245,6 +254,7 @@ export default responsibleAPI({
       res: { 200: Playlists },
     }),
     "/channels": GET({
+      tags: opTags(channelsTag),
       req: {
         security: youtubeScopes(
           "https://www.googleapis.com/auth/youtube",

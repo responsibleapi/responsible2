@@ -21,6 +21,41 @@ type Param = Nameable<QueryParamRaw>
 
 export const queryParam = (r: QueryParamRaw): QueryParamRaw => r
 
+const declaredTagBrand = Symbol("declaredTagBrand")
+const opTagsBrand = Symbol("opTagsBrand")
+
+/**
+ * Operation tags should come from reusable top-level tag declarations so route
+ * metadata stays aligned with the document-level tag list.
+ */
+export type DeclaredTag<TName extends string = string> = oas31.TagObject & {
+  name: TName
+  readonly [declaredTagBrand]: true
+}
+
+export type OpTags<
+  TTags extends readonly DeclaredTag[] = readonly DeclaredTag[],
+> = readonly TTags[number]["name"][] & {
+  readonly [opTagsBrand]: TTags
+}
+
+export const tag = <const TName extends string>(
+  value: oas31.TagObject & { name: TName },
+): DeclaredTag<TName> =>
+  Object.assign(value, { [declaredTagBrand]: true as const })
+
+export const opTags = <
+  const TTags extends readonly [DeclaredTag, ...DeclaredTag[]],
+>(
+  ...tags: TTags
+): OpTags<TTags> =>
+  Object.assign(
+    tags.map(declaredTag => declaredTag.name),
+    {
+      [opTagsBrand]: tags,
+    },
+  )
+
 interface OpReq {
   readonly security?: Security
   /* optional security means `value` OR `no authentication` */
@@ -62,9 +97,7 @@ export interface Op {
   deprecated?: boolean
   description?: string
   summary?: string
-
-  /* TODO this is possible to make more typesafe */
-  tags?: string[]
+  tags?: OpTags
 }
 
 export interface OpWithMethod extends Op {
