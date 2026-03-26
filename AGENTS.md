@@ -18,20 +18,19 @@
 
 - respect @dsl JSDocs, that's core DSL stuff
 
-## Lang rules
-
-### JSONC
-
-- never use `//` comments
-- never use `/*` for multiline comments, use `/**` instead, where each line
-  starts with a `*`
-
 ## Tools
 
 - use `bun` for everything
 - never use `bunx`, if a package is missing, ask to add it to `package.json`
 - never use `node`
 - never run formatting unless the task actually requires it
+
+## Packages
+
+### `openapi3-ts`
+
+- never `import type { ... } from "openapi3-ts/oas31"`,
+  `import type { oas31 } from "openapi3-ts"` instead.
 
 ## Docs
 
