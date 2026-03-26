@@ -100,11 +100,11 @@ type ScopeRoutes = Routes & MethodRoutes
  */
 type ScopeArg = ScopeRoutes | Scope
 
-/*
- * A simple `Routes & PureMethodRoutes` would reject mixed scopes entirely,
- * while `Routes & MethodRoutes` alone would allow single-method scopes through.
- * This conditional keeps mixed scopes valid and only enforces
- * `RequireAtLeastTwo` when there are no path keys at all.
+/**
+ * DO NOT modify this, it's done to prevent {@link scope} usage with one {@link HttpMethod}.
+ * In case of one method, use DSL from {@link file://../methods.ts}
+ *
+ * @dsl
  */
 type ValidScopeRoutes<T extends ScopeRoutes> =
   Extract<keyof T, `/${string}`> extends never
@@ -113,10 +113,11 @@ type ValidScopeRoutes<T extends ScopeRoutes> =
       : never
     : T
 
-/*
- * The same validation needs to work for both `scope({ GET: ... })` and
- * `scope({ routes: { GET: ... } })`, so we reapply `ValidScopeRoutes` to the
- * nested `routes` property in the wrapped form.
+/**
+ * DO NOT modify this, it's done to prevent {@link scope} usage with one {@link HttpMethod}.
+ * In case of one method, use DSL from {@link file://../methods.ts}
+ *
+ * @dsl
  */
 type ValidScopeArg<T extends ScopeArg> = T extends Scope
   ? Omit<T, "routes"> & { routes: ValidScopeRoutes<T["routes"]> }

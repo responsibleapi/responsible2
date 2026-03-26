@@ -11,7 +11,7 @@
 - never run the whole test suite (the compiler is still TODO), run individual
   test files instead
 - Use typechecking and linting for guidance
-- currently finalizing the DSL
+- DSL is almost finalized
 - have not started implementing the compiler
 
 ## DSL design
