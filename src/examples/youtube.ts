@@ -5930,6 +5930,7 @@ export default responsibleAPI({
   },
   forAll: {
     req: {
+      mime: "application/json",
       params: [
         __xgafv,
         access_token,
@@ -5960,9 +5961,7 @@ export default responsibleAPI({
           "https://www.googleapis.com/auth/youtube",
           "https://www.googleapis.com/auth/youtube.force-ssl",
         ),
-        body: {
-          "application/json": AbuseReport,
-        } as const,
+        body: AbuseReport,
       },
       res: {
         "200": response({
@@ -6338,9 +6337,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtubepartner",
           ),
-          body: {
-            "application/json": ChannelSection,
-          } as const,
+          body: ChannelSection,
         },
         res: {
           "200": response({
@@ -6370,9 +6367,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtubepartner",
           ),
-          body: {
-            "application/json": ChannelSection,
-          } as const,
+          body: ChannelSection,
         },
         res: {
           "200": response({
@@ -6475,9 +6470,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtubepartner",
           ),
-          body: {
-            "application/json": Channel,
-          } as const,
+          body: Channel,
         },
         res: {
           "200": response({
@@ -6572,9 +6565,7 @@ export default responsibleAPI({
           security: youtubeScope(
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: {
-            "application/json": CommentThread,
-          } as const,
+          body: CommentThread,
         },
         res: {
           "200": response({
@@ -6595,9 +6586,7 @@ export default responsibleAPI({
                 "The *part* parameter specifies a comma-separated list of commentThread resource properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
             }),
           },
-          body: {
-            "application/json": CommentThread,
-          } as const,
+          body: CommentThread,
         },
         res: {
           "200": response({
@@ -6690,9 +6679,7 @@ export default responsibleAPI({
           security: youtubeScope(
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: {
-            "application/json": Comment,
-          } as const,
+          body: Comment,
         },
         res: {
           "200": response({
@@ -6716,9 +6703,7 @@ export default responsibleAPI({
           security: youtubeScope(
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: {
-            "application/json": Comment,
-          } as const,
+          body: Comment,
         },
         res: {
           "200": response({
@@ -6961,9 +6946,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube",
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: {
-            "application/json": LiveBroadcast,
-          } as const,
+          body: LiveBroadcast,
         },
         res: {
           "200": response({
@@ -6997,9 +6980,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube",
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: {
-            "application/json": LiveBroadcast,
-          } as const,
+          body: LiveBroadcast,
         },
         res: {
           "200": response({
@@ -7077,9 +7058,7 @@ export default responsibleAPI({
           "https://www.googleapis.com/auth/youtube.force-ssl",
           "https://www.googleapis.com/auth/youtubepartner",
         ),
-        body: {
-          "application/json": Cuepoint,
-        } as const,
+        body: Cuepoint,
       },
       res: {
         "200": response({
@@ -7168,9 +7147,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube",
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: {
-            "application/json": LiveChatBan,
-          } as const,
+          body: LiveChatBan,
         },
         res: {
           "200": response({
@@ -7267,9 +7244,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube",
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: {
-            "application/json": LiveChatMessage,
-          } as const,
+          body: LiveChatMessage,
         },
         res: {
           "200": response({
@@ -7356,9 +7331,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube",
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: {
-            "application/json": LiveChatModerator,
-          } as const,
+          body: LiveChatModerator,
         },
         res: {
           "200": response({
@@ -7471,9 +7444,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube",
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: {
-            "application/json": LiveStream,
-          } as const,
+          body: LiveStream,
         },
         res: {
           "200": response({
@@ -7506,9 +7477,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube",
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: {
-            "application/json": LiveStream,
-          } as const,
+          body: LiveStream,
         },
         res: {
           "200": response({
@@ -7688,9 +7657,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtubepartner",
           ),
-          body: {
-            "application/json": PlaylistItem,
-          } as const,
+          body: PlaylistItem,
         },
         res: {
           "200": response({
@@ -7720,9 +7687,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtubepartner",
           ),
-          body: {
-            "application/json": PlaylistItem,
-          } as const,
+          body: PlaylistItem,
         },
         res: {
           "200": response({
@@ -7843,9 +7808,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtubepartner",
           ),
-          body: {
-            "application/json": Playlist,
-          } as const,
+          body: Playlist,
         },
         res: {
           "200": response({
@@ -7875,9 +7838,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtubepartner",
           ),
-          body: {
-            "application/json": Playlist,
-          } as const,
+          body: Playlist,
         },
         res: {
           "200": response({
@@ -8159,9 +8120,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtubepartner",
           ),
-          body: {
-            "application/json": Subscription,
-          } as const,
+          body: Subscription,
         },
         res: {
           "200": response({
@@ -8224,9 +8183,7 @@ export default responsibleAPI({
         security: youtubeScope(
           "https://www.googleapis.com/auth/youtube.readonly",
         ),
-        body: {
-          "application/json": TestItem,
-        } as const,
+        body: TestItem,
       },
       res: {
         "200": response({
@@ -8316,9 +8273,7 @@ export default responsibleAPI({
                 "Channel ID to which changes should be applied, for delegation.",
             }),
           },
-          body: {
-            "application/json": ThirdPartyLink,
-          } as const,
+          body: ThirdPartyLink,
         },
         res: {
           "200": response({
@@ -8343,9 +8298,7 @@ export default responsibleAPI({
                 "Channel ID to which changes should be applied, for delegation.",
             }),
           },
-          body: {
-            "application/json": ThirdPartyLink,
-          } as const,
+          body: ThirdPartyLink,
         },
         res: {
           "200": response({
@@ -8720,9 +8673,7 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtubepartner",
           ),
-          body: {
-            "application/json": Video,
-          } as const,
+          body: Video,
         },
         res: {
           "200": response({
@@ -8801,9 +8752,7 @@ export default responsibleAPI({
           "https://www.googleapis.com/auth/youtube.force-ssl",
           "https://www.googleapis.com/auth/youtubepartner",
         ),
-        body: {
-          "application/json": VideoAbuseReport,
-        } as const,
+        body: VideoAbuseReport,
       },
       res: {
         "200": response({
