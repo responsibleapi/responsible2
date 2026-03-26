@@ -1,3 +1,9 @@
+/**
+ * DSL helpers for the top-level OpenAPI `#/tags` array.
+ *
+ * Declared tag keys become the emitted OpenAPI tag `name` values so operations
+ * can reuse a closed set of tags instead of repeating string literals inline.
+ */
 import type { oas31 } from "openapi3-ts"
 
 /** codex just trying to make things extra typesafe */

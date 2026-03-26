@@ -2,8 +2,7 @@ import type { oas31 } from "openapi3-ts"
 import type { Routes, ScopeOpts } from "./scope.ts"
 
 /**
- * Named components are intentionally banned,
- * we use {@link import("./nameable.ts").Nameable}
+ * See other @dsl JSDocs to understand why we omit `#/components/`
  *
  * @dsl
  */
