@@ -1,5 +1,5 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
-import { GET, HEAD, POST, response } from "../dsl/methods.ts"
+import { GET, HEAD, POST, resp } from "../dsl/methods.ts"
 import {
   array,
   boolean,
@@ -226,7 +226,7 @@ const DownloadsChart = () =>
     total: int64({ minimum: 0 }),
   })
 
-const UpgradeToAddMoreToListenLater = () => response({ description: "402" })
+const UpgradeToAddMoreToListenLater = () => resp({ description: "402" })
 
 const PreSignedUploadURL = () =>
   object({
@@ -239,7 +239,7 @@ const ReverseReq = () => object({ showID: ShowID, value: boolean() })
 
 const ReverseResp = () => object({ value: boolean() })
 
-const NotYourShow = () => response({ description: "403" })
+const NotYourShow = () => resp({ description: "403" })
 
 const authenticatedOps = scope({
   forAll: {
@@ -248,7 +248,7 @@ const authenticatedOps = scope({
     },
     res: {
       add: {
-        401: response({ description: "401" }),
+        401: resp({ description: "401" }),
       },
     },
   },
@@ -324,7 +324,7 @@ const authenticatedOps = scope({
         res: {
           add: {
             403: NotYourShow,
-            404: response({ description: "404" }),
+            404: resp({ description: "404" }),
           },
         },
       },
@@ -425,7 +425,7 @@ const authenticatedOps = scope({
       },
       res: {
         200: PreSignedUploadURL,
-        402: response({ description: "402" }),
+        402: resp({ description: "402" }),
       },
     }),
 
@@ -508,7 +508,7 @@ const jsonAPI = scope({
         },
         res: {
           add: {
-            404: response({ description: "404" }),
+            404: resp({ description: "404" }),
           },
         },
       },
@@ -614,7 +614,7 @@ const googleAuth = scope({
 })
 
 const RedirectRSS = () =>
-  response({
+  resp({
     description: "302",
     headers: {
       location: HttpURL,
@@ -627,7 +627,7 @@ const NonEmptyString = () =>
   })
 
 const ItemNotFound = () =>
-  response({
+  resp({
     description: "404",
   })
 
@@ -658,7 +658,7 @@ export default responsibleAPI({
     "/api/health": GET({
       id: "getHealth",
       headID: "headHealth",
-      res: { 200: response({ description: "200" }) },
+      res: { 200: resp({ description: "200" }) },
     }),
 
     "/status/info": HEAD({
@@ -669,8 +669,8 @@ export default responsibleAPI({
         },
       },
       res: {
-        200: response({ description: "200" }),
-        500: response({ description: "500" }),
+        200: resp({ description: "200" }),
+        500: resp({ description: "500" }),
       },
     }),
 
@@ -682,8 +682,8 @@ export default responsibleAPI({
         },
       },
       res: {
-        200: response({ description: "200" }),
-        500: response({ description: "500" }),
+        200: resp({ description: "200" }),
+        500: resp({ description: "500" }),
       },
     }),
 
@@ -714,8 +714,8 @@ export default responsibleAPI({
           },
         },
         302: RedirectRSS,
-        403: response({ description: "403" }),
-        404: response({ description: "404" }),
+        403: resp({ description: "403" }),
+        404: resp({ description: "404" }),
       },
     }),
 
@@ -742,8 +742,8 @@ export default responsibleAPI({
           },
         },
         404: ItemNotFound,
-        429: response({ description: "429" }),
-        503: response({ description: "503" }),
+        429: resp({ description: "429" }),
+        503: resp({ description: "503" }),
       },
     }),
 
@@ -767,7 +767,7 @@ export default responsibleAPI({
           },
         },
         404: ItemNotFound,
-        429: response({ description: "429" }),
+        429: resp({ description: "429" }),
       },
     }),
 
@@ -796,7 +796,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          200: response({ description: "200" }),
+          200: resp({ description: "200" }),
         },
       },
 

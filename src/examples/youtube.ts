@@ -1,5 +1,5 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
-import { GET, POST, response } from "../dsl/methods.ts"
+import { GET, POST, resp } from "../dsl/methods.ts"
 import { named } from "../dsl/nameable.ts"
 import {
   array,
@@ -20,6 +20,7 @@ import {
   oauth2Security,
 } from "../dsl/security.ts"
 import { declareTags } from "../dsl/tags.ts"
+
 const oauthScopes = {
   "https://www.googleapis.com/auth/youtube": "Manage your YouTube account",
   "https://www.googleapis.com/auth/youtube.channel-memberships.creator":
@@ -35,6 +36,7 @@ const oauthScopes = {
   "https://www.googleapis.com/auth/youtubepartner-channel-audit":
     "View private information of your YouTube channel relevant during the audit process with a YouTube partner",
 }
+
 const Oauth2 = named(
   "Oauth2",
   oauth2Security({
@@ -47,6 +49,7 @@ const Oauth2 = named(
     },
   }),
 )
+
 const Oauth2c = () =>
   oauth2Security({
     description: "Oauth 2.0 authorizationCode authentication",
@@ -58,11 +61,13 @@ const Oauth2c = () =>
       },
     },
   })
+
 const youtubeScope = (scopeName: keyof typeof oauthScopes) =>
   securityAND(
     oauth2Requirement(Oauth2, [scopeName]),
     oauth2Requirement(Oauth2c, [scopeName]),
   )
+
 const youtubeScopes = (
   ...scopes: readonly [
     keyof typeof oauthScopes,
@@ -77,6 +82,7 @@ const youtubeScopes = (
     ...rest.map(youtubeScope),
   )
 }
+
 const AbuseReport = () =>
   object({
     "abuseTypes?": array(AbuseType),
@@ -84,6 +90,7 @@ const AbuseReport = () =>
     "relatedEntities?": array(RelatedEntity),
     "subject?": Entity,
   })
+
 const AbuseType = () =>
   object({
     "id?": string(),
@@ -5442,6 +5449,7 @@ const upload_protocol = named(
   }),
 )
 
+const successfulResponse = resp({ description: "Successful response" })
 export default responsibleAPI({
   partialDoc: {
     openapi: "3.0.0",
@@ -5526,7 +5534,7 @@ export default responsibleAPI({
         body: AbuseReport,
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: AbuseReport,
         }),
@@ -5566,7 +5574,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: ActivityListResponse,
         }),
@@ -5598,7 +5606,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({ description: "Successful response" }),
+          200: successfulResponse,
         },
       },
       GET: {
@@ -5632,7 +5640,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: CaptionListResponse,
           }),
@@ -5670,7 +5678,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: Caption,
           }),
@@ -5708,7 +5716,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: Caption,
           }),
@@ -5749,7 +5757,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
         }),
       },
@@ -5785,7 +5793,7 @@ export default responsibleAPI({
         },
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: ChannelBannerResource,
         }),
@@ -5814,7 +5822,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -5856,7 +5864,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: ChannelSectionListResponse,
           }),
@@ -5888,7 +5896,7 @@ export default responsibleAPI({
           body: ChannelSection,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: ChannelSection,
           }),
@@ -5916,7 +5924,7 @@ export default responsibleAPI({
           body: ChannelSection,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: ChannelSection,
           }),
@@ -5987,7 +5995,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: ChannelListResponse,
           }),
@@ -6015,7 +6023,7 @@ export default responsibleAPI({
           body: Channel,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: Channel,
           }),
@@ -6084,7 +6092,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: CommentThreadListResponse,
           }),
@@ -6106,7 +6114,7 @@ export default responsibleAPI({
           body: CommentThread,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: CommentThread,
           }),
@@ -6125,7 +6133,7 @@ export default responsibleAPI({
           body: CommentThread,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: CommentThread,
           }),
@@ -6149,7 +6157,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -6192,7 +6200,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: CommentListResponse,
           }),
@@ -6214,7 +6222,7 @@ export default responsibleAPI({
           body: Comment,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: Comment,
           }),
@@ -6236,7 +6244,7 @@ export default responsibleAPI({
           body: Comment,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: Comment,
           }),
@@ -6259,7 +6267,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
         }),
       },
@@ -6289,7 +6297,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
         }),
       },
@@ -6314,7 +6322,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: I18nLanguageListResponse,
         }),
@@ -6340,7 +6348,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: I18nRegionListResponse,
         }),
@@ -6374,7 +6382,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -6440,7 +6448,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveBroadcastListResponse,
           }),
@@ -6471,7 +6479,7 @@ export default responsibleAPI({
           body: LiveBroadcast,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveBroadcast,
           }),
@@ -6503,7 +6511,7 @@ export default responsibleAPI({
           body: LiveBroadcast,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveBroadcast,
           }),
@@ -6540,7 +6548,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: LiveBroadcast,
         }),
@@ -6577,7 +6585,7 @@ export default responsibleAPI({
         body: Cuepoint,
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: Cuepoint,
         }),
@@ -6616,7 +6624,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: LiveBroadcast,
         }),
@@ -6640,7 +6648,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -6662,7 +6670,7 @@ export default responsibleAPI({
           body: LiveChatBan,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveChatBan,
           }),
@@ -6686,7 +6694,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -6732,7 +6740,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveChatMessageListResponse,
           }),
@@ -6755,7 +6763,7 @@ export default responsibleAPI({
           body: LiveChatMessage,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveChatMessage,
           }),
@@ -6779,7 +6787,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -6815,7 +6823,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveChatModeratorListResponse,
           }),
@@ -6838,7 +6846,7 @@ export default responsibleAPI({
           body: LiveChatModerator,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveChatModerator,
           }),
@@ -6870,7 +6878,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -6916,7 +6924,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveStreamListResponse,
           }),
@@ -6947,7 +6955,7 @@ export default responsibleAPI({
           body: LiveStream,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveStream,
           }),
@@ -6978,7 +6986,7 @@ export default responsibleAPI({
           body: LiveStream,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: LiveStream,
           }),
@@ -7024,7 +7032,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: MemberListResponse,
         }),
@@ -7047,7 +7055,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: MembershipsLevelListResponse,
         }),
@@ -7076,7 +7084,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -7122,7 +7130,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: PlaylistItemListResponse,
           }),
@@ -7150,7 +7158,7 @@ export default responsibleAPI({
           body: PlaylistItem,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: PlaylistItem,
           }),
@@ -7178,7 +7186,7 @@ export default responsibleAPI({
           body: PlaylistItem,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: PlaylistItem,
           }),
@@ -7207,7 +7215,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -7263,7 +7271,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: PlaylistListResponse,
           }),
@@ -7295,7 +7303,7 @@ export default responsibleAPI({
           body: Playlist,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: Playlist,
           }),
@@ -7323,7 +7331,7 @@ export default responsibleAPI({
           body: Playlist,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: Playlist,
           }),
@@ -7480,7 +7488,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: SearchListResponse,
         }),
@@ -7505,7 +7513,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -7575,7 +7583,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: SubscriptionListResponse,
           }),
@@ -7599,7 +7607,7 @@ export default responsibleAPI({
           body: Subscription,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: Subscription,
           }),
@@ -7637,7 +7645,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: SuperChatEventListResponse,
         }),
@@ -7658,7 +7666,7 @@ export default responsibleAPI({
         body: TestItem,
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: TestItem,
         }),
@@ -7692,7 +7700,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -7721,7 +7729,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: ThirdPartyLinkListResponse,
           }),
@@ -7744,7 +7752,7 @@ export default responsibleAPI({
           body: ThirdPartyLink,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: ThirdPartyLink,
           }),
@@ -7767,7 +7775,7 @@ export default responsibleAPI({
           body: ThirdPartyLink,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: ThirdPartyLink,
           }),
@@ -7797,7 +7805,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: ThumbnailSetResponse,
         }),
@@ -7822,7 +7830,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: VideoAbuseReportReasonListResponse,
         }),
@@ -7853,7 +7861,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: VideoCategoryListResponse,
         }),
@@ -7882,7 +7890,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
           }),
         },
@@ -7953,7 +7961,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: VideoListResponse,
           }),
@@ -8102,7 +8110,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: Video,
           }),
@@ -8130,7 +8138,7 @@ export default responsibleAPI({
           body: Video,
         },
         res: {
-          200: response({
+          200: resp({
             description: "Successful response",
             body: Video,
           }),
@@ -8156,7 +8164,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
           body: VideoGetRatingResponse,
         }),
@@ -8181,7 +8189,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({ description: "Successful response" }),
+        200: successfulResponse,
       },
       tags: [tags.videos],
     }),
@@ -8203,7 +8211,7 @@ export default responsibleAPI({
         body: VideoAbuseReport,
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successful response",
         }),
       },
@@ -8234,7 +8242,7 @@ export default responsibleAPI({
         },
       },
       res: {
-        200: response({ description: "Successful response" }),
+        200: successfulResponse,
       },
       tags: [tags.watermarks],
     }),
@@ -8256,7 +8264,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        200: response({ description: "Successful response" }),
+        200: successfulResponse,
       },
       tags: [tags.watermarks],
     }),

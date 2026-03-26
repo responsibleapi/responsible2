@@ -18,7 +18,7 @@ export type Resp = Nameable<RespParams>
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "HEAD"
 
 /** this exists mostly to distinguish {@link Schema} from {@link Resp} */
-export const response = (param: RespParams): RespParams => param
+export const resp = (param: RespParams): RespParams => param
 
 export function GET(_op: Op): Op {
   throw new Error("TODO")

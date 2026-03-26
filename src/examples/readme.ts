@@ -1,5 +1,5 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
-import { GET, POST, response } from "../dsl/methods.ts"
+import { GET, POST, resp } from "../dsl/methods.ts"
 import {
   allOf,
   array,
@@ -351,7 +351,7 @@ const paginationHeaders = {
 }
 
 const authResponses = {
-  401: response({
+  401: resp({
     description: "Unauthorized",
     body: {
       "application/json": oneOf([
@@ -360,7 +360,7 @@ const authResponses = {
       ]),
     },
   }),
-  403: response({
+  403: resp({
     description: "Unauthorized",
     body: {
       "application/json": oneOf([errorWithCode("APIKEY_MISMATCH")]),
@@ -405,11 +405,11 @@ export default responsibleAPI({
         pathParams: { uuid: apiRegistryUUID },
       },
       res: {
-        200: response({
+        200: resp({
           description: "Successfully retrieved API registry entry.",
           body: { "application/json": object() },
         }),
-        404: response({
+        404: resp({
           description: "There is no API Registry entry with that UUID.",
           body: { "application/json": errorWithCode("REGISTRY_NOTFOUND") },
         }),
@@ -434,16 +434,16 @@ export default responsibleAPI({
             },
           },
           res: {
-            200: response({
+            200: resp({
               description: "Successfully retrieved API specification metadata.",
               headers: paginationHeaders,
             }),
-            400: response({
+            400: resp({
               description: "The supplied version header was empty.",
               body: { "application/json": errorWithCode("VERSION_EMPTY") },
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description:
                 "There is no project version matching x-readme-version.",
               body: { "application/json": errorWithCode("VERSION_NOTFOUND") },
@@ -460,10 +460,10 @@ export default responsibleAPI({
             },
           },
           res: {
-            201: response({
+            201: resp({
               description: "The API specification was successfully uploaded.",
             }),
-            400: response({
+            400: resp({
               description: "There was a validation error during upload.",
               body: {
                 "application/json": oneOf([
@@ -475,7 +475,7 @@ export default responsibleAPI({
               },
             }),
             ...authResponses,
-            408: response({
+            408: resp({
               description: "The API specification upload timed out.",
               body: { "application/json": errorWithCode("SPEC_TIMEOUT") },
             }),
@@ -499,10 +499,10 @@ export default responsibleAPI({
             },
           },
           res: {
-            200: response({
+            200: resp({
               description: "The API specification was updated.",
             }),
-            400: response({
+            400: resp({
               description: "There was a validation error during upload.",
               body: {
                 "application/json": oneOf([
@@ -516,11 +516,11 @@ export default responsibleAPI({
               },
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no API specification with that ID.",
               body: { "application/json": errorWithCode("SPEC_NOTFOUND") },
             }),
-            408: response({
+            408: resp({
               description: "The API specification upload timed out.",
               body: { "application/json": errorWithCode("SPEC_TIMEOUT") },
             }),
@@ -530,15 +530,15 @@ export default responsibleAPI({
           id: "deleteAPISpecification",
           description: "Delete an API specification in ReadMe.",
           res: {
-            204: response({
+            204: resp({
               description: "The API specification was deleted.",
             }),
-            400: response({
+            400: resp({
               description: "The supplied API specification ID was invalid.",
               body: { "application/json": errorWithCode("SPEC_ID_INVALID") },
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no API specification with that ID.",
               body: { "application/json": errorWithCode("SPEC_NOTFOUND") },
             }),
@@ -556,7 +556,7 @@ export default responsibleAPI({
           id: "getOpenRoles",
           description: "Returns all the roles we're hiring for at ReadMe!",
           res: {
-            200: response({
+            200: resp({
               description: "All the roles that we're hiring for.",
               body: array(jobOpening),
             }),
@@ -570,7 +570,7 @@ export default responsibleAPI({
             body: apply,
           },
           res: {
-            200: response({
+            200: resp({
               description: "You did it!",
             }),
           },
@@ -596,7 +596,7 @@ export default responsibleAPI({
             },
           },
           res: {
-            200: response({
+            200: resp({
               description: "The list of categories.",
               headers: paginationHeaders,
             }),
@@ -610,10 +610,10 @@ export default responsibleAPI({
             body: { "application/json": createCategory() },
           },
           res: {
-            201: response({
+            201: resp({
               description: "The category has successfully been created.",
             }),
-            400: response({
+            400: resp({
               description: "The category payload was invalid.",
               body: { "application/json": errorWithCode("CATEGORY_INVALID") },
             }),
@@ -635,10 +635,10 @@ export default responsibleAPI({
           id: "getCategory",
           description: "Returns the category with this slug.",
           res: {
-            200: response({
+            200: resp({
               description: "The category exists and has been returned.",
             }),
-            404: response({
+            404: resp({
               description: "There is no category with that slug.",
               body: { "application/json": errorWithCode("CATEGORY_NOTFOUND") },
             }),
@@ -651,14 +651,14 @@ export default responsibleAPI({
             body: { "application/json": category() },
           },
           res: {
-            200: response({
+            200: resp({
               description: "The category was successfully updated.",
             }),
-            400: response({
+            400: resp({
               description: "The category payload was invalid.",
               body: { "application/json": errorWithCode("CATEGORY_INVALID") },
             }),
-            404: response({
+            404: resp({
               description: "There is no category with that slug.",
               body: { "application/json": errorWithCode("CATEGORY_NOTFOUND") },
             }),
@@ -669,10 +669,10 @@ export default responsibleAPI({
           description:
             "Delete the category with this slug.\n>⚠️Heads Up!\n> This will also delete all of the docs within this category.",
           res: {
-            204: response({
+            204: resp({
               description: "The category was deleted.",
             }),
-            404: response({
+            404: resp({
               description: "There is no category with that slug.",
               body: { "application/json": errorWithCode("CATEGORY_NOTFOUND") },
             }),
@@ -690,11 +690,11 @@ export default responsibleAPI({
         },
       },
       res: {
-        200: response({
+        200: resp({
           description:
             "The category exists and all of the docs have been returned.",
         }),
-        404: response({
+        404: resp({
           description: "There is no category with that slug.",
           body: { "application/json": errorWithCode("CATEGORY_NOTFOUND") },
         }),
@@ -712,7 +712,7 @@ export default responsibleAPI({
             },
           },
           res: {
-            200: response({
+            200: resp({
               description: "The list of changelogs.",
               headers: paginationHeaders,
             }),
@@ -726,10 +726,10 @@ export default responsibleAPI({
             body: { "application/json": changelog() },
           },
           res: {
-            201: response({
+            201: resp({
               description: "The changelog was successfully created.",
             }),
-            400: response({
+            400: resp({
               description: "There was a validation error during creation.",
             }),
             ...authResponses,
@@ -748,10 +748,10 @@ export default responsibleAPI({
           id: "getChangelog",
           description: "Returns the changelog with this slug.",
           res: {
-            200: response({
+            200: resp({
               description: "The changelog exists and has been returned.",
             }),
-            404: response({
+            404: resp({
               description: "There is no changelog with that slug.",
             }),
             ...authResponses,
@@ -764,13 +764,13 @@ export default responsibleAPI({
             body: { "application/json": changelog() },
           },
           res: {
-            200: response({
+            200: resp({
               description: "The changelog was successfully updated.",
             }),
-            400: response({
+            400: resp({
               description: "There was a validation error during update.",
             }),
-            404: response({
+            404: resp({
               description: "There is no changelog with that slug.",
             }),
             ...authResponses,
@@ -780,10 +780,10 @@ export default responsibleAPI({
           id: "deleteChangelog",
           description: "Delete the changelog with this slug.",
           res: {
-            204: response({
+            204: resp({
               description: "The changelog was successfully updated.",
             }),
-            404: response({
+            404: resp({
               description: "There is no changelog with that slug.",
             }),
             ...authResponses,
@@ -803,7 +803,7 @@ export default responsibleAPI({
             },
           },
           res: {
-            200: response({
+            200: resp({
               description: "The list of custom pages.",
               headers: paginationHeaders,
             }),
@@ -817,10 +817,10 @@ export default responsibleAPI({
             body: { "application/json": customPage() },
           },
           res: {
-            201: response({
+            201: resp({
               description: "The custom page was successfully created.",
             }),
-            400: response({
+            400: resp({
               description: "The custom page payload was invalid.",
               body: { "application/json": errorWithCode("CUSTOMPAGE_INVALID") },
             }),
@@ -840,11 +840,11 @@ export default responsibleAPI({
           id: "getCustomPage",
           description: "Returns the custom page with this slug.",
           res: {
-            200: response({
+            200: resp({
               description: "The custom page exists and has been returned.",
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no custom page with that slug.",
               body: {
                 "application/json": errorWithCode("CUSTOMPAGE_NOTFOUND"),
@@ -859,15 +859,15 @@ export default responsibleAPI({
             body: { "application/json": customPage() },
           },
           res: {
-            200: response({
+            200: resp({
               description: "The custom page was successfully updated.",
             }),
-            400: response({
+            400: resp({
               description: "The custom page payload was invalid.",
               body: { "application/json": errorWithCode("CUSTOMPAGE_INVALID") },
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no custom page with that slug.",
               body: {
                 "application/json": errorWithCode("CUSTOMPAGE_NOTFOUND"),
@@ -879,11 +879,11 @@ export default responsibleAPI({
           id: "deleteCustomPage",
           description: "Delete the custom page with this slug.",
           res: {
-            204: response({
+            204: resp({
               description: "The custom page was successfully updated.",
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no custom page with that slug.",
               body: {
                 "application/json": errorWithCode("CUSTOMPAGE_NOTFOUND"),
@@ -907,11 +907,11 @@ export default responsibleAPI({
           id: "getDoc",
           description: "Returns the doc with this slug.",
           res: {
-            200: response({
+            200: resp({
               description: "The doc exists and has been returned.",
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no doc with that slug.",
               body: { "application/json": errorWithCode("DOC_NOTFOUND") },
             }),
@@ -924,15 +924,15 @@ export default responsibleAPI({
             body: { "application/json": doc() },
           },
           res: {
-            200: response({
+            200: resp({
               description: "The doc was successfully updated.",
             }),
-            400: response({
+            400: resp({
               description: "The doc payload was invalid.",
               body: { "application/json": errorWithCode("DOC_INVALID") },
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no doc with that slug.",
               body: { "application/json": errorWithCode("DOC_NOTFOUND") },
             }),
@@ -942,11 +942,11 @@ export default responsibleAPI({
           id: "deleteDoc",
           description: "Delete the doc with this slug.",
           res: {
-            204: response({
+            204: resp({
               description: "The doc was successfully updated.",
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no doc with that slug.",
               body: { "application/json": errorWithCode("DOC_NOTFOUND") },
             }),
@@ -964,10 +964,10 @@ export default responsibleAPI({
         body: { "application/json": doc() },
       },
       res: {
-        201: response({
+        201: resp({
           description: "The doc was successfully created.",
         }),
-        400: response({
+        400: resp({
           description: "The doc payload was invalid.",
           body: { "application/json": errorWithCode("DOC_INVALID") },
         }),
@@ -988,7 +988,7 @@ export default responsibleAPI({
         },
       },
       res: {
-        200: response({
+        200: resp({
           description: "The search was successful and results were returned.",
         }),
         ...authResponses,
@@ -998,7 +998,7 @@ export default responsibleAPI({
       id: "getErrors",
       description: "Returns with all of the error page types for this project.",
       res: {
-        200: response({
+        200: resp({
           description: "An array of the errors.",
         }),
         ...authResponses,
@@ -1008,7 +1008,7 @@ export default responsibleAPI({
       id: "getProject",
       description: "Returns project data for the API key.",
       res: {
-        200: response({
+        200: resp({
           description: "Project data",
           body: { "application/json": condensedProjectData() },
         }),
@@ -1022,7 +1022,7 @@ export default responsibleAPI({
           description:
             "Retrieve a list of versions associated with a project API key.",
           res: {
-            200: response({
+            200: resp({
               description: "A list of versions.",
             }),
             ...authResponses,
@@ -1035,10 +1035,10 @@ export default responsibleAPI({
             body: { "application/json": version() },
           },
           res: {
-            200: response({
+            200: resp({
               description: "The version was successfully created.",
             }),
-            400: response({
+            400: resp({
               description: "There was a validation error during creation.",
               body: {
                 "application/json": oneOf([
@@ -1049,7 +1049,7 @@ export default responsibleAPI({
               },
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "The forked version was not found.",
               body: {
                 "application/json": errorWithCode("VERSION_FORK_NOTFOUND"),
@@ -1070,11 +1070,11 @@ export default responsibleAPI({
           id: "getVersion",
           description: "Returns the version with this version ID.",
           res: {
-            200: response({
+            200: resp({
               description: "The version exists and has been returned.",
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no version with that version ID.",
               body: { "application/json": errorWithCode("VERSION_NOTFOUND") },
             }),
@@ -1087,17 +1087,17 @@ export default responsibleAPI({
             body: { "application/json": version() },
           },
           res: {
-            200: response({
+            200: resp({
               description: "The version was successfully updated.",
             }),
-            400: response({
+            400: resp({
               description: "The stable version cannot be demoted.",
               body: {
                 "application/json": errorWithCode("VERSION_CANT_DEMOTE_STABLE"),
               },
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no version with that version ID.",
               body: { "application/json": errorWithCode("VERSION_NOTFOUND") },
             }),
@@ -1107,17 +1107,17 @@ export default responsibleAPI({
           id: "deleteVersion",
           description: "Delete a version",
           res: {
-            200: response({
+            200: resp({
               description: "The version was successfully deleted.",
             }),
-            400: response({
+            400: resp({
               description: "The stable version cannot be removed.",
               body: {
                 "application/json": errorWithCode("VERSION_CANT_REMOVE_STABLE"),
               },
             }),
             ...authResponses,
-            404: response({
+            404: resp({
               description: "There is no version with that version ID.",
               body: { "application/json": errorWithCode("VERSION_NOTFOUND") },
             }),
