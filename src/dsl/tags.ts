@@ -1,5 +1,6 @@
 import type { oas31 } from "openapi3-ts"
 
+/** codex just trying to make things extra typesafe */
 declare const declaredTagBrand: unique symbol
 
 type TagNoName = Omit<oas31.TagObject, "name">
