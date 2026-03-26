@@ -248,8 +248,6 @@ The example mostly uses root `forAll`, but it does not really exploit per-resour
 
 ## Duplications that are clean targets for DSL work
 
-
-
 ### 2. Parameter-group composition is missing
 
 The file needs more than reusable single params. It needs reusable bundles:

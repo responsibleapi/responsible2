@@ -3,6 +3,8 @@
  *
  * Declared tag keys become the emitted OpenAPI tag `name` values so operations
  * can reuse a closed set of tags instead of repeating string literals inline.
+ *
+ * @dsl
  */
 import type { oas31 } from "openapi3-ts"
 

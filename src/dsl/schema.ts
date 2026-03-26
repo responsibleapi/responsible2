@@ -119,6 +119,10 @@ export type Schema = Nameable<RawSchema>
 
 type DictKeySchema = Nameable<Str | Num>
 
+interface ObjectOpts extends SchemaOpts {
+  required?: readonly string[]
+}
+
 export const dict = (k: DictKeySchema, v: Schema, opts?: DictOpts): Dict => ({
   ...opts,
   type: "object",
@@ -132,7 +136,7 @@ const isOptional = (k: string): k is OptionalKey => k.endsWith("?")
 
 export const object = (
   props: Readonly<Record<string, Schema>> = {},
-  opts?: SchemaOpts,
+  opts?: ObjectOpts,
 ): Obj => ({
   ...opts,
   type: "object",
@@ -142,13 +146,19 @@ export const object = (
       v,
     ]),
   ),
-  required: Object.keys(props).filter(k => !isOptional(k)),
+  required: opts?.required ?? Object.keys(props).filter(k => !isOptional(k)),
 })
 
 export const int64 = (opts?: NumberOpts): Int => ({
   ...opts,
   type: "integer",
   format: "int64",
+})
+
+export const uint64 = (opts?: NumberOpts): Int => ({
+  ...opts,
+  type: "integer",
+  format: "uint64",
 })
 
 export const integer = (opts?: NumberOpts): Int => ({
@@ -162,6 +172,12 @@ export const int32 = (opts?: NumberOpts): Int => ({
   format: "int32",
 })
 
+export const uint32 = (opts?: NumberOpts): Int => ({
+  ...opts,
+  type: "integer",
+  format: "uint32",
+})
+
 export const number = (opts?: NumberOpts): Float => ({
   ...opts,
   type: "number",
@@ -171,6 +187,12 @@ export const float = (opts?: NumberOpts): Float => ({
   ...opts,
   type: "number",
   format: "float",
+})
+
+export const double = (opts?: NumberOpts): Float => ({
+  ...opts,
+  type: "number",
+  format: "double",
 })
 
 export const httpURL = (): Str =>

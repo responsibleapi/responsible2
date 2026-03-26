@@ -8,6 +8,7 @@ import {
   array,
   boolean,
   dict,
+  double,
   email,
   float,
   httpURL,
@@ -20,6 +21,8 @@ import {
   string,
   unixMillis,
   unknown,
+  uint32,
+  uint64,
 } from "./schema.ts"
 
 const docWithSchema = (schema: RawSchema): Partial<oas31.OpenAPIObject> => ({
@@ -118,6 +121,33 @@ describe("schema", () => {
     await expectValidSchema(schema)
   })
 
+  test("object with explicit required override", async () => {
+    const schema = object(
+      {
+        title: string(),
+        subtitle: string(),
+      },
+      {
+        required: [],
+      },
+    )
+
+    expect(schema).toEqual({
+      type: "object",
+      properties: {
+        title: {
+          type: "string",
+        },
+        subtitle: {
+          type: "string",
+        },
+      },
+      required: [],
+    })
+
+    await expectValidSchema(schema)
+  })
+
   test("int64", async () => {
     const schema = int64({
       minimum: 1,
@@ -171,6 +201,24 @@ describe("schema", () => {
     await expectValidSchema(schema)
   })
 
+  test("uint64", async () => {
+    const schema = uint64({
+      minimum: 1,
+      maximum: 10,
+      example: 4,
+    })
+
+    expect(schema).toEqual({
+      type: "integer",
+      format: "uint64",
+      minimum: 1,
+      maximum: 10,
+      example: 4,
+    })
+
+    await expectValidSchema(schema)
+  })
+
   test("float", async () => {
     const schema = float({
       minimum: 1.25,
@@ -181,6 +229,24 @@ describe("schema", () => {
     expect(schema).toEqual({
       type: "number",
       format: "float",
+      minimum: 1.25,
+      maximum: 9.5,
+      example: 4.75,
+    })
+
+    await expectValidSchema(schema)
+  })
+
+  test("double", async () => {
+    const schema = double({
+      minimum: 1.25,
+      maximum: 9.5,
+      example: 4.75,
+    })
+
+    expect(schema).toEqual({
+      type: "number",
+      format: "double",
       minimum: 1.25,
       maximum: 9.5,
       example: 4.75,
@@ -201,6 +267,24 @@ describe("schema", () => {
       minimum: 1.25,
       maximum: 9.5,
       example: 4.75,
+    })
+
+    await expectValidSchema(schema)
+  })
+
+  test("uint32", async () => {
+    const schema = uint32({
+      minimum: 1,
+      maximum: 10,
+      example: 4,
+    })
+
+    expect(schema).toEqual({
+      type: "integer",
+      format: "uint32",
+      minimum: 1,
+      maximum: 10,
+      example: 4,
     })
 
     await expectValidSchema(schema)
