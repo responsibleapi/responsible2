@@ -5742,6 +5742,7 @@ const WatchSettings = () =>
       required: [],
     },
   )
+
 const tags = declareTags({
   abuseReports: {},
   activities: {},
@@ -5774,6 +5775,7 @@ const tags = declareTags({
   watermarks: {},
   youtube: {},
 } as const)
+
 const __xgafv = named(
   "_.xgafv",
   queryParam({
@@ -5967,11 +5969,11 @@ export default responsibleAPI({
           description: "Successful response",
           body: {
             "application/json": AbuseReport,
-          } as const,
+          },
         }),
       },
       tags: [tags.abuseReports],
-    } as const),
+    }),
     "/youtube/v3/activities": GET({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.activities.list",
@@ -6009,11 +6011,11 @@ export default responsibleAPI({
           description: "Successful response",
           body: {
             "application/json": ActivityListResponse,
-          } as const,
+          },
         }),
       },
       tags: [tags.activities],
-    } as const),
+    }),
     "/youtube/v3/captions": scope({
       forAll: {
         tags: [tags.captions],
@@ -6039,11 +6041,9 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
-            description: "Successful response",
-          }),
+          "200": response({ description: "Successful response" }),
         },
-      } as const,
+      },
       GET: {
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.captions.list",
