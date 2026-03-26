@@ -10,13 +10,14 @@ import {
   string,
   unknown,
 } from "../dsl/schema.ts"
-import { declareTags, queryParam } from "../dsl/scope.ts"
+import { queryParam } from "../dsl/scope.ts"
 import {
   securityAND,
   securityOR,
   oauth2Requirement,
   oauth2Security,
 } from "../dsl/security.ts"
+import { declareTags } from "../dsl/tags.ts"
 
 const VideoID = () => string({ minLength: 1 })
 const ChannelID = () => string({ minLength: 1 })

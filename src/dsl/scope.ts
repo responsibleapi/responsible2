@@ -4,6 +4,7 @@ import type { HttpMethod, Mime, Resp } from "./methods.ts"
 import type { Nameable } from "./nameable.ts"
 import type { Schema } from "./schema.ts"
 import type { Security } from "./security.ts"
+import type { OpTags, TagRegistry } from "./tags.ts"
 
 interface ReusableParam {
   in: "query" | "path"
@@ -21,56 +22,6 @@ interface QueryParamRaw extends ReusableParam {
 type Param = Nameable<QueryParamRaw>
 
 export const queryParam = (r: QueryParamRaw): QueryParamRaw => r
-
-const declaredTagBrand = Symbol("declaredTagBrand")
-
-type TagNoName = Omit<oas31.TagObject, "name">
-
-/**
- * Top-level tags should be declared once as a keyed object so operations can
- * reference the stable tag keys instead of repeating tag names inline.
- */
-type TagDeclarations = Readonly<Record<string, TagNoName>>
-
-type DeclaredTag<
-  TName extends string = string,
-  TTag extends TagNoName = TagNoName,
-> = TTag & {
-  readonly name: TName
-  readonly [declaredTagBrand]: true
-}
-
-type DeclaredTags<TTags extends TagDeclarations = TagDeclarations> = {
-  readonly [K in keyof TTags]: DeclaredTag<Extract<K, string>, TTags[K]>
-}
-
-type TagRegistry = DeclaredTags
-
-type DeclaredOpTag<TTags extends TagRegistry = TagRegistry> = TTags[keyof TTags]
-
-type OpTags<TTags extends TagRegistry = TagRegistry> =
-  readonly DeclaredOpTag<TTags>[]
-
-/**
- * Wrap the raw tag registry so the DSL can brand each entry with its key as the
- * OpenAPI tag name. That gives operations a closed set of reusable tag values
- * instead of ad-hoc objects or repeated string literals.
- *
- * @dsl
- */
-export const declareTags = <TTags extends TagDeclarations>(
-  tags: TTags,
-): DeclaredTags<TTags> =>
-  Object.fromEntries(
-    Object.entries(tags).map(([name, declaredTag]) => [
-      name,
-      {
-        ...declaredTag,
-        name,
-        [declaredTagBrand]: true,
-      },
-    ]),
-  ) as DeclaredTags<TTags>
 
 interface OpReq {
   readonly security?: Security

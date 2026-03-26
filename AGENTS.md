@@ -24,6 +24,7 @@
 - never use `bunx`, if a package is missing, ask to add it to `package.json`
 - never use `node`
 - never run formatting unless the task actually requires it
+- never [use `vitest`](docs/package.jsonc)
 
 ## Packages
 

@@ -1,6 +1,13 @@
 import { describe, test } from "vitest"
-import type { Assert, IsNever, OneExtendsTwo } from "../type-assertions.ts"
+import type {
+  Assert,
+  IsEqual,
+  IsNever,
+  OneExtendsTwo,
+} from "../type-assertions.ts"
+import type { Op } from "./scope.ts"
 import { scope } from "./scope.ts"
+import { declareTags } from "./tags.ts"
 
 type TestOp = {
   res: {
@@ -47,6 +54,20 @@ describe("scope", () => {
   test("rejects wrapped routes with only one method", () => {
     type _Test = Assert<
       IsNever<ScopeArg<typeof scope<WrappedSingleMethodPureScope>>["routes"]>
+    >
+  })
+
+  test("accepts declared tags on operations", () => {
+    const tags = declareTags({
+      videos: {},
+      channels: {},
+    } as const)
+
+    type _Test = Assert<
+      IsEqual<
+        NonNullable<Op<typeof tags>["tags"]>,
+        readonly (typeof tags.videos | typeof tags.channels)[]
+      >
     >
   })
 })
