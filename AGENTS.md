@@ -20,13 +20,12 @@
 
 ## CLI tools
 
-- use `bun` for everything
+- never use `node`, use `bun` instead
 - never use `bunx`, if a package is missing, ask to add it to `package.json`
-- never use `node`
 - never run formatting unless explicitly asked to
 - [never use `vitest`](docs/package.jsonc), `bun test` instead
 - never use `wc`, use `scc` instead (both on files and folders)
-- never use `rg` to search for code, use `ast-grep` instead
+- both `rg` and `ast-grep` are available for use
 
 ## Package rules
 
