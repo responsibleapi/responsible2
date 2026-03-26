@@ -7302,7 +7302,7 @@ export default responsibleAPI({
             description: "Successful response",
           }),
         },
-      } as const,
+      },
       GET: {
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.liveChatModerators.list",
@@ -8834,7 +8834,7 @@ export default responsibleAPI({
           "application/octet-stream": InvideoBranding,
           "image/jpeg": InvideoBranding,
           "image/png": InvideoBranding,
-        } as const,
+        },
       },
       res: {
         "200": response({
@@ -8842,7 +8842,7 @@ export default responsibleAPI({
         }),
       },
       tags: [tags.watermarks],
-    } as const),
+    }),
     "/youtube/v3/watermarks/unset": POST({
       description: "Allows removal of channel watermark.",
       id: "youtube.watermarks.unset",
@@ -8866,6 +8866,6 @@ export default responsibleAPI({
         }),
       },
       tags: [tags.watermarks],
-    } as const),
+    }),
   },
 })
