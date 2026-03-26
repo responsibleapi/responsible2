@@ -78,20 +78,16 @@ const youtubeScopes = (
   )
 }
 const AbuseReport = () =>
-  object(
-    {
-      "abuseTypes?": array(AbuseType),
-      "description?": string(),
-      "relatedEntities?": array(RelatedEntity),
-      "subject?": Entity,
-    },
-  )
+  object({
+    "abuseTypes?": array(AbuseType),
+    "description?": string(),
+    "relatedEntities?": array(RelatedEntity),
+    "subject?": Entity,
+  })
 const AbuseType = () =>
-  object(
-    {
-      "id?": string(),
-    },
-  )
+  object({
+    "id?": string(),
+  })
 const AccessPolicy = () =>
   object(
     {
@@ -108,13 +104,12 @@ const AccessPolicy = () =>
       description: "Rights management policy for YouTube resources.",
     },
   )
+
 const Activity = () =>
   object(
     {
       "contentDetails?": ActivityContentDetails,
-      "etag?": string({
-        description: "Etag of this resource",
-      }),
+      "etag?": string({ description: "Etag of this resource" }),
       "id?": string({
         description:
           "The ID that YouTube uses to uniquely identify the activity.",
@@ -329,37 +324,37 @@ const ActivityContentDetailsUpload = () =>
       description: "Information about the uploaded video.",
     },
   )
+
 const ActivityListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(Activity),
-      "kind?": string({
-        default: "youtube#activityListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#activityListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(Activity),
+    "kind?": string({
+      default: "youtube#activityListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#activityListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
+
 const ActivitySnippet = () =>
   object(
     {
@@ -411,6 +406,7 @@ const ActivitySnippet = () =>
         "Basic details about an activity, including title, description, thumbnails, activity type and group. Next ID: 12",
     },
   )
+
 const Caption = () =>
   object(
     {
@@ -433,29 +429,29 @@ const Caption = () =>
         "A *caption* resource represents a YouTube caption track. A caption track is associated with exactly one YouTube video.",
     },
   )
+
 const CaptionListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(Caption, {
-        description: "A list of captions that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#captionListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#captionListResponse".',
-      }),
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(Caption, {
+      description: "A list of captions that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#captionListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#captionListResponse".',
+    }),
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
+
 const CaptionSnippet = () =>
   object(
     {
@@ -520,6 +516,7 @@ const CaptionSnippet = () =>
         "Basic details about a caption track, such as its language and name.",
     },
   )
+
 const CdnSettings = () =>
   object(
     {
@@ -639,33 +636,32 @@ const ChannelBrandingSettings = () =>
       description: "Branding properties of a YouTube channel.",
     },
   )
+
 const ChannelContentDetails = () =>
   object(
     {
-      "relatedPlaylists?": object(
-        {
-          "favorites?": string({
-            description:
-              'The ID of the playlist that contains the channel"s favorite videos. Use the playlistItems.insert and playlistItems.delete to add or remove items from that list.',
-          }),
-          "likes?": string({
-            description:
-              'The ID of the playlist that contains the channel"s liked videos. Use the playlistItems.insert and playlistItems.delete to add or remove items from that list.',
-          }),
-          "uploads?": string({
-            description:
-              'The ID of the playlist that contains the channel"s uploaded videos. Use the videos.insert method to upload new videos and the videos.delete method to delete previously uploaded videos.',
-          }),
-          "watchHistory?": string({
-            description:
-              'The ID of the playlist that contains the channel"s watch history. Use the playlistItems.insert and playlistItems.delete to add or remove items from that list.',
-          }),
-          "watchLater?": string({
-            description:
-              'The ID of the playlist that contains the channel"s watch later playlist. Use the playlistItems.insert and playlistItems.delete to add or remove items from that list.',
-          }),
-        },
-      ),
+      "relatedPlaylists?": object({
+        "favorites?": string({
+          description:
+            'The ID of the playlist that contains the channel"s favorite videos. Use the playlistItems.insert and playlistItems.delete to add or remove items from that list.',
+        }),
+        "likes?": string({
+          description:
+            'The ID of the playlist that contains the channel"s liked videos. Use the playlistItems.insert and playlistItems.delete to add or remove items from that list.',
+        }),
+        "uploads?": string({
+          description:
+            'The ID of the playlist that contains the channel"s uploaded videos. Use the videos.insert method to upload new videos and the videos.delete method to delete previously uploaded videos.',
+        }),
+        "watchHistory?": string({
+          description:
+            'The ID of the playlist that contains the channel"s watch history. Use the playlistItems.insert and playlistItems.delete to add or remove items from that list.',
+        }),
+        "watchLater?": string({
+          description:
+            'The ID of the playlist that contains the channel"s watch later playlist. Use the playlistItems.insert and playlistItems.delete to add or remove items from that list.',
+        }),
+      }),
     },
     {
       description: "Details about the content of a channel.",
@@ -719,36 +715,34 @@ const ChannelConversionPings = () =>
     },
   )
 const ChannelListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(Channel),
-      "kind?": string({
-        default: "youtube#channelListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#channelListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(Channel),
+    "kind?": string({
+      default: "youtube#channelListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#channelListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const ChannelLocalization = () =>
   object(
     {
@@ -764,45 +758,41 @@ const ChannelLocalization = () =>
     },
   )
 const ChannelProfileDetails = () =>
-  object(
-    {
-      "channelId?": string({
-        description: "The YouTube channel ID.",
-      }),
-      "channelUrl?": string({
-        description: "The channel's URL.",
-      }),
-      "displayName?": string({
-        description: "The channel's display name.",
-      }),
-      "profileImageUrl?": string({
-        description: "The channels's avatar URL.",
-      }),
-    },
-  )
+  object({
+    "channelId?": string({
+      description: "The YouTube channel ID.",
+    }),
+    "channelUrl?": string({
+      description: "The channel's URL.",
+    }),
+    "displayName?": string({
+      description: "The channel's display name.",
+    }),
+    "profileImageUrl?": string({
+      description: "The channels's avatar URL.",
+    }),
+  })
 const ChannelSection = () =>
-  object(
-    {
-      "contentDetails?": ChannelSectionContentDetails,
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "id?": string({
-        description:
-          "The ID that YouTube uses to uniquely identify the channel section.",
-      }),
-      "kind?": string({
-        default: "youtube#channelSection",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#channelSection".',
-      }),
-      "localizations?": dict(string(), ChannelSectionLocalization, {
-        description: "Localizations for different languages",
-      }),
-      "snippet?": ChannelSectionSnippet,
-      "targeting?": ChannelSectionTargeting,
-    },
-  )
+  object({
+    "contentDetails?": ChannelSectionContentDetails,
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "id?": string({
+      description:
+        "The ID that YouTube uses to uniquely identify the channel section.",
+    }),
+    "kind?": string({
+      default: "youtube#channelSection",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#channelSection".',
+    }),
+    "localizations?": dict(string(), ChannelSectionLocalization, {
+      description: "Localizations for different languages",
+    }),
+    "snippet?": ChannelSectionSnippet,
+    "targeting?": ChannelSectionTargeting,
+  })
 const ChannelSectionContentDetails = () =>
   object(
     {
@@ -820,29 +810,26 @@ const ChannelSectionContentDetails = () =>
     },
   )
 const ChannelSectionListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(ChannelSection, {
-        description:
-          "A list of ChannelSections that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#channelSectionListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#channelSectionListResponse".',
-      }),
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(ChannelSection, {
+      description: "A list of ChannelSections that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#channelSectionListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#channelSectionListResponse".',
+    }),
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const ChannelSectionLocalization = () =>
   object(
     {
@@ -1121,34 +1108,32 @@ const Comment = () =>
     },
   )
 const CommentListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(Comment, {
-        description: "A list of comments that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#commentListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#commentListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(Comment, {
+      description: "A list of comments that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#commentListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#commentListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const CommentSnippet = () =>
   object(
     {
@@ -1246,35 +1231,32 @@ const CommentThread = () =>
     },
   )
 const CommentThreadListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(CommentThread, {
-        description:
-          "A list of comment threads that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#commentThreadListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#commentThreadListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(CommentThread, {
+      description: "A list of comment threads that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#commentThreadListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#commentThreadListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const CommentThreadReplies = () =>
   object(
     {
@@ -1317,6 +1299,7 @@ const CommentThreadSnippet = () =>
       description: "Basic details about a comment thread.",
     },
   )
+
 const ContentRating = () =>
   object(
     {
@@ -2322,6 +2305,7 @@ const ContentRating = () =>
         "Ratings schemes. The country-specific ratings are mostly for movies and shows. LINT.IfChange",
     },
   )
+
 const Cuepoint = () =>
   object(
     {
@@ -2351,31 +2335,28 @@ const Cuepoint = () =>
         "Note that there may be a 5-second end-point resolution issue. For instance, if a cuepoint comes in for 22:03:27, we may stuff the cuepoint into 22:03:25 or 22:03:30, depending. This is an artifact of HLS.",
     },
   )
+
 const Entity = () =>
-  object(
-    {
-      "id?": string(),
-      "typeId?": string(),
-      "url?": string(),
-    },
-  )
+  object({
+    "id?": string(),
+    "typeId?": string(),
+    "url?": string(),
+  })
+
 const GeoPoint = () =>
   object(
     {
       "altitude?": double({
         description: "Altitude above the reference ellipsoid, in meters.",
       }),
-      "latitude?": double({
-        description: "Latitude in degrees.",
-      }),
-      "longitude?": double({
-        description: "Longitude in degrees.",
-      }),
+      "latitude?": double({ description: "Latitude in degrees." }),
+      "longitude?": double({ description: "Longitude in degrees." }),
     },
     {
       description: "Geographical coordinates of a point, in WGS84.",
     },
   )
+
 const I18nLanguage = () =>
   object(
     {
@@ -2399,29 +2380,27 @@ const I18nLanguage = () =>
     },
   )
 const I18nLanguageListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(I18nLanguage, {
-        description:
-          "A list of supported i18n languages. In this map, the i18n language ID is the map key, and its value is the corresponding i18nLanguage resource.",
-      }),
-      "kind?": string({
-        default: "youtube#i18nLanguageListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#i18nLanguageListResponse".',
-      }),
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(I18nLanguage, {
+      description:
+        "A list of supported i18n languages. In this map, the i18n language ID is the map key, and its value is the corresponding i18nLanguage resource.",
+    }),
+    "kind?": string({
+      default: "youtube#i18nLanguageListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#i18nLanguageListResponse".',
+    }),
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const I18nLanguageSnippet = () =>
   object(
     {
@@ -2461,29 +2440,27 @@ const I18nRegion = () =>
     },
   )
 const I18nRegionListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(I18nRegion, {
-        description:
-          "A list of regions where YouTube is available. In this map, the i18n region ID is the map key, and its value is the corresponding i18nRegion resource.",
-      }),
-      "kind?": string({
-        default: "youtube#i18nRegionListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#i18nRegionListResponse".',
-      }),
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(I18nRegion, {
+      description:
+        "A list of regions where YouTube is available. In this map, the i18n region ID is the map key, and its value is the corresponding i18nRegion resource.",
+    }),
+    "kind?": string({
+      default: "youtube#i18nRegionListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#i18nRegionListResponse".',
+    }),
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const I18nRegionSnippet = () =>
   object(
     {
@@ -2618,6 +2595,7 @@ const InvideoBranding = () =>
       description: "LINT.IfChange Describes an invideo branding.",
     },
   )
+
 const InvideoPosition = () =>
   object(
     {
@@ -2661,20 +2639,15 @@ const InvideoTiming = () =>
     },
   )
 const LanguageTag = () =>
-  object(
-    {
-      "value?": string(),
-    },
-  )
+  object({
+    "value?": string(),
+  })
 const LevelDetails = () =>
-  object(
-    {
-      "displayName?": string({
-        description:
-          "The name that should be used when referring to this level.",
-      }),
-    },
-  )
+  object({
+    "displayName?": string({
+      description: "The name that should be used when referring to this level.",
+    }),
+  })
 const LiveBroadcast = () =>
   object(
     {
@@ -2783,38 +2756,36 @@ const LiveBroadcastContentDetails = () =>
     },
   )
 const LiveBroadcastListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(LiveBroadcast, {
-        description: "A list of broadcasts that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#liveBroadcastListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#liveBroadcastListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(LiveBroadcast, {
+      description: "A list of broadcasts that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#liveBroadcastListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#liveBroadcastListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const LiveBroadcastSnippet = () =>
   object(
     {
@@ -2954,88 +2925,78 @@ const LiveChatBan = () =>
     },
   )
 const LiveChatBanSnippet = () =>
-  object(
-    {
-      "banDurationSeconds?": string({
-        description:
-          "The duration of a ban, only filled if the ban has type TEMPORARY.",
-        format: "uint64",
-      }),
-      "bannedUserDetails?": ChannelProfileDetails,
-      "liveChatId?": string({
-        description: "The chat this ban is pertinent to.",
-      }),
-      "type?": string({
-        description: "The type of ban.",
-        enum: ["liveChatBanTypeUnspecified", "permanent", "temporary"],
-      }),
-    },
-  )
+  object({
+    "banDurationSeconds?": string({
+      description:
+        "The duration of a ban, only filled if the ban has type TEMPORARY.",
+      format: "uint64",
+    }),
+    "bannedUserDetails?": ChannelProfileDetails,
+    "liveChatId?": string({
+      description: "The chat this ban is pertinent to.",
+    }),
+    "type?": string({
+      description: "The type of ban.",
+      enum: ["liveChatBanTypeUnspecified", "permanent", "temporary"],
+    }),
+  })
 const LiveChatFanFundingEventDetails = () =>
-  object(
-    {
-      "amountDisplayString?": string({
-        description:
-          "A rendered string that displays the fund amount and currency to the user.",
-      }),
-      "amountMicros?": string({
-        description: "The amount of the fund.",
-        format: "uint64",
-      }),
-      "currency?": string({
-        description: "The currency in which the fund was made.",
-      }),
-      "userComment?": string({
-        description: "The comment added by the user to this fan funding event.",
-      }),
-    },
-  )
+  object({
+    "amountDisplayString?": string({
+      description:
+        "A rendered string that displays the fund amount and currency to the user.",
+    }),
+    "amountMicros?": string({
+      description: "The amount of the fund.",
+      format: "uint64",
+    }),
+    "currency?": string({
+      description: "The currency in which the fund was made.",
+    }),
+    "userComment?": string({
+      description: "The comment added by the user to this fan funding event.",
+    }),
+  })
 const LiveChatGiftMembershipReceivedDetails = () =>
-  object(
-    {
-      "associatedMembershipGiftingMessageId?": string({
-        description:
-          "The ID of the membership gifting message that is related to this gift membership. This ID will always refer to a message whose type is 'membershipGiftingEvent'.",
-      }),
-      "gifterChannelId?": string({
-        description:
-          "The ID of the user that made the membership gifting purchase. This matches the `snippet.authorChannelId` of the associated membership gifting message.",
-      }),
-      "memberLevelName?": string({
-        description:
-          "The name of the Level at which the viewer is a member. This matches the `snippet.membershipGiftingDetails.giftMembershipsLevelName` of the associated membership gifting message. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
-      }),
-    },
-  )
+  object({
+    "associatedMembershipGiftingMessageId?": string({
+      description:
+        "The ID of the membership gifting message that is related to this gift membership. This ID will always refer to a message whose type is 'membershipGiftingEvent'.",
+    }),
+    "gifterChannelId?": string({
+      description:
+        "The ID of the user that made the membership gifting purchase. This matches the `snippet.authorChannelId` of the associated membership gifting message.",
+    }),
+    "memberLevelName?": string({
+      description:
+        "The name of the Level at which the viewer is a member. This matches the `snippet.membershipGiftingDetails.giftMembershipsLevelName` of the associated membership gifting message. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
+    }),
+  })
 const LiveChatMemberMilestoneChatDetails = () =>
-  object(
-    {
-      "memberLevelName?": string({
-        description:
-          "The name of the Level at which the viever is a member. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
-      }),
-      "memberMonth?": uint32({
-        description:
-          "The total amount of months (rounded up) the viewer has been a member that granted them this Member Milestone Chat. This is the same number of months as is being displayed to YouTube users.",
-      }),
-      "userComment?": string({
-        description:
-          "The comment added by the member to this Member Milestone Chat. This field is empty for messages without a comment from the member.",
-      }),
-    },
-  )
+  object({
+    "memberLevelName?": string({
+      description:
+        "The name of the Level at which the viever is a member. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
+    }),
+    "memberMonth?": uint32({
+      description:
+        "The total amount of months (rounded up) the viewer has been a member that granted them this Member Milestone Chat. This is the same number of months as is being displayed to YouTube users.",
+    }),
+    "userComment?": string({
+      description:
+        "The comment added by the member to this Member Milestone Chat. This field is empty for messages without a comment from the member.",
+    }),
+  })
 const LiveChatMembershipGiftingDetails = () =>
-  object(
-    {
-      "giftMembershipsCount?": int32({
-        description: "The number of gift memberships purchased by the user.",
-      }),
-      "giftMembershipsLevelName?": string({
-        description:
-          "The name of the level of the gift memberships purchased by the user. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
-      }),
-    },
-  )
+  object({
+    "giftMembershipsCount?": int32({
+      description: "The number of gift memberships purchased by the user.",
+    }),
+    "giftMembershipsLevelName?": string({
+      description:
+        "The name of the level of the gift memberships purchased by the user. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
+    }),
+  })
 const LiveChatMessage = () =>
   object(
     {
@@ -3060,80 +3021,71 @@ const LiveChatMessage = () =>
     },
   )
 const LiveChatMessageAuthorDetails = () =>
-  object(
-    {
-      "channelId?": string({
-        description: "The YouTube channel ID.",
-      }),
-      "channelUrl?": string({
-        description: "The channel's URL.",
-      }),
-      "displayName?": string({
-        description: "The channel's display name.",
-      }),
-      "isChatModerator?": boolean({
-        description: "Whether the author is a moderator of the live chat.",
-      }),
-      "isChatOwner?": boolean({
-        description: "Whether the author is the owner of the live chat.",
-      }),
-      "isChatSponsor?": boolean({
-        description: "Whether the author is a sponsor of the live chat.",
-      }),
-      "isVerified?": boolean({
-        description:
-          "Whether the author's identity has been verified by YouTube.",
-      }),
-      "profileImageUrl?": string({
-        description: "The channels's avatar URL.",
-      }),
-    },
-  )
+  object({
+    "channelId?": string({
+      description: "The YouTube channel ID.",
+    }),
+    "channelUrl?": string({
+      description: "The channel's URL.",
+    }),
+    "displayName?": string({
+      description: "The channel's display name.",
+    }),
+    "isChatModerator?": boolean({
+      description: "Whether the author is a moderator of the live chat.",
+    }),
+    "isChatOwner?": boolean({
+      description: "Whether the author is the owner of the live chat.",
+    }),
+    "isChatSponsor?": boolean({
+      description: "Whether the author is a sponsor of the live chat.",
+    }),
+    "isVerified?": boolean({
+      description:
+        "Whether the author's identity has been verified by YouTube.",
+    }),
+    "profileImageUrl?": string({
+      description: "The channels's avatar URL.",
+    }),
+  })
 const LiveChatMessageDeletedDetails = () =>
-  object(
-    {
-      "deletedMessageId?": string(),
-    },
-  )
+  object({
+    "deletedMessageId?": string(),
+  })
 const LiveChatMessageListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(LiveChatMessage),
-      "kind?": string({
-        default: "youtube#liveChatMessageListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatMessageListResponse".',
-      }),
-      "nextPageToken?": string(),
-      "offlineAt?": string({
-        description:
-          "The date and time when the underlying stream went offline.",
-        format: "date-time",
-      }),
-      "pageInfo?": PageInfo,
-      "pollingIntervalMillis?": uint32({
-        description:
-          "The amount of time the client should wait before polling again.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(LiveChatMessage),
+    "kind?": string({
+      default: "youtube#liveChatMessageListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatMessageListResponse".',
+    }),
+    "nextPageToken?": string(),
+    "offlineAt?": string({
+      description: "The date and time when the underlying stream went offline.",
+      format: "date-time",
+    }),
+    "pageInfo?": PageInfo,
+    "pollingIntervalMillis?": uint32({
+      description:
+        "The amount of time the client should wait before polling again.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const LiveChatMessageRetractedDetails = () =>
-  object(
-    {
-      "retractedMessageId?": string(),
-    },
-  )
+  object({
+    "retractedMessageId?": string(),
+  })
 const LiveChatMessageSnippet = () =>
   object(
     {
@@ -3216,129 +3168,115 @@ const LiveChatModerator = () =>
     },
   )
 const LiveChatModeratorListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(LiveChatModerator, {
-        description: "A list of moderators that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#liveChatModeratorListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatModeratorListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(LiveChatModerator, {
+      description: "A list of moderators that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#liveChatModeratorListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatModeratorListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const LiveChatModeratorSnippet = () =>
-  object(
-    {
-      "liveChatId?": string({
-        description: "The ID of the live chat this moderator can act on.",
-      }),
-      "moderatorDetails?": ChannelProfileDetails,
-    },
-  )
+  object({
+    "liveChatId?": string({
+      description: "The ID of the live chat this moderator can act on.",
+    }),
+    "moderatorDetails?": ChannelProfileDetails,
+  })
 const LiveChatNewSponsorDetails = () =>
-  object(
-    {
-      "isUpgrade?": boolean({
-        description:
-          "If the viewer just had upgraded from a lower level. For viewers that were not members at the time of purchase, this field is false.",
-      }),
-      "memberLevelName?": string({
-        description:
-          "The name of the Level that the viewer just had joined. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
-      }),
-    },
-  )
+  object({
+    "isUpgrade?": boolean({
+      description:
+        "If the viewer just had upgraded from a lower level. For viewers that were not members at the time of purchase, this field is false.",
+    }),
+    "memberLevelName?": string({
+      description:
+        "The name of the Level that the viewer just had joined. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
+    }),
+  })
 const LiveChatSuperChatDetails = () =>
-  object(
-    {
-      "amountDisplayString?": string({
-        description:
-          "A rendered string that displays the fund amount and currency to the user.",
-      }),
-      "amountMicros?": string({
-        description:
-          "The amount purchased by the user, in micros (1,750,000 micros = 1.75).",
-        format: "uint64",
-      }),
-      "currency?": string({
-        description: "The currency in which the purchase was made.",
-      }),
-      "tier?": uint32({
-        description:
-          "The tier in which the amount belongs. Lower amounts belong to lower tiers. The lowest tier is 1.",
-      }),
-      "userComment?": string({
-        description: "The comment added by the user to this Super Chat event.",
-      }),
-    },
-  )
+  object({
+    "amountDisplayString?": string({
+      description:
+        "A rendered string that displays the fund amount and currency to the user.",
+    }),
+    "amountMicros?": string({
+      description:
+        "The amount purchased by the user, in micros (1,750,000 micros = 1.75).",
+      format: "uint64",
+    }),
+    "currency?": string({
+      description: "The currency in which the purchase was made.",
+    }),
+    "tier?": uint32({
+      description:
+        "The tier in which the amount belongs. Lower amounts belong to lower tiers. The lowest tier is 1.",
+    }),
+    "userComment?": string({
+      description: "The comment added by the user to this Super Chat event.",
+    }),
+  })
 const LiveChatSuperStickerDetails = () =>
-  object(
-    {
-      "amountDisplayString?": string({
-        description:
-          "A rendered string that displays the fund amount and currency to the user.",
-      }),
-      "amountMicros?": string({
-        description:
-          "The amount purchased by the user, in micros (1,750,000 micros = 1.75).",
-        format: "uint64",
-      }),
-      "currency?": string({
-        description: "The currency in which the purchase was made.",
-      }),
-      "superStickerMetadata?": SuperStickerMetadata,
-      "tier?": uint32({
-        description:
-          "The tier in which the amount belongs. Lower amounts belong to lower tiers. The lowest tier is 1.",
-      }),
-    },
-  )
+  object({
+    "amountDisplayString?": string({
+      description:
+        "A rendered string that displays the fund amount and currency to the user.",
+    }),
+    "amountMicros?": string({
+      description:
+        "The amount purchased by the user, in micros (1,750,000 micros = 1.75).",
+      format: "uint64",
+    }),
+    "currency?": string({
+      description: "The currency in which the purchase was made.",
+    }),
+    "superStickerMetadata?": SuperStickerMetadata,
+    "tier?": uint32({
+      description:
+        "The tier in which the amount belongs. Lower amounts belong to lower tiers. The lowest tier is 1.",
+    }),
+  })
 const LiveChatTextMessageDetails = () =>
-  object(
-    {
-      "messageText?": string({
-        description: "The user's message.",
-      }),
-    },
-  )
+  object({
+    "messageText?": string({
+      description: "The user's message.",
+    }),
+  })
 const LiveChatUserBannedMessageDetails = () =>
-  object(
-    {
-      "banDurationSeconds?": string({
-        description:
-          "The duration of the ban. This property is only present if the banType is temporary.",
-        format: "uint64",
-      }),
-      "banType?": string({
-        description: "The type of ban.",
-        enum: ["permanent", "temporary"],
-      }),
-      "bannedUserDetails?": ChannelProfileDetails,
-    },
-  )
+  object({
+    "banDurationSeconds?": string({
+      description:
+        "The duration of the ban. This property is only present if the banType is temporary.",
+      format: "uint64",
+    }),
+    "banType?": string({
+      description: "The type of ban.",
+      enum: ["permanent", "temporary"],
+    }),
+    "bannedUserDetails?": ChannelProfileDetails,
+  })
 const LiveStream = () =>
   object(
     {
@@ -3364,60 +3302,58 @@ const LiveStream = () =>
     },
   )
 const LiveStreamConfigurationIssue = () =>
-  object(
-    {
-      "description?": string({
-        description:
-          "The long-form description of the issue and how to resolve it.",
-      }),
-      "reason?": string({
-        description: "The short-form reason for this issue.",
-      }),
-      "severity?": string({
-        description: "How severe this issue is to the stream.",
-        enum: ["info", "warning", "error"],
-      }),
-      "type?": string({
-        description: "The kind of error happening.",
-        enum: [
-          "gopSizeOver",
-          "gopSizeLong",
-          "gopSizeShort",
-          "openGop",
-          "badContainer",
-          "audioBitrateHigh",
-          "audioBitrateLow",
-          "audioSampleRate",
-          "bitrateHigh",
-          "bitrateLow",
-          "audioCodec",
-          "videoCodec",
-          "noAudioStream",
-          "noVideoStream",
-          "multipleVideoStreams",
-          "multipleAudioStreams",
-          "audioTooManyChannels",
-          "interlacedVideo",
-          "frameRateHigh",
-          "resolutionMismatch",
-          "videoCodecMismatch",
-          "videoInterlaceMismatch",
-          "videoProfileMismatch",
-          "videoBitrateMismatch",
-          "framerateMismatch",
-          "gopMismatch",
-          "audioSampleRateMismatch",
-          "audioStereoMismatch",
-          "audioCodecMismatch",
-          "audioBitrateMismatch",
-          "videoResolutionSuboptimal",
-          "videoResolutionUnsupported",
-          "videoIngestionStarved",
-          "videoIngestionFasterThanRealtime",
-        ],
-      }),
-    },
-  )
+  object({
+    "description?": string({
+      description:
+        "The long-form description of the issue and how to resolve it.",
+    }),
+    "reason?": string({
+      description: "The short-form reason for this issue.",
+    }),
+    "severity?": string({
+      description: "How severe this issue is to the stream.",
+      enum: ["info", "warning", "error"],
+    }),
+    "type?": string({
+      description: "The kind of error happening.",
+      enum: [
+        "gopSizeOver",
+        "gopSizeLong",
+        "gopSizeShort",
+        "openGop",
+        "badContainer",
+        "audioBitrateHigh",
+        "audioBitrateLow",
+        "audioSampleRate",
+        "bitrateHigh",
+        "bitrateLow",
+        "audioCodec",
+        "videoCodec",
+        "noAudioStream",
+        "noVideoStream",
+        "multipleVideoStreams",
+        "multipleAudioStreams",
+        "audioTooManyChannels",
+        "interlacedVideo",
+        "frameRateHigh",
+        "resolutionMismatch",
+        "videoCodecMismatch",
+        "videoInterlaceMismatch",
+        "videoProfileMismatch",
+        "videoBitrateMismatch",
+        "framerateMismatch",
+        "gopMismatch",
+        "audioSampleRateMismatch",
+        "audioStereoMismatch",
+        "audioCodecMismatch",
+        "audioBitrateMismatch",
+        "videoResolutionSuboptimal",
+        "videoResolutionUnsupported",
+        "videoIngestionStarved",
+        "videoIngestionFasterThanRealtime",
+      ],
+    }),
+  })
 const LiveStreamContentDetails = () =>
   object(
     {
@@ -3435,76 +3371,70 @@ const LiveStreamContentDetails = () =>
     },
   )
 const LiveStreamHealthStatus = () =>
-  object(
-    {
-      "configurationIssues?": array(LiveStreamConfigurationIssue, {
-        description: "The configurations issues on this stream",
-      }),
-      "lastUpdateTimeSeconds?": string({
-        description: "The last time this status was updated (in seconds)",
-        format: "uint64",
-      }),
-      "status?": string({
-        description: "The status code of this stream",
-        enum: ["good", "ok", "bad", "noData", "revoked"],
-      }),
-    },
-  )
+  object({
+    "configurationIssues?": array(LiveStreamConfigurationIssue, {
+      description: "The configurations issues on this stream",
+    }),
+    "lastUpdateTimeSeconds?": string({
+      description: "The last time this status was updated (in seconds)",
+      format: "uint64",
+    }),
+    "status?": string({
+      description: "The status code of this stream",
+      enum: ["good", "ok", "bad", "noData", "revoked"],
+    }),
+  })
 const LiveStreamListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(LiveStream, {
-        description: "A list of live streams that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#liveStreamListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#liveStreamListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(LiveStream, {
+      description: "A list of live streams that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#liveStreamListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#liveStreamListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const LiveStreamSnippet = () =>
-  object(
-    {
-      "channelId?": string({
-        description:
-          "The ID that YouTube uses to uniquely identify the channel that is transmitting the stream.",
-      }),
-      "description?": string({
-        description:
-          "The stream's description. The value cannot be longer than 10000 characters.",
-      }),
-      "isDefaultStream?": boolean(),
-      "publishedAt?": string({
-        description: "The date and time that the stream was created.",
-        format: "date-time",
-      }),
-      "title?": string({
-        description:
-          "The stream's title. The value must be between 1 and 128 characters long.",
-      }),
-    },
-  )
+  object({
+    "channelId?": string({
+      description:
+        "The ID that YouTube uses to uniquely identify the channel that is transmitting the stream.",
+    }),
+    "description?": string({
+      description:
+        "The stream's description. The value cannot be longer than 10000 characters.",
+    }),
+    "isDefaultStream?": boolean(),
+    "publishedAt?": string({
+      description: "The date and time that the stream was created.",
+      format: "date-time",
+    }),
+    "title?": string({
+      description:
+        "The stream's title. The value must be between 1 and 128 characters long.",
+    }),
+  })
 const LiveStreamStatus = () =>
   object(
     {
@@ -3518,19 +3448,15 @@ const LiveStreamStatus = () =>
     },
   )
 const LocalizedProperty = () =>
-  object(
-    {
-      "defaultLanguage?": LanguageTag,
-      "localized?": array(LocalizedString),
-    },
-  )
+  object({
+    "defaultLanguage?": LanguageTag,
+    "localized?": array(LocalizedString),
+  })
 const LocalizedString = () =>
-  object(
-    {
-      "language?": string(),
-      "value?": string(),
-    },
-  )
+  object({
+    "language?": string(),
+    "value?": string(),
+  })
 const Member = () =>
   object(
     {
@@ -3550,95 +3476,85 @@ const Member = () =>
     },
   )
 const MemberListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(Member, {
-        description: "A list of members that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#memberListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#memberListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(Member, {
+      description: "A list of members that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#memberListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#memberListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const MemberSnippet = () =>
-  object(
-    {
-      "creatorChannelId?": string({
-        description: "The id of the channel that's offering memberships.",
-      }),
-      "memberDetails?": ChannelProfileDetails,
-      "membershipsDetails?": MembershipsDetails,
-    },
-  )
+  object({
+    "creatorChannelId?": string({
+      description: "The id of the channel that's offering memberships.",
+    }),
+    "memberDetails?": ChannelProfileDetails,
+    "membershipsDetails?": MembershipsDetails,
+  })
 const MembershipsDetails = () =>
-  object(
-    {
-      "accessibleLevels?": array(string(), {
-        description:
-          "Ids of all levels that the user has access to. This includes the currently active level and all other levels that are included because of a higher purchase.",
-      }),
-      "highestAccessibleLevel?": string({
-        description:
-          "Id of the highest level that the user has access to at the moment.",
-      }),
-      "highestAccessibleLevelDisplayName?": string({
-        description:
-          "Display name for the highest level that the user has access to at the moment.",
-      }),
-      "membershipsDuration?": MembershipsDuration,
-      "membershipsDurationAtLevels?": array(MembershipsDurationAtLevel, {
-        description:
-          "Data about memberships duration on particular pricing levels.",
-      }),
-    },
-  )
+  object({
+    "accessibleLevels?": array(string(), {
+      description:
+        "Ids of all levels that the user has access to. This includes the currently active level and all other levels that are included because of a higher purchase.",
+    }),
+    "highestAccessibleLevel?": string({
+      description:
+        "Id of the highest level that the user has access to at the moment.",
+    }),
+    "highestAccessibleLevelDisplayName?": string({
+      description:
+        "Display name for the highest level that the user has access to at the moment.",
+    }),
+    "membershipsDuration?": MembershipsDuration,
+    "membershipsDurationAtLevels?": array(MembershipsDurationAtLevel, {
+      description:
+        "Data about memberships duration on particular pricing levels.",
+    }),
+  })
 const MembershipsDuration = () =>
-  object(
-    {
-      "memberSince?": string({
-        description:
-          "The date and time when the user became a continuous member across all levels.",
-      }),
-      "memberTotalDurationMonths?": int32({
-        description:
-          "The cumulative time the user has been a member across all levels in complete months (the time is rounded down to the nearest integer).",
-      }),
-    },
-  )
+  object({
+    "memberSince?": string({
+      description:
+        "The date and time when the user became a continuous member across all levels.",
+    }),
+    "memberTotalDurationMonths?": int32({
+      description:
+        "The cumulative time the user has been a member across all levels in complete months (the time is rounded down to the nearest integer).",
+    }),
+  })
 const MembershipsDurationAtLevel = () =>
-  object(
-    {
-      "level?": string({
-        description: "Pricing level ID.",
-      }),
-      "memberSince?": string({
-        description:
-          "The date and time when the user became a continuous member for the given level.",
-      }),
-      "memberTotalDurationMonths?": int32({
-        description:
-          "The cumulative time the user has been a member for the given level in complete months (the time is rounded down to the nearest integer).",
-      }),
-    },
-  )
+  object({
+    "level?": string({
+      description: "Pricing level ID.",
+    }),
+    "memberSince?": string({
+      description:
+        "The date and time when the user became a continuous member for the given level.",
+    }),
+    "memberTotalDurationMonths?": int32({
+      description:
+        "The cumulative time the user has been a member for the given level in complete months (the time is rounded down to the nearest integer).",
+    }),
+  })
 const MembershipsLevel = () =>
   object(
     {
@@ -3662,39 +3578,33 @@ const MembershipsLevel = () =>
     },
   )
 const MembershipsLevelListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(MembershipsLevel, {
-        description:
-          "A list of pricing levels offered by a creator to the fans.",
-      }),
-      "kind?": string({
-        default: "youtube#membershipsLevelListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#membershipsLevelListResponse".',
-      }),
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(MembershipsLevel, {
+      description: "A list of pricing levels offered by a creator to the fans.",
+    }),
+    "kind?": string({
+      default: "youtube#membershipsLevelListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#membershipsLevelListResponse".',
+    }),
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const MembershipsLevelSnippet = () =>
-  object(
-    {
-      "creatorChannelId?": string({
-        description:
-          "The id of the channel that's offering channel memberships.",
-      }),
-      "levelDetails?": LevelDetails,
-    },
-  )
+  object({
+    "creatorChannelId?": string({
+      description: "The id of the channel that's offering channel memberships.",
+    }),
+    "levelDetails?": LevelDetails,
+  })
 const MonitorStreamInfo = () =>
   object(
     {
@@ -3759,13 +3669,11 @@ const Playlist = () =>
     },
   )
 const PlaylistContentDetails = () =>
-  object(
-    {
-      "itemCount?": uint32({
-        description: "The number of videos in the playlist.",
-      }),
-    },
-  )
+  object({
+    "itemCount?": uint32({
+      description: "The number of videos in the playlist.",
+    }),
+  })
 const PlaylistItem = () =>
   object(
     {
@@ -3791,62 +3699,56 @@ const PlaylistItem = () =>
     },
   )
 const PlaylistItemContentDetails = () =>
-  object(
-    {
-      "endAt?": string({
-        description:
-          "The time, measured in seconds from the start of the video, when the video should stop playing. (The playlist owner can specify the times when the video should start and stop playing when the video is played in the context of the playlist.) By default, assume that the video.endTime is the end of the video.",
-      }),
-      "note?": string({
-        description: "A user-generated note for this item.",
-      }),
-      "startAt?": string({
-        description:
-          "The time, measured in seconds from the start of the video, when the video should start playing. (The playlist owner can specify the times when the video should start and stop playing when the video is played in the context of the playlist.) The default value is 0.",
-      }),
-      "videoId?": string({
-        description:
-          "The ID that YouTube uses to uniquely identify a video. To retrieve the video resource, set the id query parameter to this value in your API request.",
-      }),
-      "videoPublishedAt?": string({
-        description:
-          "The date and time that the video was published to YouTube.",
-        format: "date-time",
-      }),
-    },
-  )
+  object({
+    "endAt?": string({
+      description:
+        "The time, measured in seconds from the start of the video, when the video should stop playing. (The playlist owner can specify the times when the video should start and stop playing when the video is played in the context of the playlist.) By default, assume that the video.endTime is the end of the video.",
+    }),
+    "note?": string({
+      description: "A user-generated note for this item.",
+    }),
+    "startAt?": string({
+      description:
+        "The time, measured in seconds from the start of the video, when the video should start playing. (The playlist owner can specify the times when the video should start and stop playing when the video is played in the context of the playlist.) The default value is 0.",
+    }),
+    "videoId?": string({
+      description:
+        "The ID that YouTube uses to uniquely identify a video. To retrieve the video resource, set the id query parameter to this value in your API request.",
+    }),
+    "videoPublishedAt?": string({
+      description: "The date and time that the video was published to YouTube.",
+      format: "date-time",
+    }),
+  })
 const PlaylistItemListResponse = () =>
-  object(
-    {
-      "etag?": string(),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(PlaylistItem, {
-        description:
-          "A list of playlist items that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#playlistItemListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#playlistItemListResponse". Etag of this resource.',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string(),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(PlaylistItem, {
+      description: "A list of playlist items that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#playlistItemListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#playlistItemListResponse". Etag of this resource.',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const PlaylistItemSnippet = () =>
   object(
     {
@@ -3904,38 +3806,36 @@ const PlaylistItemStatus = () =>
     },
   )
 const PlaylistListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(Playlist, {
-        description: "A list of playlists that match the request criteria",
-      }),
-      "kind?": string({
-        default: "youtube#playlistListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#playlistListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(Playlist, {
+      description: "A list of playlists that match the request criteria",
+    }),
+    "kind?": string({
+      default: "youtube#playlistListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#playlistListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const PlaylistLocalization = () =>
   object(
     {
@@ -3951,14 +3851,12 @@ const PlaylistLocalization = () =>
     },
   )
 const PlaylistPlayer = () =>
-  object(
-    {
-      "embedHtml?": string({
-        description:
-          "An <iframe> tag that embeds a player that will play the playlist.",
-      }),
-    },
-  )
+  object({
+    "embedHtml?": string({
+      description:
+        "An <iframe> tag that embeds a player that will play the playlist.",
+    }),
+  })
 const PlaylistSnippet = () =>
   object(
     {
@@ -4000,14 +3898,12 @@ const PlaylistSnippet = () =>
     },
   )
 const PlaylistStatus = () =>
-  object(
-    {
-      "privacyStatus?": string({
-        description: "The playlist's privacy status.",
-        enum: ["public", "unlisted", "private"],
-      }),
-    },
-  )
+  object({
+    "privacyStatus?": string({
+      description: "The playlist's privacy status.",
+      enum: ["public", "unlisted", "private"],
+    }),
+  })
 const PropertyValue = () =>
   object(
     {
@@ -4023,11 +3919,9 @@ const PropertyValue = () =>
     },
   )
 const RelatedEntity = () =>
-  object(
-    {
-      "entity?": Entity,
-    },
-  )
+  object({
+    "entity?": Entity,
+  })
 const ResourceId = () =>
   object(
     {
@@ -4053,39 +3947,37 @@ const ResourceId = () =>
     },
   )
 const SearchListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(SearchResult, {
-        description: "Pagination information for token pagination.",
-      }),
-      "kind?": string({
-        default: "youtube#searchListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#searchListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "regionCode?": string(),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(SearchResult, {
+      description: "Pagination information for token pagination.",
+    }),
+    "kind?": string({
+      default: "youtube#searchListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#searchListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "regionCode?": string(),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const SearchResult = () =>
   object(
     {
@@ -4185,38 +4077,36 @@ const SubscriptionContentDetails = () =>
     },
   )
 const SubscriptionListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(Subscription, {
-        description: "A list of subscriptions that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#subscriptionListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#subscriptionListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(Subscription, {
+      description: "A list of subscriptions that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#subscriptionListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#subscriptionListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const SubscriptionSnippet = () =>
   object(
     {
@@ -4288,103 +4178,92 @@ const SuperChatEvent = () =>
     },
   )
 const SuperChatEventListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(SuperChatEvent, {
-        description:
-          "A list of Super Chat purchases that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#superChatEventListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#superChatEventListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(SuperChatEvent, {
+      description:
+        "A list of Super Chat purchases that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#superChatEventListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#superChatEventListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const SuperChatEventSnippet = () =>
-  object(
-    {
-      "amountMicros?": string({
-        description:
-          "The purchase amount, in micros of the purchase currency. e.g., 1 is represented as 1000000.",
-        format: "uint64",
-      }),
-      "channelId?": string({
-        description: "Channel id where the event occurred.",
-      }),
-      "commentText?": string({
-        description: "The text contents of the comment left by the user.",
-      }),
-      "createdAt?": string({
-        description: "The date and time when the event occurred.",
-        format: "date-time",
-      }),
-      "currency?": string({
-        description: "The currency in which the purchase was made. ISO 4217.",
-      }),
-      "displayString?": string({
-        description:
-          'A rendered string that displays the purchase amount and currency (e.g., "$1.00"). The string is rendered for the given language.',
-      }),
-      "isSuperStickerEvent?": boolean({
-        description: "True if this event is a Super Sticker event.",
-      }),
-      "messageType?": uint32({
-        description:
-          "The tier for the paid message, which is based on the amount of money spent to purchase the message.",
-      }),
-      "superStickerMetadata?": SuperStickerMetadata,
-      "supporterDetails?": ChannelProfileDetails,
-    },
-  )
+  object({
+    "amountMicros?": string({
+      description:
+        "The purchase amount, in micros of the purchase currency. e.g., 1 is represented as 1000000.",
+      format: "uint64",
+    }),
+    "channelId?": string({
+      description: "Channel id where the event occurred.",
+    }),
+    "commentText?": string({
+      description: "The text contents of the comment left by the user.",
+    }),
+    "createdAt?": string({
+      description: "The date and time when the event occurred.",
+      format: "date-time",
+    }),
+    "currency?": string({
+      description: "The currency in which the purchase was made. ISO 4217.",
+    }),
+    "displayString?": string({
+      description:
+        'A rendered string that displays the purchase amount and currency (e.g., "$1.00"). The string is rendered for the given language.',
+    }),
+    "isSuperStickerEvent?": boolean({
+      description: "True if this event is a Super Sticker event.",
+    }),
+    "messageType?": uint32({
+      description:
+        "The tier for the paid message, which is based on the amount of money spent to purchase the message.",
+    }),
+    "superStickerMetadata?": SuperStickerMetadata,
+    "supporterDetails?": ChannelProfileDetails,
+  })
 const SuperStickerMetadata = () =>
-  object(
-    {
-      "altText?": string({
-        description:
-          "Internationalized alt text that describes the sticker image and any animation associated with it.",
-      }),
-      "altTextLanguage?": string({
-        description:
-          "Specifies the localization language in which the alt text is returned.",
-      }),
-      "stickerId?": string({
-        description:
-          "Unique identifier of the Super Sticker. This is a shorter form of the alt_text that includes pack name and a recognizable characteristic of the sticker.",
-      }),
-    },
-  )
+  object({
+    "altText?": string({
+      description:
+        "Internationalized alt text that describes the sticker image and any animation associated with it.",
+    }),
+    "altTextLanguage?": string({
+      description:
+        "Specifies the localization language in which the alt text is returned.",
+    }),
+    "stickerId?": string({
+      description:
+        "Unique identifier of the Super Sticker. This is a shorter form of the alt_text that includes pack name and a recognizable characteristic of the sticker.",
+    }),
+  })
 const TestItem = () =>
-  object(
-    {
-      "featuredPart?": boolean(),
-      "gaia?": string({
-        format: "int64",
-      }),
-      "id?": string(),
-      "snippet?": TestItemTestItemSnippet,
-    },
-  )
-const TestItemTestItemSnippet = () =>
-  object(
-    {},
-  )
+  object({
+    "featuredPart?": boolean(),
+    "gaia?": string({
+      format: "int64",
+    }),
+    "id?": string(),
+    "snippet?": TestItemTestItemSnippet,
+  })
+const TestItemTestItemSnippet = () => object({})
 const ThirdPartyLink = () =>
   object(
     {
@@ -4409,19 +4288,17 @@ const ThirdPartyLink = () =>
     },
   )
 const ThirdPartyLinkListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "items?": array(ThirdPartyLink),
-      "kind?": string({
-        default: "youtube#thirdPartyLinkListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#thirdPartyLinkListResponse".',
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "items?": array(ThirdPartyLink),
+    "kind?": string({
+      default: "youtube#thirdPartyLinkListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#thirdPartyLinkListResponse".',
+    }),
+  })
 const ThirdPartyLinkSnippet = () =>
   object(
     {
@@ -4480,28 +4357,26 @@ const ThumbnailDetails = () =>
     },
   )
 const ThumbnailSetResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(ThumbnailDetails, {
-        description: "A list of thumbnails.",
-      }),
-      "kind?": string({
-        default: "youtube#thumbnailSetResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#thumbnailSetResponse".',
-      }),
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(ThumbnailDetails, {
+      description: "A list of thumbnails.",
+    }),
+    "kind?": string({
+      default: "youtube#thumbnailSetResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#thumbnailSetResponse".',
+    }),
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const TokenPagination = () =>
   object(
     {},
@@ -4509,14 +4384,13 @@ const TokenPagination = () =>
       description: "Stub token pagination template to suppress results.",
     },
   )
+
 const Video = () =>
   object(
     {
       "ageGating?": VideoAgeGating,
       "contentDetails?": VideoContentDetails,
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
+      "etag?": string({ description: "Etag of this resource." }),
       "fileDetails?": VideoFileDetails,
       "id?": string({
         description: "The ID that YouTube uses to uniquely identify the video.",
@@ -4546,28 +4420,28 @@ const Video = () =>
       description: "A *video* resource represents a YouTube video.",
     },
   )
+
 const VideoAbuseReport = () =>
-  object(
-    {
-      "comments?": string({
-        description: "Additional comments regarding the abuse report.",
-      }),
-      "language?": string({
-        description: "The language that the content was viewed in.",
-      }),
-      "reasonId?": string({
-        description:
-          "The high-level, or primary, reason that the content is abusive. The value is an abuse report reason ID.",
-      }),
-      "secondaryReasonId?": string({
-        description:
-          "The specific, or secondary, reason that this content is abusive (if available). The value is an abuse report reason ID that is a valid secondary reason for the primary reason.",
-      }),
-      "videoId?": string({
-        description: "The ID that YouTube uses to uniquely identify the video.",
-      }),
-    },
-  )
+  object({
+    "comments?": string({
+      description: "Additional comments regarding the abuse report.",
+    }),
+    "language?": string({
+      description: "The language that the content was viewed in.",
+    }),
+    "reasonId?": string({
+      description:
+        "The high-level, or primary, reason that the content is abusive. The value is an abuse report reason ID.",
+    }),
+    "secondaryReasonId?": string({
+      description:
+        "The specific, or secondary, reason that this content is abusive (if available). The value is an abuse report reason ID that is a valid secondary reason for the primary reason.",
+    }),
+    "videoId?": string({
+      description: "The ID that YouTube uses to uniquely identify the video.",
+    }),
+  })
+
 const VideoAbuseReportReason = () =>
   object(
     {
@@ -4590,29 +4464,27 @@ const VideoAbuseReportReason = () =>
     },
   )
 const VideoAbuseReportReasonListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(VideoAbuseReportReason, {
-        description:
-          "A list of valid abuse reasons that are used with `video.ReportAbuse`.",
-      }),
-      "kind?": string({
-        default: "youtube#videoAbuseReportReasonListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string `"youtube#videoAbuseReportReasonListResponse"`.',
-      }),
-      "visitorId?": string({
-        description: "The `visitorId` identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(VideoAbuseReportReason, {
+      description:
+        "A list of valid abuse reasons that are used with `video.ReportAbuse`.",
+    }),
+    "kind?": string({
+      default: "youtube#videoAbuseReportReasonListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string `"youtube#videoAbuseReportReasonListResponse"`.',
+    }),
+    "visitorId?": string({
+      description: "The `visitorId` identifies the visitor.",
+    }),
+  })
 const VideoAbuseReportReasonSnippet = () =>
   object(
     {
@@ -4631,34 +4503,30 @@ const VideoAbuseReportReasonSnippet = () =>
     },
   )
 const VideoAbuseReportSecondaryReason = () =>
-  object(
-    {
-      "id?": string({
-        description: "The ID of this abuse report secondary reason.",
-      }),
-      "label?": string({
-        description:
-          "The localized label for this abuse report secondary reason.",
-      }),
-    },
-  )
+  object({
+    "id?": string({
+      description: "The ID of this abuse report secondary reason.",
+    }),
+    "label?": string({
+      description:
+        "The localized label for this abuse report secondary reason.",
+    }),
+  })
 const VideoAgeGating = () =>
-  object(
-    {
-      "alcoholContent?": boolean({
-        description:
-          "Indicates whether or not the video has alcoholic beverage content. Only users of legal purchasing age in a particular country, as identified by ICAP, can view the content.",
-      }),
-      "restricted?": boolean({
-        description:
-          "Age-restricted trailers. For redband trailers and adult-rated video-games. Only users aged 18+ can view the content. The the field is true the content is restricted to viewers aged 18+. Otherwise The field won't be present.",
-      }),
-      "videoGameRating?": string({
-        description: "Video game rating, if any.",
-        enum: ["anyone", "m15Plus", "m16Plus", "m17Plus"],
-      }),
-    },
-  )
+  object({
+    "alcoholContent?": boolean({
+      description:
+        "Indicates whether or not the video has alcoholic beverage content. Only users of legal purchasing age in a particular country, as identified by ICAP, can view the content.",
+    }),
+    "restricted?": boolean({
+      description:
+        "Age-restricted trailers. For redband trailers and adult-rated video-games. Only users aged 18+ can view the content. The the field is true the content is restricted to viewers aged 18+. Otherwise The field won't be present.",
+    }),
+    "videoGameRating?": string({
+      description: "Video game rating, if any.",
+      enum: ["anyone", "m15Plus", "m16Plus", "m17Plus"],
+    }),
+  })
 const VideoCategory = () =>
   object(
     {
@@ -4682,39 +4550,37 @@ const VideoCategory = () =>
     },
   )
 const VideoCategoryListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(VideoCategory, {
-        description:
-          "A list of video categories that can be associated with YouTube videos. In this map, the video category ID is the map key, and its value is the corresponding videoCategory resource.",
-      }),
-      "kind?": string({
-        default: "youtube#videoCategoryListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#videoCategoryListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(VideoCategory, {
+      description:
+        "A list of video categories that can be associated with YouTube videos. In this map, the video category ID is the map key, and its value is the corresponding videoCategory resource.",
+    }),
+    "kind?": string({
+      default: "youtube#videoCategoryListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#videoCategoryListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const VideoCategorySnippet = () =>
   object(
     {
@@ -4905,59 +4771,55 @@ const VideoFileDetailsVideoStream = () =>
     },
   )
 const VideoGetRatingResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(VideoRating, {
-        description: "A list of ratings that match the request criteria.",
-      }),
-      "kind?": string({
-        default: "youtube#videoGetRatingResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#videoGetRatingResponse".',
-      }),
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(VideoRating, {
+      description: "A list of ratings that match the request criteria.",
+    }),
+    "kind?": string({
+      default: "youtube#videoGetRatingResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#videoGetRatingResponse".',
+    }),
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const VideoListResponse = () =>
-  object(
-    {
-      "etag?": string({
-        description: "Etag of this resource.",
-      }),
-      "eventId?": string({
-        description:
-          "Serialized EventId of the request which produced this response.",
-      }),
-      "items?": array(Video),
-      "kind?": string({
-        default: "youtube#videoListResponse",
-        description:
-          'Identifies what kind of resource this is. Value: the fixed string "youtube#videoListResponse".',
-      }),
-      "nextPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
-      }),
-      "pageInfo?": PageInfo,
-      "prevPageToken?": string({
-        description:
-          "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
-      }),
-      "tokenPagination?": TokenPagination,
-      "visitorId?": string({
-        description: "The visitorId identifies the visitor.",
-      }),
-    },
-  )
+  object({
+    "etag?": string({
+      description: "Etag of this resource.",
+    }),
+    "eventId?": string({
+      description:
+        "Serialized EventId of the request which produced this response.",
+    }),
+    "items?": array(Video),
+    "kind?": string({
+      default: "youtube#videoListResponse",
+      description:
+        'Identifies what kind of resource this is. Value: the fixed string "youtube#videoListResponse".',
+    }),
+    "nextPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
+    }),
+    "pageInfo?": PageInfo,
+    "prevPageToken?": string({
+      description:
+        "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
+    }),
+    "tokenPagination?": TokenPagination,
+    "visitorId?": string({
+      description: "The visitorId identifies the visitor.",
+    }),
+  })
 const VideoLiveStreamingDetails = () =>
   object(
     {
@@ -5123,6 +4985,7 @@ const VideoRating = () =>
       description: "Basic details about rating of a video.",
     },
   )
+
 const VideoRecordingDetails = () =>
   object(
     {
@@ -5140,6 +5003,7 @@ const VideoRecordingDetails = () =>
       description: "Recording information associated with the video.",
     },
   )
+
 const VideoSnippet = () =>
   object(
     {
@@ -5286,6 +5150,7 @@ const VideoStatus = () =>
         "Basic details about a video category, such as its localized title. Next Id: 18",
     },
   )
+
 const VideoSuggestions = () =>
   object(
     {
@@ -5368,6 +5233,7 @@ const VideoSuggestions = () =>
         "Specifies suggestions on how to improve video content, including encoding hints, tag suggestions, and editor suggestions.",
     },
   )
+
 const VideoSuggestionsTagSuggestion = () =>
   object(
     {
@@ -5383,6 +5249,7 @@ const VideoSuggestionsTagSuggestion = () =>
       description: "A single tag suggestion with it's relevance information.",
     },
   )
+
 const VideoTopicDetails = () =>
   object(
     {
@@ -5403,6 +5270,7 @@ const VideoTopicDetails = () =>
       description: "Freebase topic information related to the video.",
     },
   )
+
 const WatchSettings = () =>
   object(
     {
@@ -5467,6 +5335,7 @@ const __xgafv = named(
     }),
   }),
 )
+
 const access_token = named(
   "access_token",
   queryParam({
@@ -5476,6 +5345,7 @@ const access_token = named(
     schema: string(),
   }),
 )
+
 const alt = named(
   "alt",
   queryParam({
@@ -5487,6 +5357,7 @@ const alt = named(
     }),
   }),
 )
+
 const callback = named(
   "callback",
   queryParam({
@@ -5496,6 +5367,7 @@ const callback = named(
     schema: string(),
   }),
 )
+
 const fields = named(
   "fields",
   queryParam({
@@ -5506,6 +5378,7 @@ const fields = named(
     schema: string(),
   }),
 )
+
 const key = named(
   "key",
   queryParam({
@@ -5516,6 +5389,7 @@ const key = named(
     schema: string(),
   }),
 )
+
 const oauth_token = named(
   "oauth_token",
   queryParam({
@@ -5525,6 +5399,7 @@ const oauth_token = named(
     schema: string(),
   }),
 )
+
 const prettyPrint = named(
   "prettyPrint",
   queryParam({
@@ -5534,6 +5409,7 @@ const prettyPrint = named(
     schema: boolean(),
   }),
 )
+
 const quotaUser = named(
   "quotaUser",
   queryParam({
@@ -5544,6 +5420,7 @@ const quotaUser = named(
     schema: string(),
   }),
 )
+
 const uploadType = named(
   "uploadType",
   queryParam({
@@ -5554,6 +5431,7 @@ const uploadType = named(
     schema: string(),
   }),
 )
+
 const upload_protocol = named(
   "upload_protocol",
   queryParam({
@@ -5563,6 +5441,7 @@ const upload_protocol = named(
     schema: string(),
   }),
 )
+
 export default responsibleAPI({
   partialDoc: {
     openapi: "3.0.0",
@@ -5647,7 +5526,7 @@ export default responsibleAPI({
         body: AbuseReport,
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: AbuseReport,
         }),
@@ -5687,7 +5566,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: ActivityListResponse,
         }),
@@ -5719,7 +5598,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({ description: "Successful response" }),
+          200: response({ description: "Successful response" }),
         },
       },
       GET: {
@@ -5753,7 +5632,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: CaptionListResponse,
           }),
@@ -5791,7 +5670,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: Caption,
           }),
@@ -5829,7 +5708,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: Caption,
           }),
@@ -5870,7 +5749,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
         }),
       },
@@ -5906,7 +5785,7 @@ export default responsibleAPI({
         },
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: ChannelBannerResource,
         }),
@@ -5935,7 +5814,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -5977,7 +5856,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: ChannelSectionListResponse,
           }),
@@ -6009,7 +5888,7 @@ export default responsibleAPI({
           body: ChannelSection,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: ChannelSection,
           }),
@@ -6037,7 +5916,7 @@ export default responsibleAPI({
           body: ChannelSection,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: ChannelSection,
           }),
@@ -6108,7 +5987,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: ChannelListResponse,
           }),
@@ -6136,7 +6015,7 @@ export default responsibleAPI({
           body: Channel,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: Channel,
           }),
@@ -6205,7 +6084,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: CommentThreadListResponse,
           }),
@@ -6227,7 +6106,7 @@ export default responsibleAPI({
           body: CommentThread,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: CommentThread,
           }),
@@ -6246,7 +6125,7 @@ export default responsibleAPI({
           body: CommentThread,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: CommentThread,
           }),
@@ -6270,7 +6149,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -6313,7 +6192,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: CommentListResponse,
           }),
@@ -6335,7 +6214,7 @@ export default responsibleAPI({
           body: Comment,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: Comment,
           }),
@@ -6357,7 +6236,7 @@ export default responsibleAPI({
           body: Comment,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: Comment,
           }),
@@ -6380,7 +6259,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
         }),
       },
@@ -6410,7 +6289,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
         }),
       },
@@ -6435,7 +6314,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: I18nLanguageListResponse,
         }),
@@ -6461,7 +6340,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: I18nRegionListResponse,
         }),
@@ -6495,7 +6374,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -6561,7 +6440,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveBroadcastListResponse,
           }),
@@ -6592,7 +6471,7 @@ export default responsibleAPI({
           body: LiveBroadcast,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveBroadcast,
           }),
@@ -6624,7 +6503,7 @@ export default responsibleAPI({
           body: LiveBroadcast,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveBroadcast,
           }),
@@ -6661,7 +6540,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: LiveBroadcast,
         }),
@@ -6698,7 +6577,7 @@ export default responsibleAPI({
         body: Cuepoint,
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: Cuepoint,
         }),
@@ -6737,7 +6616,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: LiveBroadcast,
         }),
@@ -6761,7 +6640,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -6783,7 +6662,7 @@ export default responsibleAPI({
           body: LiveChatBan,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveChatBan,
           }),
@@ -6807,7 +6686,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -6853,7 +6732,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveChatMessageListResponse,
           }),
@@ -6876,7 +6755,7 @@ export default responsibleAPI({
           body: LiveChatMessage,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveChatMessage,
           }),
@@ -6900,7 +6779,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -6936,7 +6815,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveChatModeratorListResponse,
           }),
@@ -6959,7 +6838,7 @@ export default responsibleAPI({
           body: LiveChatModerator,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveChatModerator,
           }),
@@ -6991,7 +6870,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -7037,7 +6916,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveStreamListResponse,
           }),
@@ -7068,7 +6947,7 @@ export default responsibleAPI({
           body: LiveStream,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveStream,
           }),
@@ -7099,7 +6978,7 @@ export default responsibleAPI({
           body: LiveStream,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: LiveStream,
           }),
@@ -7145,7 +7024,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: MemberListResponse,
         }),
@@ -7168,7 +7047,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: MembershipsLevelListResponse,
         }),
@@ -7197,7 +7076,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -7243,7 +7122,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: PlaylistItemListResponse,
           }),
@@ -7271,7 +7150,7 @@ export default responsibleAPI({
           body: PlaylistItem,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: PlaylistItem,
           }),
@@ -7299,7 +7178,7 @@ export default responsibleAPI({
           body: PlaylistItem,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: PlaylistItem,
           }),
@@ -7328,7 +7207,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -7384,7 +7263,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: PlaylistListResponse,
           }),
@@ -7416,7 +7295,7 @@ export default responsibleAPI({
           body: Playlist,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: Playlist,
           }),
@@ -7444,7 +7323,7 @@ export default responsibleAPI({
           body: Playlist,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: Playlist,
           }),
@@ -7601,7 +7480,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: SearchListResponse,
         }),
@@ -7626,7 +7505,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -7696,7 +7575,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: SubscriptionListResponse,
           }),
@@ -7720,7 +7599,7 @@ export default responsibleAPI({
           body: Subscription,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: Subscription,
           }),
@@ -7758,7 +7637,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: SuperChatEventListResponse,
         }),
@@ -7779,7 +7658,7 @@ export default responsibleAPI({
         body: TestItem,
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: TestItem,
         }),
@@ -7813,7 +7692,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -7842,7 +7721,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: ThirdPartyLinkListResponse,
           }),
@@ -7865,7 +7744,7 @@ export default responsibleAPI({
           body: ThirdPartyLink,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: ThirdPartyLink,
           }),
@@ -7888,7 +7767,7 @@ export default responsibleAPI({
           body: ThirdPartyLink,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: ThirdPartyLink,
           }),
@@ -7918,7 +7797,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: ThumbnailSetResponse,
         }),
@@ -7943,7 +7822,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: VideoAbuseReportReasonListResponse,
         }),
@@ -7974,7 +7853,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: VideoCategoryListResponse,
         }),
@@ -8003,7 +7882,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
           }),
         },
@@ -8074,7 +7953,7 @@ export default responsibleAPI({
           ),
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: VideoListResponse,
           }),
@@ -8223,7 +8102,7 @@ export default responsibleAPI({
           },
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: Video,
           }),
@@ -8251,7 +8130,7 @@ export default responsibleAPI({
           body: Video,
         },
         res: {
-          "200": response({
+          200: response({
             description: "Successful response",
             body: Video,
           }),
@@ -8277,7 +8156,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
           body: VideoGetRatingResponse,
         }),
@@ -8302,9 +8181,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
-          description: "Successful response",
-        }),
+        200: response({ description: "Successful response" }),
       },
       tags: [tags.videos],
     }),
@@ -8326,7 +8203,7 @@ export default responsibleAPI({
         body: VideoAbuseReport,
       },
       res: {
-        "200": response({
+        200: response({
           description: "Successful response",
         }),
       },
@@ -8357,9 +8234,7 @@ export default responsibleAPI({
         },
       },
       res: {
-        "200": response({
-          description: "Successful response",
-        }),
+        200: response({ description: "Successful response" }),
       },
       tags: [tags.watermarks],
     }),
@@ -8381,9 +8256,7 @@ export default responsibleAPI({
         ),
       },
       res: {
-        "200": response({
-          description: "Successful response",
-        }),
+        200: response({ description: "Successful response" }),
       },
       tags: [tags.watermarks],
     }),
