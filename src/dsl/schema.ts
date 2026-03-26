@@ -1,6 +1,6 @@
 import type { Nameable } from "./nameable.ts"
 
-type StringFormat =
+type KnownStringFormat =
   | "byte"
   | "email"
   | "uri"
@@ -10,6 +10,8 @@ type StringFormat =
   | "binary"
   | "url"
   | "blob"
+
+type StringFormat = KnownStringFormat | (string & {})
 
 type SchemaOpts = Readonly<{
   default?: unknown
