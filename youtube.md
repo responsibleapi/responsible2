@@ -248,18 +248,7 @@ The example mostly uses root `forAll`, but it does not really exploit per-resour
 
 ## Duplications that are clean targets for DSL work
 
-### 1. Scope-level operation defaults should cover `tags`
 
-`scope({ forAll })` currently helps with request/response defaults, but not with operation metadata like tags.
-
-That forces this repetition on almost every grouped resource:
-
-- `tags: [tags.captions]`
-- `tags: [tags.channelSections]`
-- `tags: [tags.comments]`
-- and so on
-
-A `scope`-level tag default would remove a lot of noise immediately.
 
 ### 2. Parameter-group composition is missing
 
