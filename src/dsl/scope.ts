@@ -1,7 +1,7 @@
 import type { oas31 } from "openapi3-ts"
 import type { RequireAtLeastTwo } from "../lib.ts"
 import type { HttpMethod, Mime, Resp } from "./methods.ts"
-import type { Nameable } from "./nameable.ts"
+import type { NamedThunk } from "./nameable.ts"
 import type { Schema } from "./schema.ts"
 import type { Security } from "./security.ts"
 import type { OpTags, TagRegistry } from "./tags.ts"
@@ -19,7 +19,14 @@ interface QueryParamRaw extends ReusableParam {
   explode?: boolean
 }
 
-type Param = Nameable<QueryParamRaw>
+/**
+ * `params` is reserved for reusable named parameter components. Inline request
+ * params should use dedicated DSL fields such as {@link OpReq.query} and
+ * {@link OpReq.pathParams}.
+ *
+ * @dsl
+ */
+type Param = NamedThunk<QueryParamRaw>
 
 export const queryParam = (r: QueryParamRaw): QueryParamRaw => r
 

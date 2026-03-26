@@ -6344,22 +6344,15 @@ export default responsibleAPI({
       description: "Inserts a new resource into this collection.",
       id: "youtube.abuseReports.insert",
       req: {
-        params: [
-          queryParam({
-            description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
-            } as const),
-            style: "form"
-          })
-        ],
+              type: "array",
+              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include."
+            } as const)
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl"),
         body: ({
           "application/json": AbuseReport
@@ -6379,82 +6372,43 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.activities.list",
       req: {
-        params: [
-          queryParam({
-            description: "The *part* parameter specifies a comma-separated list of one or more activity resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in an activity resource, the snippet property contains other properties that identify the type of activity, a display title for the activity, and so forth. If you set *part=snippet*, the API response will also contain all of those nested properties.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "The *part* parameter specifies a comma-separated list of one or more activity resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in an activity resource, the snippet property contains other properties that identify the type of activity, a display title for the activity, and so forth. If you set *part=snippet*, the API response will also contain all of those nested properties."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            in: "query",
-            name: "channelId",
-            schema: ({
+          "channelId?": ({
               type: "string"
-            } as const)
-          }),
-          queryParam({
-            in: "query",
-            name: "home",
-            schema: ({
+            } as const),
+          "home?": ({
               type: "boolean"
-            } as const)
-          }),
-          queryParam({
-            description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-            in: "query",
-            name: "maxResults",
-            schema: ({
+            } as const),
+          "maxResults?": ({
               maximum: 50,
               minimum: 0,
-              type: "integer"
-            } as const)
-          }),
-          queryParam({
-            in: "query",
-            name: "mine",
-            schema: ({
+              type: "integer",
+              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+            } as const),
+          "mine?": ({
               type: "boolean"
-            } as const)
-          }),
-          queryParam({
-            description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-            in: "query",
-            name: "pageToken",
-            schema: ({
+            } as const),
+          "pageToken?": ({
+              type: "string",
+              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
+            } as const),
+          "publishedAfter?": ({
+              type: "string"
+            } as const),
+          "publishedBefore?": ({
+              type: "string"
+            } as const),
+          "regionCode?": ({
               type: "string"
             } as const)
-          }),
-          queryParam({
-            in: "query",
-            name: "publishedAfter",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            in: "query",
-            name: "publishedBefore",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            in: "query",
-            name: "regionCode",
-            schema: ({
-              type: "string"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly")
       },
       res: {
@@ -6475,32 +6429,19 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.captions.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
+              } as const),
+            "onBehalfOf?": ({
+                type: "string",
+                description: "ID of the Google+ Page for the channel that the request is be on behalf of"
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            }),
-            queryParam({
-              description: "ID of the Google+ Page for the channel that the request is be on behalf of",
-              in: "query",
-              name: "onBehalfOf",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -6513,60 +6454,34 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.captions.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more caption resource parts that the API response will include. The part names that you can include in the parameter value are id and snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more caption resource parts that the API response will include. The part names that you can include in the parameter value are id and snippet."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Returns the captions for the specified video.",
-              in: "query",
-              name: "videoId",
-              required: true,
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Returns the captions with the given IDs for Stubby or Apiary.",
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
+            videoId: ({
+                type: "string",
+                description: "Returns the captions for the specified video."
+              } as const),
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "Returns the captions with the given IDs for Stubby or Apiary."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "ID of the Google+ Page for the channel that the request is on behalf of.",
-              in: "query",
-              name: "onBehalfOf",
-              schema: ({
-                type: "string"
+            "onBehalfOf?": ({
+                type: "string",
+                description: "ID of the Google+ Page for the channel that the request is on behalf of."
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -6582,46 +6497,27 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.captions.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies the caption resource parts that the API response will include. Set the parameter value to snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies the caption resource parts that the API response will include. Set the parameter value to snippet."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "ID of the Google+ Page for the channel that the request is be on behalf of",
-              in: "query",
-              name: "onBehalfOf",
-              schema: ({
-                type: "string"
+            "onBehalfOf?": ({
+                type: "string",
+                description: "ID of the Google+ Page for the channel that the request is be on behalf of"
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "sync?": ({
+                type: "boolean",
+                description: "Extra parameter to allow automatically syncing the uploaded caption/transcript with the audio."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Extra parameter to allow automatically syncing the uploaded caption/transcript with the audio.",
-              in: "query",
-              name: "sync",
-              schema: ({
-                type: "boolean"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/octet-stream": Caption,
@@ -6641,46 +6537,27 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.captions.update",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more caption resource parts that the API response will include. The part names that you can include in the parameter value are id and snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more caption resource parts that the API response will include. The part names that you can include in the parameter value are id and snippet."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "ID of the Google+ Page for the channel that the request is on behalf of.",
-              in: "query",
-              name: "onBehalfOf",
-              schema: ({
-                type: "string"
+            "onBehalfOf?": ({
+                type: "string",
+                description: "ID of the Google+ Page for the channel that the request is on behalf of."
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "sync?": ({
+                type: "boolean",
+                description: "Extra parameter to allow automatically syncing the uploaded caption/transcript with the audio."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Extra parameter to allow automatically syncing the uploaded caption/transcript with the audio.",
-              in: "query",
-              name: "sync",
-              schema: ({
-                type: "boolean"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/octet-stream": Caption,
@@ -6701,49 +6578,30 @@ export default responsibleAPI({
       description: "Downloads a caption track.",
       id: "youtube.captions.download",
       req: {
-        params: [
-          queryParam({
-            description: "The ID of the caption track to download, required for One Platform.",
-            in: "path",
-            name: "id",
-            required: true,
-            schema: ({
-              type: "string"
+        pathParams: {
+          id: ({
+              type: "string",
+              description: "The ID of the caption track to download, required for One Platform."
             } as const)
-          }),
-          queryParam({
-            description: "ID of the Google+ Page for the channel that the request is be on behalf of",
-            in: "query",
-            name: "onBehalfOf",
-            schema: ({
-              type: "string"
+        },
+        query: {
+          "onBehalfOf?": ({
+              type: "string",
+              description: "ID of the Google+ Page for the channel that the request is be on behalf of"
+            } as const),
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+            } as const),
+          "tfmt?": ({
+              type: "string",
+              description: "Convert the captions into this format. Supported options are sbv, srt, and vtt."
+            } as const),
+          "tlang?": ({
+              type: "string",
+              description: "tlang is the language code; machine translate the captions into this language."
             } as const)
-          }),
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Convert the captions into this format. Supported options are sbv, srt, and vtt.",
-            in: "query",
-            name: "tfmt",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "tlang is the language code; machine translate the captions into this language.",
-            in: "query",
-            name: "tlang",
-            schema: ({
-              type: "string"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
       },
       res: {
@@ -6757,32 +6615,20 @@ export default responsibleAPI({
       description: "Inserts a new resource into this collection.",
       id: "youtube.channelBanners.insert",
       req: {
-        params: [
-          queryParam({
-            description: "Unused, channel_id is currently derived from the security context of the requestor.",
-            in: "query",
-            name: "channelId",
-            schema: ({
-              type: "string"
+        query: {
+          "channelId?": ({
+              type: "string",
+              description: "Unused, channel_id is currently derived from the security context of the requestor."
+            } as const),
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+            } as const),
+          "onBehalfOfContentOwnerChannel?": ({
+              type: "string",
+              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
             } as const)
-          }),
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-            in: "query",
-            name: "onBehalfOfContentOwnerChannel",
-            schema: ({
-              type: "string"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.upload"),
         body: ({
           "application/octet-stream": ChannelBannerResource,
@@ -6808,24 +6654,15 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.channelSections.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -6838,67 +6675,38 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.channelSections.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more channelSection resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, and contentDetails. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channelSection resource, the snippet property contains other properties, such as a display title for the channelSection. If you set *part=snippet*, the API response will also contain all of those nested properties.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more channelSection resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, and contentDetails. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channelSection resource, the snippet property contains other properties, such as a display title for the channelSection. If you set *part=snippet*, the API response will also contain all of those nested properties."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Return the ChannelSections owned by the specified channel ID.",
-              in: "query",
-              name: "channelId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return content in specified language",
-              in: "query",
-              name: "hl",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the ChannelSections with the given IDs for Stubby or Apiary.",
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
+            "channelId?": ({
+                type: "string",
+                description: "Return the ChannelSections owned by the specified channel ID."
+              } as const),
+            "hl?": ({
+                type: "string",
+                description: "Return content in specified language"
+              } as const),
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "Return the ChannelSections with the given IDs for Stubby or Apiary."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Return the ChannelSections owned by the authenticated user.",
-              in: "query",
-              name: "mine",
-              schema: ({
-                type: "boolean"
+            "mine?": ({
+                type: "boolean",
+                description: "Return the ChannelSections owned by the authenticated user."
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -6914,38 +6722,23 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.channelSections.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
               } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/json": ChannelSection
@@ -6964,30 +6757,19 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.channelSections.update",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/json": ChannelSection
@@ -7011,109 +6793,60 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.channels.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more channel resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channel resource, the contentDetails property contains other properties, such as the uploads properties. As such, if you set *part=contentDetails*, the API response will also contain all of those nested properties.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more channel resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channel resource, the contentDetails property contains other properties, such as the uploads properties. As such, if you set *part=contentDetails*, the API response will also contain all of those nested properties."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Return the channels within the specified guide category ID.",
-              in: "query",
-              name: "categoryId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the channel associated with a YouTube username.",
-              in: "query",
-              name: "forUsername",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Stands for \"host language\". Specifies the localization language of the metadata to be filled into snippet.localized. The field is filled with the default metadata if there is no localization in the specified language. The parameter value must be a language code included in the list returned by the i18nLanguages.list method (e.g. en_US, es_MX).",
-              in: "query",
-              name: "hl",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the channels with the specified IDs.",
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
+            "categoryId?": ({
+                type: "string",
+                description: "Return the channels within the specified guide category ID."
+              } as const),
+            "forUsername?": ({
+                type: "string",
+                description: "Return the channel associated with a YouTube username."
+              } as const),
+            "hl?": ({
+                type: "string",
+                description: "Stands for \"host language\". Specifies the localization language of the metadata to be filled into snippet.localized. The field is filled with the default metadata if there is no localization in the specified language. The parameter value must be a language code included in the list returned by the i18nLanguages.list method (e.g. en_US, es_MX)."
+              } as const),
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "Return the channels with the specified IDs."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Return the channels managed by the authenticated user.",
-              in: "query",
-              name: "managedByMe",
-              schema: ({
-                type: "boolean"
-              } as const)
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+            "managedByMe?": ({
+                type: "boolean",
+                description: "Return the channels managed by the authenticated user."
+              } as const),
+            "maxResults?": ({
                 maximum: 50,
                 minimum: 0,
-                type: "integer"
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+              } as const),
+            "mine?": ({
+                type: "boolean",
+                description: "Return the ids of channels owned by the authenticated user."
+              } as const),
+            "mySubscribers?": ({
+                type: "boolean",
+                description: "Return the channels subscribed to the authenticated user"
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
               } as const)
-            }),
-            queryParam({
-              description: "Return the ids of channels owned by the authenticated user.",
-              in: "query",
-              name: "mine",
-              schema: ({
-                type: "boolean"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the channels subscribed to the authenticated user",
-              in: "query",
-              name: "mySubscribers",
-              schema: ({
-                type: "boolean"
-              } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtubepartner", "https://www.googleapis.com/auth/youtubepartner-channel-audit")
         },
         res: {
@@ -7129,30 +6862,19 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.channels.update",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The API currently only allows the parameter value to be set to either brandingSettings or invideoPromotion. (You cannot update both of those parts with a single request.) Note that this method overrides the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The API currently only allows the parameter value to be set to either brandingSettings or invideoPromotion. (You cannot update both of those parts with a single request.) Note that this method overrides the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "The *onBehalfOfContentOwner* parameter indicates that the authenticated user is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with needs to be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "The *onBehalfOfContentOwner* parameter indicates that the authenticated user is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with needs to be linked to the specified YouTube content owner."
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/json": Channel
@@ -7176,124 +6898,75 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.commentThreads.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more commentThread resource properties that the API response will include.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more commentThread resource properties that the API response will include."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Returns the comment threads of all videos of the channel and the channel comments as well.",
-              in: "query",
-              name: "allThreadsRelatedToChannelId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Returns the comment threads for all the channel comments (ie does not include comments left on videos).",
-              in: "query",
-              name: "channelId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Returns the comment threads with the given IDs for Stubby or Apiary.",
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
+            "allThreadsRelatedToChannelId?": ({
+                type: "string",
+                description: "Returns the comment threads of all videos of the channel and the channel comments as well."
+              } as const),
+            "channelId?": ({
+                type: "string",
+                description: "Returns the comment threads for all the channel comments (ie does not include comments left on videos)."
+              } as const),
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "Returns the comment threads with the given IDs for Stubby or Apiary."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+            "maxResults?": ({
                 maximum: 100,
                 minimum: 1,
-                type: "integer"
-              } as const)
-            }),
-            queryParam({
-              description: "Limits the returned comment threads to those with the specified moderation status. Not compatible with the 'id' filter. Valid values: published, heldForReview, likelySpam.",
-              in: "query",
-              name: "moderationStatus",
-              schema: ({
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+              } as const),
+            "moderationStatus?": ({
                 enum: [
                   "published",
                   "heldForReview",
                   "likelySpam",
                   "rejected"
                 ],
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              in: "query",
-              name: "order",
-              schema: ({
+                type: "string",
+                description: "Limits the returned comment threads to those with the specified moderation status. Not compatible with the 'id' filter. Valid values: published, heldForReview, likelySpam."
+              } as const),
+            "order?": ({
                 enum: [
                   "orderUnspecified",
                   "time",
                   "relevance"
                 ],
                 type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Limits the returned comment threads to those matching the specified key words. Not compatible with the 'id' filter.",
-              in: "query",
-              name: "searchTerms",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The requested text format for the returned comments.",
-              in: "query",
-              name: "textFormat",
-              schema: ({
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
+              } as const),
+            "searchTerms?": ({
+                type: "string",
+                description: "Limits the returned comment threads to those matching the specified key words. Not compatible with the 'id' filter."
+              } as const),
+            "textFormat?": ({
                 enum: [
                   "textFormatUnspecified",
                   "html",
                   "plainText"
                 ],
-                type: "string"
+                type: "string",
+                description: "The requested text format for the returned comments."
+              } as const),
+            "videoId?": ({
+                type: "string",
+                description: "Returns the comment threads of the specified video."
               } as const)
-            }),
-            queryParam({
-              description: "Returns the comment threads of the specified video.",
-              in: "query",
-              name: "videoId",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScope("https://www.googleapis.com/auth/youtube.force-ssl")
         },
         res: {
@@ -7309,22 +6982,15 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.commentThreads.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
-              } as const),
-              style: "form"
-            })
-          ],
+                type: "array",
+                description: "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units."
+              } as const)
+          },
           security: youtubeScope("https://www.googleapis.com/auth/youtube.force-ssl"),
           body: ({
             "application/json": CommentThread
@@ -7343,21 +7009,15 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.youtube.v3.updateCommentThreads",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of commentThread resource properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
-              explode: true,
-              in: "query",
-              name: "part",
-              schema: ({
+          query: {
+            "part?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
-              } as const),
-              style: "form"
-            })
-          ],
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of commentThread resource properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update."
+              } as const)
+          },
           body: ({
             "application/json": CommentThread
           } as const)
@@ -7381,16 +7041,11 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.comments.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
               } as const)
-            })
-          ],
+          },
           security: youtubeScope("https://www.googleapis.com/auth/youtube.force-ssl")
         },
         res: {
@@ -7403,74 +7058,45 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.comments.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more comment resource properties that the API response will include.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more comment resource properties that the API response will include."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Returns the comments with the given IDs for One Platform.",
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "Returns the comments with the given IDs for One Platform."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+            "maxResults?": ({
                 maximum: 100,
                 minimum: 1,
-                type: "integer"
-              } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Returns replies to the specified comment. Note, currently YouTube features only one level of replies (ie replies to top level comments). However replies to replies may be supported in the future.",
-              in: "query",
-              name: "parentId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The requested text format for the returned comments.",
-              in: "query",
-              name: "textFormat",
-              schema: ({
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
+              } as const),
+            "parentId?": ({
+                type: "string",
+                description: "Returns replies to the specified comment. Note, currently YouTube features only one level of replies (ie replies to top level comments). However replies to replies may be supported in the future."
+              } as const),
+            "textFormat?": ({
                 enum: [
                   "textFormatUnspecified",
                   "html",
                   "plainText"
                 ],
-                type: "string"
+                type: "string",
+                description: "The requested text format for the returned comments."
               } as const)
-            })
-          ],
+          },
           security: youtubeScope("https://www.googleapis.com/auth/youtube.force-ssl")
         },
         res: {
@@ -7486,22 +7112,15 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.comments.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
-              } as const),
-              style: "form"
-            })
-          ],
+                type: "array",
+                description: "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units."
+              } as const)
+          },
           security: youtubeScope("https://www.googleapis.com/auth/youtube.force-ssl"),
           body: ({
             "application/json": Comment
@@ -7520,22 +7139,15 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.comments.update",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter identifies the properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
-              } as const),
-              style: "form"
-            })
-          ],
+                type: "array",
+                description: "The *part* parameter identifies the properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update."
+              } as const)
+          },
           security: youtubeScope("https://www.googleapis.com/auth/youtube.force-ssl"),
           body: ({
             "application/json": Comment
@@ -7555,22 +7167,15 @@ export default responsibleAPI({
       description: "Expresses the caller's opinion that one or more comments should be flagged as spam.",
       id: "youtube.comments.markAsSpam",
       req: {
-        params: [
-          queryParam({
-            description: "Flags the comments with the given IDs as spam in the caller's opinion.",
-            explode: true,
-            in: "query",
-            name: "id",
-            required: true,
-            schema: ({
+        query: {
+          id: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
-            } as const),
-            style: "form"
-          })
-        ],
+              type: "array",
+              description: "Flags the comments with the given IDs as spam in the caller's opinion."
+            } as const)
+        },
         security: youtubeScope("https://www.googleapis.com/auth/youtube.force-ssl")
       },
       res: {
@@ -7584,45 +7189,29 @@ export default responsibleAPI({
       description: "Sets the moderation status of one or more comments.",
       id: "youtube.comments.setModerationStatus",
       req: {
-        params: [
-          queryParam({
-            description: "Modifies the moderation status of the comments with the given IDs",
-            explode: true,
-            in: "query",
-            name: "id",
-            required: true,
-            schema: ({
+        query: {
+          id: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "Modifies the moderation status of the comments with the given IDs"
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            description: "Specifies the requested moderation status. Note, comments can be in statuses, which are not available through this call. For example, this call does not allow to mark a comment as 'likely spam'. Valid values: MODERATION_STATUS_PUBLISHED, MODERATION_STATUS_HELD_FOR_REVIEW, MODERATION_STATUS_REJECTED.",
-            in: "query",
-            name: "moderationStatus",
-            required: true,
-            schema: ({
+          moderationStatus: ({
               enum: [
                 "published",
                 "heldForReview",
                 "likelySpam",
                 "rejected"
               ],
-              type: "string"
+              type: "string",
+              description: "Specifies the requested moderation status. Note, comments can be in statuses, which are not available through this call. For example, this call does not allow to mark a comment as 'likely spam'. Valid values: MODERATION_STATUS_PUBLISHED, MODERATION_STATUS_HELD_FOR_REVIEW, MODERATION_STATUS_REJECTED."
+            } as const),
+          "banAuthor?": ({
+              type: "boolean",
+              description: "If set to true the author of the comment gets added to the ban list. This means all future comments of the author will autmomatically be rejected. Only valid in combination with STATUS_REJECTED."
             } as const)
-          }),
-          queryParam({
-            description: "If set to true the author of the comment gets added to the ban list. This means all future comments of the author will autmomatically be rejected. Only valid in combination with STATUS_REJECTED.",
-            in: "query",
-            name: "banAuthor",
-            schema: ({
-              type: "boolean"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScope("https://www.googleapis.com/auth/youtube.force-ssl")
       },
       res: {
@@ -7636,29 +7225,18 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.i18nLanguages.list",
       req: {
-        params: [
-          queryParam({
-            description: "The *part* parameter specifies the i18nLanguage resource properties that the API response will include. Set the parameter value to snippet.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "The *part* parameter specifies the i18nLanguage resource properties that the API response will include. Set the parameter value to snippet."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            in: "query",
-            name: "hl",
-            schema: ({
+          "hl?": ({
               type: "string"
             } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtubepartner")
       },
       res: {
@@ -7675,29 +7253,18 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.i18nRegions.list",
       req: {
-        params: [
-          queryParam({
-            description: "The *part* parameter specifies the i18nRegion resource properties that the API response will include. Set the parameter value to snippet.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "The *part* parameter specifies the i18nRegion resource properties that the API response will include. Set the parameter value to snippet."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            in: "query",
-            name: "hl",
-            schema: ({
+          "hl?": ({
               type: "string"
             } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtubepartner")
       },
       res: {
@@ -7718,33 +7285,20 @@ export default responsibleAPI({
         description: "Delete a given broadcast.",
         id: "youtube.liveBroadcasts.delete",
         req: {
-          params: [
-            queryParam({
-              description: "Broadcast to delete.",
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
-                type: "string"
+          query: {
+            id: ({
+                type: "string",
+                description: "Broadcast to delete."
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl")
         },
         res: {
@@ -7757,26 +7311,15 @@ export default responsibleAPI({
         description: "Retrieve the list of broadcasts associated with the given channel.",
         id: "youtube.liveBroadcasts.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, status and statistics.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, status and statistics."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Return broadcasts with a certain status, e.g. active broadcasts.",
-              in: "query",
-              name: "broadcastStatus",
-              schema: ({
+            "broadcastStatus?": ({
                 enum: [
                   "broadcastStatusFilterUnspecified",
                   "all",
@@ -7784,78 +7327,48 @@ export default responsibleAPI({
                   "upcoming",
                   "completed"
                 ],
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return only broadcasts with the selected type.",
-              in: "query",
-              name: "broadcastType",
-              schema: ({
+                type: "string",
+                description: "Return broadcasts with a certain status, e.g. active broadcasts."
+              } as const),
+            "broadcastType?": ({
                 enum: [
                   "broadcastTypeFilterUnspecified",
                   "all",
                   "event",
                   "persistent"
                 ],
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return broadcasts with the given ids from Stubby or Apiary.",
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
+                type: "string",
+                description: "Return only broadcasts with the selected type."
+              } as const),
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "Return broadcasts with the given ids from Stubby or Apiary."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+            "maxResults?": ({
                 maximum: 50,
                 minimum: 0,
-                type: "integer"
-              } as const)
-            }),
-            queryParam({
-              in: "query",
-              name: "mine",
-              schema: ({
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+              } as const),
+            "mine?": ({
                 type: "boolean"
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly")
         },
         res: {
@@ -7871,38 +7384,23 @@ export default responsibleAPI({
         description: "Inserts a new stream for the authenticated user.",
         id: "youtube.liveBroadcasts.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
               } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl"),
           body: ({
             "application/json": LiveBroadcast
@@ -7921,38 +7419,23 @@ export default responsibleAPI({
         description: "Updates an existing broadcast for the authenticated user.",
         id: "youtube.liveBroadcasts.update",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a broadcast's privacy status is defined in the status part. As such, if your request is updating a private or unlisted broadcast, and the request's part parameter value includes the status part, the broadcast's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the broadcast will revert to the default privacy setting.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a broadcast's privacy status is defined in the status part. As such, if your request is updating a private or unlisted broadcast, and the request's part parameter value includes the status part, the broadcast's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the broadcast will revert to the default privacy setting."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
               } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl"),
           body: ({
             "application/json": LiveBroadcast
@@ -7972,55 +7455,31 @@ export default responsibleAPI({
       description: "Bind a broadcast to a stream.",
       id: "youtube.liveBroadcasts.bind",
       req: {
-        params: [
-          queryParam({
-            description: "Broadcast to bind to the stream",
-            in: "query",
-            name: "id",
-            required: true,
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          id: ({
+              type: "string",
+              description: "Broadcast to bind to the stream"
+            } as const),
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+            } as const),
+          "onBehalfOfContentOwnerChannel?": ({
+              type: "string",
+              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
+            } as const),
+          "streamId?": ({
+              type: "string",
+              description: "Stream to bind, if not set unbind the current one."
             } as const)
-          }),
-          queryParam({
-            description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-            in: "query",
-            name: "onBehalfOfContentOwnerChannel",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Stream to bind, if not set unbind the current one.",
-            in: "query",
-            name: "streamId",
-            schema: ({
-              type: "string"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl")
       },
       res: {
@@ -8037,45 +7496,27 @@ export default responsibleAPI({
       description: "Insert cuepoints in a broadcast",
       id: "youtube.liveBroadcasts.insertCuepoint",
       req: {
-        params: [
-          queryParam({
-            description: "Broadcast to insert ads to, or equivalently `external_video_id` for internal use.",
-            in: "query",
-            name: "id",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-            in: "query",
-            name: "onBehalfOfContentOwnerChannel",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
-            explode: true,
-            in: "query",
-            name: "part",
-            schema: ({
+        query: {
+          "id?": ({
+              type: "string",
+              description: "Broadcast to insert ads to, or equivalently `external_video_id` for internal use."
+            } as const),
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+            } as const),
+          "onBehalfOfContentOwnerChannel?": ({
+              type: "string",
+              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
+            } as const),
+          "part?": ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
-            } as const),
-            style: "form"
-          })
-        ],
+              type: "array",
+              description: "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status."
+            } as const)
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
         body: ({
           "application/json": Cuepoint
@@ -8095,62 +7536,37 @@ export default responsibleAPI({
       description: "Transition a broadcast to a given status.",
       id: "youtube.liveBroadcasts.transition",
       req: {
-        params: [
-          queryParam({
-            description: "The status to which the broadcast is going to transition.",
-            in: "query",
-            name: "broadcastStatus",
-            required: true,
-            schema: ({
+        query: {
+          broadcastStatus: ({
               enum: [
                 "statusUnspecified",
                 "testing",
                 "live",
                 "complete"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Broadcast to transition.",
-            in: "query",
-            name: "id",
-            required: true,
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+              type: "string",
+              description: "The status to which the broadcast is going to transition."
+            } as const),
+          id: ({
+              type: "string",
+              description: "Broadcast to transition."
+            } as const),
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+            } as const),
+          "onBehalfOfContentOwnerChannel?": ({
+              type: "string",
+              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
             } as const)
-          }),
-          queryParam({
-            description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-            in: "query",
-            name: "onBehalfOfContentOwnerChannel",
-            schema: ({
-              type: "string"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl")
       },
       res: {
@@ -8171,16 +7587,11 @@ export default responsibleAPI({
         description: "Deletes a chat ban.",
         id: "youtube.liveChatBans.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl")
         },
         res: {
@@ -8193,22 +7604,15 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.liveChatBans.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
-              } as const),
-              style: "form"
-            })
-          ],
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet."
+              } as const)
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl"),
           body: ({
             "application/json": LiveChatBan
@@ -8232,16 +7636,11 @@ export default responsibleAPI({
         description: "Deletes a chat message.",
         id: "youtube.liveChatMessages.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl")
         },
         res: {
@@ -8254,67 +7653,39 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.liveChatMessages.list",
         req: {
-          params: [
-            queryParam({
-              description: "The id of the live chat for which comments should be returned.",
-              in: "query",
-              name: "liveChatId",
-              required: true,
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The *part* parameter specifies the liveChatComment resource parts that the API response will include. Supported values are id and snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            liveChatId: ({
+                type: "string",
+                description: "The id of the live chat for which comments should be returned."
+              } as const),
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies the liveChatComment resource parts that the API response will include. Supported values are id and snippet."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Specifies the localization language in which the system messages should be returned.",
-              in: "query",
-              name: "hl",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+            "hl?": ({
+                type: "string",
+                description: "Specifies the localization language in which the system messages should be returned."
+              } as const),
+            "maxResults?": ({
                 maximum: 2000,
                 minimum: 200,
-                type: "integer"
-              } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken property identify other pages that could be retrieved.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Specifies the size of the profile image that should be returned for each user.",
-              in: "query",
-              name: "profileImageSize",
-              schema: ({
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken property identify other pages that could be retrieved."
+              } as const),
+            "profileImageSize?": ({
                 maximum: 720,
                 minimum: 16,
-                type: "integer"
+                type: "integer",
+                description: "Specifies the size of the profile image that should be returned for each user."
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly")
         },
         res: {
@@ -8330,22 +7701,15 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.liveChatMessages.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes. It identifies the properties that the write operation will set as well as the properties that the API response will include. Set the parameter value to snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
-              } as const),
-              style: "form"
-            })
-          ],
+                type: "array",
+                description: "The *part* parameter serves two purposes. It identifies the properties that the write operation will set as well as the properties that the API response will include. Set the parameter value to snippet."
+              } as const)
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl"),
           body: ({
             "application/json": LiveChatMessage
@@ -8369,16 +7733,11 @@ export default responsibleAPI({
         description: "Deletes a chat moderator.",
         id: "youtube.liveChatModerators.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl")
         },
         res: {
@@ -8391,49 +7750,29 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.liveChatModerators.list",
         req: {
-          params: [
-            queryParam({
-              description: "The id of the live chat for which moderators should be returned.",
-              in: "query",
-              name: "liveChatId",
-              required: true,
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The *part* parameter specifies the liveChatModerator resource parts that the API response will include. Supported values are id and snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            liveChatId: ({
+                type: "string",
+                description: "The id of the live chat for which moderators should be returned."
+              } as const),
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies the liveChatModerator resource parts that the API response will include. Supported values are id and snippet."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+            "maxResults?": ({
                 maximum: 50,
                 minimum: 0,
-                type: "integer"
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
               } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly")
         },
         res: {
@@ -8449,22 +7788,15 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.liveChatModerators.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
-              } as const),
-              style: "form"
-            })
-          ],
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet."
+              } as const)
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl"),
           body: ({
             "application/json": LiveChatModerator
@@ -8488,32 +7820,19 @@ export default responsibleAPI({
         description: "Deletes an existing stream for the authenticated user.",
         id: "youtube.liveStreams.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl")
         },
         res: {
@@ -8526,76 +7845,43 @@ export default responsibleAPI({
         description: "Retrieve the list of streams associated with the given channel. --",
         id: "youtube.liveStreams.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more liveStream resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, cdn, and status.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more liveStream resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, cdn, and status."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Return LiveStreams with the given ids from Stubby or Apiary.",
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "Return LiveStreams with the given ids from Stubby or Apiary."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+            "maxResults?": ({
                 maximum: 50,
                 minimum: 0,
-                type: "integer"
-              } as const)
-            }),
-            queryParam({
-              in: "query",
-              name: "mine",
-              schema: ({
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+              } as const),
+            "mine?": ({
                 type: "boolean"
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly")
         },
         res: {
@@ -8611,38 +7897,23 @@ export default responsibleAPI({
         description: "Inserts a new stream for the authenticated user.",
         id: "youtube.liveStreams.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, content_details, and status.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, content_details, and status."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
               } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl"),
           body: ({
             "application/json": LiveStream
@@ -8661,38 +7932,23 @@ export default responsibleAPI({
         description: "Updates an existing stream for the authenticated user.",
         id: "youtube.liveStreams.update",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. If the request body does not specify a value for a mutable property, the existing value for that property will be removed.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. If the request body does not specify a value for a mutable property, the existing value for that property will be removed."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
               } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl"),
           body: ({
             "application/json": LiveStream
@@ -8712,69 +7968,42 @@ export default responsibleAPI({
       description: "Retrieves a list of members that match the request criteria for a channel.",
       id: "youtube.members.list",
       req: {
-        params: [
-          queryParam({
-            description: "The *part* parameter specifies the member resource parts that the API response will include. Set the parameter value to snippet.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "The *part* parameter specifies the member resource parts that the API response will include. Set the parameter value to snippet."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            description: "Comma separated list of channel IDs. Only data about members that are part of this list will be included in the response.",
-            in: "query",
-            name: "filterByMemberChannelId",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter members in the results set to the ones that have access to a level.",
-            in: "query",
-            name: "hasAccessToLevel",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-            in: "query",
-            name: "maxResults",
-            schema: ({
+          "filterByMemberChannelId?": ({
+              type: "string",
+              description: "Comma separated list of channel IDs. Only data about members that are part of this list will be included in the response."
+            } as const),
+          "hasAccessToLevel?": ({
+              type: "string",
+              description: "Filter members in the results set to the ones that have access to a level."
+            } as const),
+          "maxResults?": ({
               maximum: 1000,
               minimum: 0,
-              type: "integer"
-            } as const)
-          }),
-          queryParam({
-            description: "Parameter that specifies which channel members to return.",
-            in: "query",
-            name: "mode",
-            schema: ({
+              type: "integer",
+              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+            } as const),
+          "mode?": ({
               enum: [
                 "listMembersModeUnknown",
                 "updates",
                 "all_current"
               ],
-              type: "string"
+              type: "string",
+              description: "Parameter that specifies which channel members to return."
+            } as const),
+          "pageToken?": ({
+              type: "string",
+              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
             } as const)
-          }),
-          queryParam({
-            description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-            in: "query",
-            name: "pageToken",
-            schema: ({
-              type: "string"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScope("https://www.googleapis.com/auth/youtube.channel-memberships.creator")
       },
       res: {
@@ -8791,22 +8020,15 @@ export default responsibleAPI({
       description: "Retrieves a list of all pricing levels offered by a creator to the fans.",
       id: "youtube.membershipsLevels.list",
       req: {
-        params: [
-          queryParam({
-            description: "The *part* parameter specifies the membershipsLevel resource parts that the API response will include. Supported values are id and snippet.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
-            } as const),
-            style: "form"
-          })
-        ],
+              type: "array",
+              description: "The *part* parameter specifies the membershipsLevel resource parts that the API response will include. Supported values are id and snippet."
+            } as const)
+        },
         security: youtubeScope("https://www.googleapis.com/auth/youtube.channel-memberships.creator")
       },
       res: {
@@ -8827,24 +8049,15 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.playlistItems.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -8857,76 +8070,43 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.playlistItems.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more playlistItem resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlistItem resource, the snippet property contains numerous fields, including the title, description, position, and resourceId properties. As such, if you set *part=snippet*, the API response will contain all of those properties.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
+                items: ({
+                  type: "string"
+                } as const),
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more playlistItem resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlistItem resource, the snippet property contains numerous fields, including the title, description, position, and resourceId properties. As such, if you set *part=snippet*, the API response will contain all of those properties."
+              } as const),
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
                 type: "array"
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
-                items: ({
-                  type: "string"
-                } as const),
-                type: "array"
-              } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+            "maxResults?": ({
                 maximum: 50,
                 minimum: 0,
-                type: "integer"
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
+              } as const),
+            "playlistId?": ({
+                type: "string",
+                description: "Return the playlist items within the given playlist."
+              } as const),
+            "videoId?": ({
+                type: "string",
+                description: "Return the playlist items associated with the given video ID."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the playlist items within the given playlist.",
-              in: "query",
-              name: "playlistId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the playlist items associated with the given video ID.",
-              in: "query",
-              name: "videoId",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -8942,30 +8122,19 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.playlistItems.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/json": PlaylistItem
@@ -8984,30 +8153,19 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.playlistItems.update",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a playlist item can specify a start time and end time, which identify the times portion of the video that should play when users watch the video in the playlist. If your request is updating a playlist item that sets these values, and the request's part parameter value includes the contentDetails part, the playlist item's start and end times will be updated to whatever value the request body specifies. If the request body does not specify values, the existing start and end times will be removed and replaced with the default settings.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a playlist item can specify a start time and end time, which identify the times portion of the video that should play when users watch the video in the playlist. If your request is updating a playlist item that sets these values, and the request's part parameter value includes the contentDetails part, the playlist item's start and end times will be updated to whatever value the request body specifies. If the request body does not specify values, the existing start and end times will be removed and replaced with the default settings."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/json": PlaylistItem
@@ -9031,24 +8189,15 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.playlists.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -9061,93 +8210,52 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.playlists.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more playlist resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlist resource, the snippet property contains properties like author, title, description, tags, and timeCreated. As such, if you set *part=snippet*, the API response will contain all of those properties.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more playlist resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlist resource, the snippet property contains properties like author, title, description, tags, and timeCreated. As such, if you set *part=snippet*, the API response will contain all of those properties."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Return the playlists owned by the specified channel ID.",
-              in: "query",
-              name: "channelId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return content in specified language",
-              in: "query",
-              name: "hl",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the playlists with the given IDs for Stubby or Apiary.",
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
+            "channelId?": ({
+                type: "string",
+                description: "Return the playlists owned by the specified channel ID."
+              } as const),
+            "hl?": ({
+                type: "string",
+                description: "Return content in specified language"
+              } as const),
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "Return the playlists with the given IDs for Stubby or Apiary."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+            "maxResults?": ({
                 maximum: 50,
                 minimum: 0,
-                type: "integer"
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+              } as const),
+            "mine?": ({
+                type: "boolean",
+                description: "Return the playlists owned by the authenticated user."
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
               } as const)
-            }),
-            queryParam({
-              description: "Return the playlists owned by the authenticated user.",
-              in: "query",
-              name: "mine",
-              schema: ({
-                type: "boolean"
-              } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -9163,38 +8271,23 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.playlists.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
               } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/json": Playlist
@@ -9213,30 +8306,19 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.playlists.update",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for mutable properties that are contained in any parts that the request body specifies. For example, a playlist's description is contained in the snippet part, which must be included in the request body. If the request does not specify a value for the snippet.description property, the playlist's existing description will be deleted.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for mutable properties that are contained in any parts that the request body specifies. For example, a playlist's description is contained in the snippet part, which must be included in the request body. If the request does not specify a value for the snippet.description property, the playlist's existing description will be deleted."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/json": Playlist
@@ -9256,119 +8338,68 @@ export default responsibleAPI({
       description: "Retrieves a list of search resources",
       id: "youtube.search.list",
       req: {
-        params: [
-          queryParam({
-            description: "The *part* parameter specifies a comma-separated list of one or more search resource properties that the API response will include. Set the parameter value to snippet.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "The *part* parameter specifies a comma-separated list of one or more search resource properties that the API response will include. Set the parameter value to snippet."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            description: "Filter on resources belonging to this channelId.",
-            in: "query",
-            name: "channelId",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Add a filter on the channel search.",
-            in: "query",
-            name: "channelType",
-            schema: ({
+          "channelId?": ({
+              type: "string",
+              description: "Filter on resources belonging to this channelId."
+            } as const),
+          "channelType?": ({
               enum: [
                 "channelTypeUnspecified",
                 "any",
                 "show"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on the livestream status of the videos.",
-            in: "query",
-            name: "eventType",
-            schema: ({
+              type: "string",
+              description: "Add a filter on the channel search."
+            } as const),
+          "eventType?": ({
               enum: [
                 "none",
                 "upcoming",
                 "live",
                 "completed"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Search owned by a content owner.",
-            in: "query",
-            name: "forContentOwner",
-            schema: ({
-              type: "boolean"
-            } as const)
-          }),
-          queryParam({
-            description: "Restrict the search to only retrieve videos uploaded using the project id of the authenticated user.",
-            in: "query",
-            name: "forDeveloper",
-            schema: ({
-              type: "boolean"
-            } as const)
-          }),
-          queryParam({
-            description: "Search for the private videos of the authenticated user.",
-            in: "query",
-            name: "forMine",
-            schema: ({
-              type: "boolean"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on location of the video",
-            in: "query",
-            name: "location",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on distance from the location (specified above).",
-            in: "query",
-            name: "locationRadius",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-            in: "query",
-            name: "maxResults",
-            schema: ({
+              type: "string",
+              description: "Filter on the livestream status of the videos."
+            } as const),
+          "forContentOwner?": ({
+              type: "boolean",
+              description: "Search owned by a content owner."
+            } as const),
+          "forDeveloper?": ({
+              type: "boolean",
+              description: "Restrict the search to only retrieve videos uploaded using the project id of the authenticated user."
+            } as const),
+          "forMine?": ({
+              type: "boolean",
+              description: "Search for the private videos of the authenticated user."
+            } as const),
+          "location?": ({
+              type: "string",
+              description: "Filter on location of the video"
+            } as const),
+          "locationRadius?": ({
+              type: "string",
+              description: "Filter on distance from the location (specified above)."
+            } as const),
+          "maxResults?": ({
               maximum: 50,
               minimum: 0,
-              type: "integer"
-            } as const)
-          }),
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Sort order of the results.",
-            in: "query",
-            name: "order",
-            schema: ({
+              type: "integer",
+              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+            } as const),
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+            } as const),
+          "order?": ({
               enum: [
                 "searchSortUnspecified",
                 "date",
@@ -9378,153 +8409,91 @@ export default responsibleAPI({
                 "title",
                 "videoCount"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-            in: "query",
-            name: "pageToken",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on resources published after this date.",
-            in: "query",
-            name: "publishedAfter",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on resources published before this date.",
-            in: "query",
-            name: "publishedBefore",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Textual search terms to match.",
-            in: "query",
-            name: "q",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Display the content as seen by viewers in this country.",
-            in: "query",
-            name: "regionCode",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Search related to a resource.",
-            in: "query",
-            name: "relatedToVideoId",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Return results relevant to this language.",
-            in: "query",
-            name: "relevanceLanguage",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Indicates whether the search results should include restricted content as well as standard content.",
-            in: "query",
-            name: "safeSearch",
-            schema: ({
+              type: "string",
+              description: "Sort order of the results."
+            } as const),
+          "pageToken?": ({
+              type: "string",
+              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
+            } as const),
+          "publishedAfter?": ({
+              type: "string",
+              description: "Filter on resources published after this date."
+            } as const),
+          "publishedBefore?": ({
+              type: "string",
+              description: "Filter on resources published before this date."
+            } as const),
+          "q?": ({
+              type: "string",
+              description: "Textual search terms to match."
+            } as const),
+          "regionCode?": ({
+              type: "string",
+              description: "Display the content as seen by viewers in this country."
+            } as const),
+          "relatedToVideoId?": ({
+              type: "string",
+              description: "Search related to a resource."
+            } as const),
+          "relevanceLanguage?": ({
+              type: "string",
+              description: "Return results relevant to this language."
+            } as const),
+          "safeSearch?": ({
               enum: [
                 "safeSearchSettingUnspecified",
                 "none",
                 "moderate",
                 "strict"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Restrict results to a particular topic.",
-            in: "query",
-            name: "topicId",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Restrict results to a particular set of resource types from One Platform.",
-            explode: true,
-            in: "query",
-            name: "type",
-            schema: ({
+              type: "string",
+              description: "Indicates whether the search results should include restricted content as well as standard content."
+            } as const),
+          "topicId?": ({
+              type: "string",
+              description: "Restrict results to a particular topic."
+            } as const),
+          "type?": ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "Restrict results to a particular set of resource types from One Platform."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            description: "Filter on the presence of captions on the videos.",
-            in: "query",
-            name: "videoCaption",
-            schema: ({
+          "videoCaption?": ({
               enum: [
                 "videoCaptionUnspecified",
                 "any",
                 "closedCaption",
                 "none"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on videos in a specific category.",
-            in: "query",
-            name: "videoCategoryId",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on the definition of the videos.",
-            in: "query",
-            name: "videoDefinition",
-            schema: ({
+              type: "string",
+              description: "Filter on the presence of captions on the videos."
+            } as const),
+          "videoCategoryId?": ({
+              type: "string",
+              description: "Filter on videos in a specific category."
+            } as const),
+          "videoDefinition?": ({
               enum: [
                 "any",
                 "standard",
                 "high"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on 3d videos.",
-            in: "query",
-            name: "videoDimension",
-            schema: ({
+              type: "string",
+              description: "Filter on the definition of the videos."
+            } as const),
+          "videoDimension?": ({
               enum: [
                 "any",
                 "2d",
                 "3d"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on the duration of the videos.",
-            in: "query",
-            name: "videoDuration",
-            schema: ({
+              type: "string",
+              description: "Filter on 3d videos."
+            } as const),
+          "videoDuration?": ({
               enum: [
                 "videoDurationUnspecified",
                 "any",
@@ -9532,63 +8501,47 @@ export default responsibleAPI({
                 "medium",
                 "long"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on embeddable videos.",
-            in: "query",
-            name: "videoEmbeddable",
-            schema: ({
+              type: "string",
+              description: "Filter on the duration of the videos."
+            } as const),
+          "videoEmbeddable?": ({
               enum: [
                 "videoEmbeddableUnspecified",
                 "any",
                 "true"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on the license of the videos.",
-            in: "query",
-            name: "videoLicense",
-            schema: ({
+              type: "string",
+              description: "Filter on embeddable videos."
+            } as const),
+          "videoLicense?": ({
               enum: [
                 "any",
                 "youtube",
                 "creativeCommon"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on syndicated videos.",
-            in: "query",
-            name: "videoSyndicated",
-            schema: ({
+              type: "string",
+              description: "Filter on the license of the videos."
+            } as const),
+          "videoSyndicated?": ({
               enum: [
                 "videoSyndicatedUnspecified",
                 "any",
                 "true"
               ],
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Filter on videos of a specific type.",
-            in: "query",
-            name: "videoType",
-            schema: ({
+              type: "string",
+              description: "Filter on syndicated videos."
+            } as const),
+          "videoType?": ({
               enum: [
                 "videoTypeUnspecified",
                 "any",
                 "movie",
                 "episode"
               ],
-              type: "string"
+              type: "string",
+              description: "Filter on videos of a specific type."
             } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtubepartner")
       },
       res: {
@@ -9609,16 +8562,11 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.subscriptions.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -9631,122 +8579,69 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.subscriptions.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more subscription resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a subscription resource, the snippet property contains other properties, such as a display title for the subscription. If you set *part=snippet*, the API response will also contain all of those nested properties.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more subscription resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a subscription resource, the snippet property contains other properties, such as a display title for the subscription. If you set *part=snippet*, the API response will also contain all of those nested properties."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Return the subscriptions of the given channel owner.",
-              in: "query",
-              name: "channelId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the subscriptions to the subset of these channels that the authenticated user is subscribed to.",
-              in: "query",
-              name: "forChannelId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the subscriptions with the given IDs for Stubby or Apiary.",
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
+            "channelId?": ({
+                type: "string",
+                description: "Return the subscriptions of the given channel owner."
+              } as const),
+            "forChannelId?": ({
+                type: "string",
+                description: "Return the subscriptions to the subset of these channels that the authenticated user is subscribed to."
+              } as const),
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "Return the subscriptions with the given IDs for Stubby or Apiary."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+            "maxResults?": ({
                 maximum: 50,
                 minimum: 0,
-                type: "integer"
-              } as const)
-            }),
-            queryParam({
-              description: "Flag for returning the subscriptions of the authenticated user.",
-              in: "query",
-              name: "mine",
-              schema: ({
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+              } as const),
+            "mine?": ({
+                type: "boolean",
+                description: "Flag for returning the subscriptions of the authenticated user."
+              } as const),
+            "myRecentSubscribers?": ({
                 type: "boolean"
-              } as const)
-            }),
-            queryParam({
-              in: "query",
-              name: "myRecentSubscribers",
-              schema: ({
-                type: "boolean"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the subscribers of the given channel owner.",
-              in: "query",
-              name: "mySubscribers",
-              schema: ({
-                type: "boolean"
-              } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The order of the returned subscriptions",
-              in: "query",
-              name: "order",
-              schema: ({
+              } as const),
+            "mySubscribers?": ({
+                type: "boolean",
+                description: "Return the subscribers of the given channel owner."
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
+              } as const),
+            "order?": ({
                 enum: [
                   "subscriptionOrderUnspecified",
                   "relevance",
                   "unread",
                   "alphabetical"
                 ],
-                type: "string"
+                type: "string",
+                description: "The order of the returned subscriptions"
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
               } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -9762,22 +8657,15 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.subscriptions.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
-              } as const),
-              style: "form"
-            })
-          ],
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include."
+              } as const)
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/json": Subscription
@@ -9797,48 +8685,29 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.superChatEvents.list",
       req: {
-        params: [
-          queryParam({
-            description: "The *part* parameter specifies the superChatEvent resource parts that the API response will include. This parameter is currently not supported.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "The *part* parameter specifies the superChatEvent resource parts that the API response will include. This parameter is currently not supported."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            description: "Return rendered funding amounts in specified language.",
-            in: "query",
-            name: "hl",
-            schema: ({
-              type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-            in: "query",
-            name: "maxResults",
-            schema: ({
+          "hl?": ({
+              type: "string",
+              description: "Return rendered funding amounts in specified language."
+            } as const),
+          "maxResults?": ({
               maximum: 50,
               minimum: 1,
-              type: "integer"
+              type: "integer",
+              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set."
+            } as const),
+          "pageToken?": ({
+              type: "string",
+              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved."
             } as const)
-          }),
-          queryParam({
-            description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-            in: "query",
-            name: "pageToken",
-            schema: ({
-              type: "string"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly")
       },
       res: {
@@ -9855,28 +8724,17 @@ export default responsibleAPI({
       description: "POST method.",
       id: "youtube.tests.insert",
       req: {
-        params: [
-          queryParam({
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
               type: "array"
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            in: "query",
-            name: "externalChannelId",
-            schema: ({
+          "externalChannelId?": ({
               type: "string"
             } as const)
-          })
-        ],
+        },
         security: youtubeScope("https://www.googleapis.com/auth/youtube.readonly"),
         body: ({
           "application/json": TestItem
@@ -9900,51 +8758,31 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.thirdPartyLinks.delete",
         req: {
-          params: [
-            queryParam({
-              description: "Delete the partner links with the given linking token.",
-              in: "query",
-              name: "linkingToken",
-              required: true,
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Type of the link to be deleted.",
-              in: "query",
-              name: "type",
-              required: true,
-              schema: ({
+          query: {
+            linkingToken: ({
+                type: "string",
+                description: "Delete the partner links with the given linking token."
+              } as const),
+            type: ({
                 enum: [
                   "linkUnspecified",
                   "channelToStoreLink"
                 ],
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Channel ID to which changes should be applied, for delegation.",
-              in: "query",
-              name: "externalChannelId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Do not use. Required for compatibility.",
-              explode: true,
-              in: "query",
-              name: "part",
-              schema: ({
+                type: "string",
+                description: "Type of the link to be deleted."
+              } as const),
+            "externalChannelId?": ({
+                type: "string",
+                description: "Channel ID to which changes should be applied, for delegation."
+              } as const),
+            "part?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
-              } as const),
-              style: "form"
-            })
-          ]
+                type: "array",
+                description: "Do not use. Required for compatibility."
+              } as const)
+          },
         },
         res: {
           "200": response({
@@ -9956,50 +8794,31 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.thirdPartyLinks.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies the thirdPartyLink resource parts that the API response will include. Supported values are linkingToken, status, and snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies the thirdPartyLink resource parts that the API response will include. Supported values are linkingToken, status, and snippet."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Channel ID to which changes should be applied, for delegation.",
-              in: "query",
-              name: "externalChannelId",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Get a third party link with the given linking token.",
-              in: "query",
-              name: "linkingToken",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Get a third party link of the given type.",
-              in: "query",
-              name: "type",
-              schema: ({
+            "externalChannelId?": ({
+                type: "string",
+                description: "Channel ID to which changes should be applied, for delegation."
+              } as const),
+            "linkingToken?": ({
+                type: "string",
+                description: "Get a third party link with the given linking token."
+              } as const),
+            "type?": ({
                 enum: [
                   "linkUnspecified",
                   "channelToStoreLink"
                 ],
-                type: "string"
+                type: "string",
+                description: "Get a third party link of the given type."
               } as const)
-            })
-          ]
+          },
         },
         res: {
           "200": response({
@@ -10014,30 +8833,19 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.thirdPartyLinks.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Channel ID to which changes should be applied, for delegation.",
-              in: "query",
-              name: "externalChannelId",
-              schema: ({
-                type: "string"
+            "externalChannelId?": ({
+                type: "string",
+                description: "Channel ID to which changes should be applied, for delegation."
               } as const)
-            })
-          ],
+          },
           body: ({
             "application/json": ThirdPartyLink
           } as const)
@@ -10055,30 +8863,19 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.thirdPartyLinks.update",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Channel ID to which changes should be applied, for delegation.",
-              in: "query",
-              name: "externalChannelId",
-              schema: ({
-                type: "string"
+            "externalChannelId?": ({
+                type: "string",
+                description: "Channel ID to which changes should be applied, for delegation."
               } as const)
-            })
-          ],
+          },
           body: ({
             "application/json": ThirdPartyLink
           } as const)
@@ -10097,25 +8894,16 @@ export default responsibleAPI({
       description: "As this is not an insert in a strict sense (it supports uploading/setting of a thumbnail for multiple videos, which doesn't result in creation of a single resource), I use a custom verb here.",
       id: "youtube.thumbnails.set",
       req: {
-        params: [
-          queryParam({
-            description: "Returns the Thumbnail with the given video IDs for Stubby or Apiary.",
-            in: "query",
-            name: "videoId",
-            required: true,
-            schema: ({
-              type: "string"
+        query: {
+          videoId: ({
+              type: "string",
+              description: "Returns the Thumbnail with the given video IDs for Stubby or Apiary."
+            } as const),
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner."
             } as const)
-          }),
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtubepartner")
       },
       res: {
@@ -10132,29 +8920,18 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.videoAbuseReportReasons.list",
       req: {
-        params: [
-          queryParam({
-            description: "The *part* parameter specifies the videoCategory resource parts that the API response will include. Supported values are id and snippet.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "The *part* parameter specifies the videoCategory resource parts that the API response will include. Supported values are id and snippet."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            in: "query",
-            name: "hl",
-            schema: ({
+          "hl?": ({
               type: "string"
             } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly")
       },
       res: {
@@ -10171,49 +8948,28 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.videoCategories.list",
       req: {
-        params: [
-          queryParam({
-            description: "The *part* parameter specifies the videoCategory resource properties that the API response will include. Set the parameter value to snippet.",
-            explode: true,
-            in: "query",
-            name: "part",
-            required: true,
-            schema: ({
+        query: {
+          part: ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "The *part* parameter specifies the videoCategory resource properties that the API response will include. Set the parameter value to snippet."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            in: "query",
-            name: "hl",
-            schema: ({
+          "hl?": ({
               type: "string"
-            } as const)
-          }),
-          queryParam({
-            description: "Returns the video categories with the given IDs for Stubby or Apiary.",
-            explode: true,
-            in: "query",
-            name: "id",
-            schema: ({
+            } as const),
+          "id?": ({
               items: ({
                 type: "string"
               } as const),
-              type: "array"
+              type: "array",
+              description: "Returns the video categories with the given IDs for Stubby or Apiary."
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            in: "query",
-            name: "regionCode",
-            schema: ({
+          "regionCode?": ({
               type: "string"
             } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtubepartner")
       },
       res: {
@@ -10234,24 +8990,15 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.videos.delete",
         req: {
-          params: [
-            queryParam({
-              in: "query",
-              name: "id",
-              required: true,
-              schema: ({
+          query: {
+            id: ({
                 type: "string"
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -10264,136 +9011,79 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.videos.list",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter specifies a comma-separated list of one or more video resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a video resource, the snippet property contains the channelId, title, description, tags, and categoryId properties. As such, if you set *part=snippet*, the API response will contain all of those properties.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter specifies a comma-separated list of one or more video resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a video resource, the snippet property contains the channelId, title, description, tags, and categoryId properties. As such, if you set *part=snippet*, the API response will contain all of those properties."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Return the videos that are in the specified chart.",
-              in: "query",
-              name: "chart",
-              schema: ({
+            "chart?": ({
                 enum: [
                   "chartUnspecified",
                   "mostPopular"
                 ],
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Stands for \"host language\". Specifies the localization language of the metadata to be filled into snippet.localized. The field is filled with the default metadata if there is no localization in the specified language. The parameter value must be a language code included in the list returned by the i18nLanguages.list method (e.g. en_US, es_MX).",
-              in: "query",
-              name: "hl",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Return videos with the given ids.",
-              explode: true,
-              in: "query",
-              name: "id",
-              schema: ({
+                type: "string",
+                description: "Return the videos that are in the specified chart."
+              } as const),
+            "hl?": ({
+                type: "string",
+                description: "Stands for \"host language\". Specifies the localization language of the metadata to be filled into snippet.localized. The field is filled with the default metadata if there is no localization in the specified language. The parameter value must be a language code included in the list returned by the i18nLanguages.list method (e.g. en_US, es_MX)."
+              } as const),
+            "id?": ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "Return videos with the given ids."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              in: "query",
-              name: "locale",
-              schema: ({
+            "locale?": ({
                 type: "string"
-              } as const)
-            }),
-            queryParam({
-              in: "query",
-              name: "maxHeight",
-              schema: ({
+              } as const),
+            "maxHeight?": ({
                 maximum: 8192,
                 minimum: 72,
                 type: "integer"
-              } as const)
-            }),
-            queryParam({
-              description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set. *Note:* This parameter is supported for use in conjunction with the myRating and chart parameters, but it is not supported for use in conjunction with the id parameter.",
-              in: "query",
-              name: "maxResults",
-              schema: ({
+              } as const),
+            "maxResults?": ({
                 maximum: 50,
                 minimum: 1,
-                type: "integer"
-              } as const)
-            }),
-            queryParam({
-              description: "Return the player with maximum height specified in",
-              in: "query",
-              name: "maxWidth",
-              schema: ({
+                type: "integer",
+                description: "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set. *Note:* This parameter is supported for use in conjunction with the myRating and chart parameters, but it is not supported for use in conjunction with the id parameter."
+              } as const),
+            "maxWidth?": ({
                 maximum: 8192,
                 minimum: 72,
-                type: "integer"
-              } as const)
-            }),
-            queryParam({
-              description: "Return videos liked/disliked by the authenticated user. Does not support RateType.RATED_TYPE_NONE.",
-              in: "query",
-              name: "myRating",
-              schema: ({
+                type: "integer",
+                description: "Return the player with maximum height specified in"
+              } as const),
+            "myRating?": ({
                 enum: [
                   "none",
                   "like",
                   "dislike"
                 ],
-                type: "string"
+                type: "string",
+                description: "Return videos liked/disliked by the authenticated user. Does not support RateType.RATED_TYPE_NONE."
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "pageToken?": ({
+                type: "string",
+                description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved. *Note:* This parameter is supported for use in conjunction with the myRating and chart parameters, but it is not supported for use in conjunction with the id parameter."
+              } as const),
+            "regionCode?": ({
+                type: "string",
+                description: "Use a chart that is specific to the specified region"
+              } as const),
+            "videoCategoryId?": ({
+                type: "string",
+                description: "Use chart that is specific to the specified video category"
               } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved. *Note:* This parameter is supported for use in conjunction with the myRating and chart parameters, but it is not supported for use in conjunction with the id parameter.",
-              in: "query",
-              name: "pageToken",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Use a chart that is specific to the specified region",
-              in: "query",
-              name: "regionCode",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Use chart that is specific to the specified video category",
-              in: "query",
-              name: "videoCategoryId",
-              schema: ({
-                type: "string"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtubepartner")
         },
         res: {
@@ -10409,62 +9099,35 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.videos.insert",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "Should auto-levels be applied to the upload.",
-              in: "query",
-              name: "autoLevels",
-              schema: ({
-                type: "boolean"
+            "autoLevels?": ({
+                type: "boolean",
+                description: "Should auto-levels be applied to the upload."
+              } as const),
+            "notifySubscribers?": ({
+                type: "boolean",
+                description: "Notify the channel subscribers about the new video. As default, the notification is enabled."
+              } as const),
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
+              } as const),
+            "onBehalfOfContentOwnerChannel?": ({
+                type: "string",
+                description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel."
+              } as const),
+            "stabilize?": ({
+                type: "boolean",
+                description: "Should stabilize be applied to the upload."
               } as const)
-            }),
-            queryParam({
-              description: "Notify the channel subscribers about the new video. As default, the notification is enabled.",
-              in: "query",
-              name: "notifySubscribers",
-              schema: ({
-                type: "boolean"
-              } as const)
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-              in: "query",
-              name: "onBehalfOfContentOwnerChannel",
-              schema: ({
-                type: "string"
-              } as const)
-            }),
-            queryParam({
-              description: "Should stabilize be applied to the upload.",
-              in: "query",
-              name: "stabilize",
-              schema: ({
-                type: "boolean"
-              } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/octet-stream": Video,
@@ -10587,30 +9250,19 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.videos.update",
         req: {
-          params: [
-            queryParam({
-              description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a video's privacy setting is contained in the status part. As such, if your request is updating a private video, and the request's part parameter value includes the status part, the video's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the video will revert to the default privacy setting. In addition, not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response.",
-              explode: true,
-              in: "query",
-              name: "part",
-              required: true,
-              schema: ({
+          query: {
+            part: ({
                 items: ({
                   type: "string"
                 } as const),
-                type: "array"
+                type: "array",
+                description: "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a video's privacy setting is contained in the status part. As such, if your request is updating a private video, and the request's part parameter value includes the status part, the video's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the video will revert to the default privacy setting. In addition, not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response."
               } as const),
-              style: "form"
-            }),
-            queryParam({
-              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-              in: "query",
-              name: "onBehalfOfContentOwner",
-              schema: ({
-                type: "string"
+            "onBehalfOfContentOwner?": ({
+                type: "string",
+                description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner."
               } as const)
-            })
-          ],
+          },
           security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
           body: ({
             "application/json": Video
@@ -10630,29 +9282,18 @@ export default responsibleAPI({
       description: "Retrieves the ratings that the authorized user gave to a list of specified videos.",
       id: "youtube.videos.getRating",
       req: {
-        params: [
-          queryParam({
-            explode: true,
-            in: "query",
-            name: "id",
-            required: true,
-            schema: ({
+        query: {
+          id: ({
               items: ({
                 type: "string"
               } as const),
               type: "array"
             } as const),
-            style: "form"
-          }),
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
             } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
       },
       res: {
@@ -10669,20 +9310,11 @@ export default responsibleAPI({
       description: "Adds a like or dislike rating to a video or removes a rating from a video.",
       id: "youtube.videos.rate",
       req: {
-        params: [
-          queryParam({
-            in: "query",
-            name: "id",
-            required: true,
-            schema: ({
+        query: {
+          id: ({
               type: "string"
-            } as const)
-          }),
-          queryParam({
-            in: "query",
-            name: "rating",
-            required: true,
-            schema: ({
+            } as const),
+          rating: ({
               enum: [
                 "none",
                 "like",
@@ -10690,8 +9322,7 @@ export default responsibleAPI({
               ],
               type: "string"
             } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
       },
       res: {
@@ -10705,16 +9336,12 @@ export default responsibleAPI({
       description: "Report abuse for a video.",
       id: "youtube.videos.reportAbuse",
       req: {
-        params: [
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
+        query: {
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
             } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner"),
         body: ({
           "application/json": VideoAbuseReport
@@ -10731,24 +9358,15 @@ export default responsibleAPI({
       description: "Allows upload of watermark image and setting it for a channel.",
       id: "youtube.watermarks.set",
       req: {
-        params: [
-          queryParam({
-            in: "query",
-            name: "channelId",
-            required: true,
-            schema: ({
+        query: {
+          channelId: ({
               type: "string"
+            } as const),
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
             } as const)
-          }),
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtubepartner"),
         body: ({
           "application/octet-stream": InvideoBranding,
@@ -10767,24 +9385,15 @@ export default responsibleAPI({
       description: "Allows removal of channel watermark.",
       id: "youtube.watermarks.unset",
       req: {
-        params: [
-          queryParam({
-            in: "query",
-            name: "channelId",
-            required: true,
-            schema: ({
+        query: {
+          channelId: ({
               type: "string"
+            } as const),
+          "onBehalfOfContentOwner?": ({
+              type: "string",
+              description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner."
             } as const)
-          }),
-          queryParam({
-            description: "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            in: "query",
-            name: "onBehalfOfContentOwner",
-            schema: ({
-              type: "string"
-            } as const)
-          })
-        ],
+        },
         security: youtubeScopes("https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl", "https://www.googleapis.com/auth/youtubepartner")
       },
       res: {
