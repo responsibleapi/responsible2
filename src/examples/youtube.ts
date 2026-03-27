@@ -2386,6 +2386,7 @@ const I18nLanguage = () =>
         "An *i18nLanguage* resource identifies a UI language currently supported by YouTube.",
     },
   )
+
 const I18nLanguageListResponse = () =>
   object({
     "etag?": string({
@@ -2408,6 +2409,7 @@ const I18nLanguageListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
+
 const I18nLanguageSnippet = () =>
   object(
     {
@@ -2424,6 +2426,7 @@ const I18nLanguageSnippet = () =>
         "Basic details about an i18n language, such as language code and human-readable name.",
     },
   )
+
 const I18nRegion = () =>
   object(
     {
@@ -2446,6 +2449,7 @@ const I18nRegion = () =>
         "A *i18nRegion* resource identifies a region where YouTube is available.",
     },
   )
+
 const I18nRegionListResponse = () =>
   object({
     "etag?": string({
@@ -2468,6 +2472,7 @@ const I18nRegionListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
+
 const I18nRegionSnippet = () =>
   object(
     {
@@ -2860,6 +2865,7 @@ const LiveBroadcastStatistics = () =>
         "Statistics about the live broadcast. These represent a snapshot of the values at the time of the request. Statistics are only returned for live broadcasts.",
     },
   )
+
 const LiveBroadcastStatus = () =>
   object(
     {
