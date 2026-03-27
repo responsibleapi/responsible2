@@ -5513,7 +5513,7 @@ const cuepointResponse = () =>
     body: Cuepoint,
   })
 
-const partParamFunc = ({
+const partQuery = ({
   description,
   required = true,
 }: {
@@ -5524,12 +5524,7 @@ const partParamFunc = ({
     in: "query",
     name: "part",
     required,
-    schema:
-      description === ""
-        ? array(string())
-        : array(string(), {
-            description,
-          }),
+    schema: !description ? array(string()) : array(string(), { description }),
   })
 
 export default responsibleAPI({
@@ -5604,7 +5599,7 @@ export default responsibleAPI({
       id: "youtube.abuseReports.insert",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
           }),
@@ -5628,7 +5623,7 @@ export default responsibleAPI({
       id: "youtube.activities.list",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies a comma-separated list of one or more activity resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in an activity resource, the snippet property contains other properties that identify the type of activity, a display title for the activity, and so forth. If you set *part=snippet*, the API response will also contain all of those nested properties.",
           }),
@@ -5704,7 +5699,7 @@ export default responsibleAPI({
         id: "youtube.captions.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more caption resource parts that the API response will include. The part names that you can include in the parameter value are id and snippet.",
             }),
@@ -5731,7 +5726,7 @@ export default responsibleAPI({
         id: "youtube.captions.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies the caption resource parts that the API response will include. Set the parameter value to snippet.",
             }),
@@ -5759,7 +5754,7 @@ export default responsibleAPI({
         id: "youtube.captions.update",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more caption resource parts that the API response will include. The part names that you can include in the parameter value are id and snippet.",
             }),
@@ -5880,7 +5875,7 @@ export default responsibleAPI({
         id: "youtube.channelSections.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more channelSection resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, and contentDetails. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channelSection resource, the snippet property contains other properties, such as a display title for the channelSection. If you set *part=snippet*, the API response will also contain all of those nested properties.",
             }),
@@ -5925,7 +5920,7 @@ export default responsibleAPI({
         id: "youtube.channelSections.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
             }),
@@ -5953,7 +5948,7 @@ export default responsibleAPI({
         id: "youtube.channelSections.update",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
             }),
@@ -5982,7 +5977,7 @@ export default responsibleAPI({
         id: "youtube.channels.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more channel resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channel resource, the contentDetails property contains other properties, such as the uploads properties. As such, if you set *part=contentDetails*, the API response will also contain all of those nested properties.",
             }),
@@ -6050,7 +6045,7 @@ export default responsibleAPI({
         id: "youtube.channels.update",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The API currently only allows the parameter value to be set to either brandingSettings or invideoPromotion. (You cannot update both of those parts with a single request.) Note that this method overrides the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies.",
             }),
@@ -6093,7 +6088,7 @@ export default responsibleAPI({
         id: "youtube.commentThreads.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more commentThread resource properties that the API response will include.",
             }),
@@ -6159,7 +6154,7 @@ export default responsibleAPI({
         id: "youtube.commentThreads.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units.",
             }),
@@ -6175,7 +6170,7 @@ export default responsibleAPI({
         id: "youtube.youtube.v3.updateCommentThreads",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of commentThread resource properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
               required: false,
@@ -6214,7 +6209,7 @@ export default responsibleAPI({
         id: "youtube.comments.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more comment resource properties that the API response will include.",
             }),
@@ -6257,7 +6252,7 @@ export default responsibleAPI({
         id: "youtube.comments.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units.",
             }),
@@ -6276,7 +6271,7 @@ export default responsibleAPI({
         id: "youtube.comments.update",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter identifies the properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
             }),
@@ -6330,7 +6325,7 @@ export default responsibleAPI({
       id: "youtube.i18nLanguages.list",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies the i18nLanguage resource properties that the API response will include. Set the parameter value to snippet.",
           }),
@@ -6358,7 +6353,7 @@ export default responsibleAPI({
       id: "youtube.i18nRegions.list",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies the i18nRegion resource properties that the API response will include. Set the parameter value to snippet.",
           }),
@@ -6417,7 +6412,7 @@ export default responsibleAPI({
         id: "youtube.liveBroadcasts.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, status and statistics.",
             }),
@@ -6474,7 +6469,7 @@ export default responsibleAPI({
         id: "youtube.liveBroadcasts.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status.",
             }),
@@ -6492,7 +6487,7 @@ export default responsibleAPI({
         id: "youtube.liveBroadcasts.update",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a broadcast's privacy status is defined in the status part. As such, if your request is updating a private or unlisted broadcast, and the request's part parameter value includes the status part, the broadcast's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the broadcast will revert to the default privacy setting.",
             }),
@@ -6510,7 +6505,7 @@ export default responsibleAPI({
       id: "youtube.liveBroadcasts.bind",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
           }),
@@ -6539,7 +6534,7 @@ export default responsibleAPI({
       id: "youtube.liveBroadcasts.insertCuepoint",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
             required: false,
@@ -6569,7 +6564,7 @@ export default responsibleAPI({
       id: "youtube.liveBroadcasts.transition",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
           }),
@@ -6620,7 +6615,7 @@ export default responsibleAPI({
         id: "youtube.liveChatBans.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
             }),
@@ -6664,7 +6659,7 @@ export default responsibleAPI({
         id: "youtube.liveChatMessages.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies the liveChatComment resource parts that the API response will include. Supported values are id and snippet.",
             }),
@@ -6713,7 +6708,7 @@ export default responsibleAPI({
         id: "youtube.liveChatMessages.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes. It identifies the properties that the write operation will set as well as the properties that the API response will include. Set the parameter value to snippet.",
             }),
@@ -6757,7 +6752,7 @@ export default responsibleAPI({
         id: "youtube.liveChatModerators.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies the liveChatModerator resource parts that the API response will include. Supported values are id and snippet.",
             }),
@@ -6796,7 +6791,7 @@ export default responsibleAPI({
         id: "youtube.liveChatModerators.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
             }),
@@ -6857,7 +6852,7 @@ export default responsibleAPI({
         id: "youtube.liveStreams.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more liveStream resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, cdn, and status.",
             }),
@@ -6905,7 +6900,7 @@ export default responsibleAPI({
         id: "youtube.liveStreams.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, content_details, and status.",
             }),
@@ -6932,7 +6927,7 @@ export default responsibleAPI({
         id: "youtube.liveStreams.update",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. If the request body does not specify a value for a mutable property, the existing value for that property will be removed.",
             }),
@@ -6961,7 +6956,7 @@ export default responsibleAPI({
       id: "youtube.members.list",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies the member resource parts that the API response will include. Set the parameter value to snippet.",
           }),
@@ -7009,7 +7004,7 @@ export default responsibleAPI({
       id: "youtube.membershipsLevels.list",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies the membershipsLevel resource parts that the API response will include. Supported values are id and snippet.",
           }),
@@ -7064,7 +7059,7 @@ export default responsibleAPI({
         id: "youtube.playlistItems.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more playlistItem resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlistItem resource, the snippet property contains numerous fields, including the title, description, position, and resourceId properties. As such, if you set *part=snippet*, the API response will contain all of those properties.",
             }),
@@ -7113,7 +7108,7 @@ export default responsibleAPI({
         id: "youtube.playlistItems.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
             }),
@@ -7137,7 +7132,7 @@ export default responsibleAPI({
         id: "youtube.playlistItems.update",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a playlist item can specify a start time and end time, which identify the times portion of the video that should play when users watch the video in the playlist. If your request is updating a playlist item that sets these values, and the request's part parameter value includes the contentDetails part, the playlist item's start and end times will be updated to whatever value the request body specifies. If the request body does not specify values, the existing start and end times will be removed and replaced with the default settings.",
             }),
@@ -7195,7 +7190,7 @@ export default responsibleAPI({
         id: "youtube.playlists.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more playlist resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlist resource, the snippet property contains properties like author, title, description, tags, and timeCreated. As such, if you set *part=snippet*, the API response will contain all of those properties.",
             }),
@@ -7254,7 +7249,7 @@ export default responsibleAPI({
         id: "youtube.playlists.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
             }),
@@ -7282,7 +7277,7 @@ export default responsibleAPI({
         id: "youtube.playlists.update",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for mutable properties that are contained in any parts that the request body specifies. For example, a playlist's description is contained in the snippet part, which must be included in the request body. If the request does not specify a value for the snippet.description property, the playlist's existing description will be deleted.",
             }),
@@ -7307,7 +7302,7 @@ export default responsibleAPI({
       id: "youtube.search.list",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies a comma-separated list of one or more search resource properties that the API response will include. Set the parameter value to snippet.",
           }),
@@ -7487,7 +7482,7 @@ export default responsibleAPI({
         id: "youtube.subscriptions.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more subscription resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a subscription resource, the snippet property contains other properties, such as a display title for the subscription. If you set *part=snippet*, the API response will also contain all of those nested properties.",
             }),
@@ -7560,7 +7555,7 @@ export default responsibleAPI({
         id: "youtube.subscriptions.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
             }),
@@ -7585,7 +7580,7 @@ export default responsibleAPI({
       id: "youtube.superChatEvents.list",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies the superChatEvent resource parts that the API response will include. This parameter is currently not supported.",
           }),
@@ -7624,7 +7619,7 @@ export default responsibleAPI({
       description: "POST method.",
       id: "youtube.tests.insert",
       req: {
-        params: [partParamFunc({ description: "" })],
+        params: [partQuery({ description: "" })],
         query: {
           "externalChannelId?": string(),
         },
@@ -7658,7 +7653,7 @@ export default responsibleAPI({
         id: "youtube.thirdPartyLinks.delete",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description: "Do not use. Required for compatibility.",
               required: false,
             }),
@@ -7687,7 +7682,7 @@ export default responsibleAPI({
         id: "youtube.thirdPartyLinks.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies the thirdPartyLink resource parts that the API response will include. Supported values are linkingToken, status, and snippet.",
             }),
@@ -7719,7 +7714,7 @@ export default responsibleAPI({
         id: "youtube.thirdPartyLinks.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet.",
             }),
@@ -7738,7 +7733,7 @@ export default responsibleAPI({
         id: "youtube.thirdPartyLinks.update",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet.",
             }),
@@ -7788,7 +7783,7 @@ export default responsibleAPI({
       id: "youtube.videoAbuseReportReasons.list",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies the videoCategory resource parts that the API response will include. Supported values are id and snippet.",
           }),
@@ -7815,7 +7810,7 @@ export default responsibleAPI({
       id: "youtube.videoCategories.list",
       req: {
         params: [
-          partParamFunc({
+          partQuery({
             description:
               "The *part* parameter specifies the videoCategory resource properties that the API response will include. Set the parameter value to snippet.",
           }),
@@ -7868,7 +7863,7 @@ export default responsibleAPI({
         id: "youtube.videos.list",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more video resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a video resource, the snippet property contains the channelId, title, description, tags, and categoryId properties. As such, if you set *part=snippet*, the API response will contain all of those properties.",
             }),
@@ -7939,7 +7934,7 @@ export default responsibleAPI({
         id: "youtube.videos.insert",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response.",
             }),
@@ -8087,7 +8082,7 @@ export default responsibleAPI({
         id: "youtube.videos.update",
         req: {
           params: [
-            partParamFunc({
+            partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a video's privacy setting is contained in the status part. As such, if your request is updating a private video, and the request's part parameter value includes the status part, the video's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the video will revert to the default privacy setting. In addition, not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response.",
             }),

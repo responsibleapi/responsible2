@@ -22,6 +22,11 @@
 - never use `wc`, use `scc` instead (both on files and folders)
 - both `rg` and `ast-grep` are available for use
 
+### Git
+
+- when committing, always stage the intended files before running `git commit`;
+  never run `git commit` before `git add` for the same change set
+
 ## DSL design
 
 - never edit declarations tagged with `@dsl`. If you need to change them, ask

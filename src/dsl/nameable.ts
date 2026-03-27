@@ -26,6 +26,8 @@ export type Nameable<T> = NamedThunk<T> | NonFunction<T>
 /**
  * Use this for component keys that are not valid TypeScript identifiers,
  * for example `named("_.xgafv", queryParam(...))`.
+ *
+ * TODO: type this with {@link NamedThunk}
  */
 export const named = <T>(
   componentName: string,

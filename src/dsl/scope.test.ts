@@ -119,8 +119,8 @@ describe("scope", () => {
     >
   })
 
-  test("rejects inline params in params arrays", () => {
-    type _Test = Assert<IsNever<Extract<ReturnType<typeof queryParam>, Param>>>
+  test("accepts raw query params in params arrays", () => {
+    type _Test = Assert<OneExtendsTwo<ReturnType<typeof queryParam>, Param>>
   })
 
   test("accepts named params in params arrays", () => {
