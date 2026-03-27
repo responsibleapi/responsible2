@@ -16,7 +16,6 @@
 These are the clearest cases where route regrouping would unlock real `forAll`
 reuse:
 
-
 `liveChat` is a weaker candidate. The URL prefix is shared, but `bans`,
 `messages`, and `moderators` have different tags and different query shapes, so
 nesting helps less there.

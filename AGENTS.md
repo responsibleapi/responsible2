@@ -13,11 +13,6 @@
 - never run the whole test suite, run individual test files instead
 - use typechecking and linting for verification
 
-## DSL design
-
-- never edit declarations tagged with `@dsl`. If you need to change them, ask
-  first
-
 ## CLI tools
 
 - never use `node`, use `bun` instead
@@ -26,6 +21,13 @@
 - [never use `vitest`](docs/package.jsonc), `bun test` instead
 - never use `wc`, use `scc` instead (both on files and folders)
 - both `rg` and `ast-grep` are available for use
+
+## DSL design
+
+- never edit declarations tagged with `@dsl`. If you need to change them, ask
+  first
+- full DSL documentation is spreadout in `@dsl` tagged JSDocs, you can concat
+  them to get the full story
 
 ## Package rules
 

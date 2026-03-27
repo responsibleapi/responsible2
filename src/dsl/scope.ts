@@ -67,7 +67,7 @@ export interface Op<TTags extends TagRegistry = TagRegistry> {
   id?: string
   headID?: string
   req?: OpReq | Schema
-  res: OpRes
+  res?: OpRes
   deprecated?: boolean
   description?: string
   summary?: string
@@ -157,6 +157,20 @@ type ValidScopeArg<T extends ScopeArg> = T extends Scope
 /**
  * Use this when declaring multiple routes under the same subpath.
  * For single methods, use DSL from {@link file://../methods.ts}
+ *
+ * Scope merge behavior:
+ *
+ * `forAll` is inherited by every nested route and scope.
+ *
+ * - `req` is additive: parent defaults provide shared mime, params, security,
+ *   and request fields, while children extend or narrow them locally.
+ * - `tags` are inherited from the nearest containing scope.
+ * - `res.defaults` augments matching response ranges, for example to add shared
+ *   mime or headers to every `2xx` or `4xx` response.
+ * - `res.add` injects whole response entries into each child operation.
+ * - If an operation already declares the same status code locally, keep that
+ *   response local for now. In practice, `forAll.res.add.200` is for sibling
+ *   operations that do not already define their own `200`.
  *
  * @dsl
  */

@@ -5690,6 +5690,11 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtubepartner",
           ),
         },
+        res: {
+          add: {
+            200: successfulResponse,
+          },
+        },
       },
       DELETE: {
         description: "Deletes a resource.",
@@ -5698,9 +5703,6 @@ export default responsibleAPI({
           query: {
             id: string(),
           },
-        },
-        res: {
-          200: successfulResponse,
         },
       },
       GET: {
@@ -5801,9 +5803,6 @@ export default responsibleAPI({
             }),
           },
         },
-        res: {
-          200: successfulResponse,
-        },
       }),
     }),
     "/youtube/v3/channelBanners/insert": POST({
@@ -5846,6 +5845,14 @@ export default responsibleAPI({
     "/youtube/v3/channelSections": scope({
       forAll: {
         tags: [tags.channelSections],
+        res: {
+          add: {
+            200: resp({
+              description: "Successful response",
+              body: ChannelSection,
+            }),
+          },
+        },
       },
       DELETE: {
         description: "Deletes a resource.",
@@ -5936,12 +5943,6 @@ export default responsibleAPI({
           ),
           body: ChannelSection,
         },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: ChannelSection,
-          }),
-        },
       },
       PUT: {
         description: "Updates an existing resource.",
@@ -5963,12 +5964,6 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtubepartner",
           ),
           body: ChannelSection,
-        },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: ChannelSection,
-          }),
         },
       },
     }),
@@ -6074,6 +6069,14 @@ export default responsibleAPI({
     "/youtube/v3/commentThreads": scope({
       forAll: {
         tags: [tags.commentThreads],
+        res: {
+          add: {
+            200: resp({
+              description: "Successful response",
+              body: CommentThread,
+            }),
+          },
+        },
       },
       GET: {
         description: "Retrieves a list of resources, possibly filtered.",
@@ -6154,12 +6157,6 @@ export default responsibleAPI({
           ),
           body: CommentThread,
         },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: CommentThread,
-          }),
-        },
       },
       PUT: {
         description: "Updates an existing resource.",
@@ -6173,12 +6170,6 @@ export default responsibleAPI({
           },
           body: CommentThread,
         },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: CommentThread,
-          }),
-        },
         tags: [tags.youtube],
       },
     }),
@@ -6190,6 +6181,11 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
         },
+        res: {
+          add: {
+            200: successfulResponse,
+          },
+        },
       },
       DELETE: {
         description: "Deletes a resource.",
@@ -6198,9 +6194,6 @@ export default responsibleAPI({
           query: {
             id: string(),
           },
-        },
-        res: {
-          200: successfulResponse,
         },
       },
       GET: {
@@ -6294,9 +6287,6 @@ export default responsibleAPI({
             }),
           },
         },
-        res: {
-          200: successfulResponse,
-        },
       }),
       "/setModerationStatus": POST({
         description: "Sets the moderation status of one or more comments.",
@@ -6317,9 +6307,6 @@ export default responsibleAPI({
                 "If set to true the author of the comment gets added to the ban list. This means all future comments of the author will autmomatically be rejected. Only valid in combination with STATUS_REJECTED.",
             }),
           },
-        },
-        res: {
-          200: successfulResponse,
         },
       }),
     }),
@@ -6380,6 +6367,11 @@ export default responsibleAPI({
         tags: liveBroadcastTags,
         req: {
           query: liveBroadcastContentOwnerQuery(),
+        },
+        res: {
+          add: {
+            200: liveBroadcastResponse(),
+          },
         },
       },
       DELETE: {
@@ -6466,9 +6458,6 @@ export default responsibleAPI({
           ),
           body: LiveBroadcast,
         },
-        res: {
-          200: liveBroadcastResponse(),
-        },
       },
       PUT: {
         description:
@@ -6483,9 +6472,6 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
           body: LiveBroadcast,
-        },
-        res: {
-          200: liveBroadcastResponse(),
         },
       },
     }),
@@ -6782,6 +6768,14 @@ export default responsibleAPI({
     "/youtube/v3/liveStreams": scope({
       forAll: {
         tags: [tags.liveStreams],
+        res: {
+          add: {
+            200: resp({
+              description: "Successful response",
+              body: LiveStream,
+            }),
+          },
+        },
       },
       DELETE: {
         description: "Deletes an existing stream for the authenticated user.",
@@ -6878,12 +6872,6 @@ export default responsibleAPI({
           ),
           body: LiveStream,
         },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: LiveStream,
-          }),
-        },
       },
       PUT: {
         description: "Updates an existing stream for the authenticated user.",
@@ -6908,12 +6896,6 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
           body: LiveStream,
-        },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: LiveStream,
-          }),
         },
       },
     }),
@@ -6989,6 +6971,14 @@ export default responsibleAPI({
     "/youtube/v3/playlistItems": scope({
       forAll: {
         tags: [tags.playlistItems],
+        res: {
+          add: {
+            200: resp({
+              description: "Successful response",
+              body: PlaylistItem,
+            }),
+          },
+        },
       },
       DELETE: {
         description: "Deletes a resource.",
@@ -7079,12 +7069,6 @@ export default responsibleAPI({
           ),
           body: PlaylistItem,
         },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: PlaylistItem,
-          }),
-        },
       },
       PUT: {
         description: "Updates an existing resource.",
@@ -7107,17 +7091,19 @@ export default responsibleAPI({
           ),
           body: PlaylistItem,
         },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: PlaylistItem,
-          }),
-        },
       },
     }),
     "/youtube/v3/playlists": scope({
       forAll: {
         tags: [tags.playlists],
+        res: {
+          add: {
+            200: resp({
+              description: "Successful response",
+              body: Playlist,
+            }),
+          },
+        },
       },
       DELETE: {
         description: "Deletes a resource.",
@@ -7222,12 +7208,6 @@ export default responsibleAPI({
           ),
           body: Playlist,
         },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: Playlist,
-          }),
-        },
       },
       PUT: {
         description: "Updates an existing resource.",
@@ -7249,12 +7229,6 @@ export default responsibleAPI({
             "https://www.googleapis.com/auth/youtubepartner",
           ),
           body: Playlist,
-        },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: Playlist,
-          }),
         },
       },
     }),
@@ -7594,6 +7568,14 @@ export default responsibleAPI({
     "/youtube/v3/thirdPartyLinks": scope({
       forAll: {
         tags: [tags.thirdPartyLinks],
+        res: {
+          add: {
+            200: resp({
+              description: "Successful response",
+              body: ThirdPartyLink,
+            }),
+          },
+        },
       },
       DELETE: {
         description: "Deletes a resource.",
@@ -7667,12 +7649,6 @@ export default responsibleAPI({
           },
           body: ThirdPartyLink,
         },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: ThirdPartyLink,
-          }),
-        },
       },
       PUT: {
         description: "Updates an existing resource.",
@@ -7689,12 +7665,6 @@ export default responsibleAPI({
             }),
           },
           body: ThirdPartyLink,
-        },
-        res: {
-          200: resp({
-            description: "Successful response",
-            body: ThirdPartyLink,
-          }),
         },
       },
     }),
@@ -7787,6 +7757,11 @@ export default responsibleAPI({
     "/youtube/v3/videos": scope({
       forAll: {
         tags: videoTags,
+        res: {
+          add: {
+            200: successfulResponse,
+          },
+        },
       },
       DELETE: {
         description: "Deletes a resource.",
@@ -7797,9 +7772,6 @@ export default responsibleAPI({
             ...videoContentOwnerQuery(),
           },
           security: videoPartnerSecurity(),
-        },
-        res: {
-          200: successfulResponse,
         },
       },
       GET: {
@@ -8069,9 +8041,6 @@ export default responsibleAPI({
           },
           security: videoPartnerSecurity(),
         },
-        res: {
-          200: successfulResponse,
-        },
       }),
       "/reportAbuse": POST({
         description: "Report abuse for a video.",
@@ -8081,9 +8050,6 @@ export default responsibleAPI({
           security: videoPartnerSecurity(),
           body: VideoAbuseReport,
         },
-        res: {
-          200: successfulResponse,
-        },
       }),
     }),
     "/youtube/v3/watermarks": scope({
@@ -8092,6 +8058,11 @@ export default responsibleAPI({
         req: {
           query: watermarkQuery(),
           security: videoPartnerSecurity(),
+        },
+        res: {
+          add: {
+            200: successfulResponse,
+          },
         },
       },
       routes: {
@@ -8107,16 +8078,10 @@ export default responsibleAPI({
               "image/png": InvideoBranding,
             },
           },
-          res: {
-            200: successfulResponse,
-          },
         }),
         "/unset": POST({
           description: "Allows removal of channel watermark.",
           id: "youtube.watermarks.unset",
-          res: {
-            200: successfulResponse,
-          },
         }),
       },
     }),

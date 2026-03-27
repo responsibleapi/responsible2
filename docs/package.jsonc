@@ -5,22 +5,6 @@
 {
   "scripts": {
     /**
-     * Alias for the default fast path.
-     */
-    "check": "",
-
-    /**
-     * Why not `--parallel --no-exit-on-error`: to fail faster.
-     */
-    "check:fast": "",
-
-    /**
-     * `--no-exit-on-error` keeps the other checks running so one command can
-     * report the full failure set.
-     */
-    "check:full": "",
-
-    /**
      * We keep `bun test` as the script entrypoint because it is faster for
      * local runs in this project.
      *
