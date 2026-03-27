@@ -29,6 +29,27 @@
 - full DSL documentation is spreadout in `@dsl` tagged JSDocs, you can concat
   them to get the full story
 
+## Large mechanical refactors
+
+- Use `scc <path>` first when a refactor targets a large file or a large folder
+  and you need a quick size estimate.
+- Treat `ast-grep` as the default tool for large repetitive syntax-preserving
+  refactors, especially when the same shape appears many times in one file.
+- Prefer `ast-grep run` without `-U` first to preview the rewrite and inspect
+  the diff before applying it.
+- After the preview looks correct, rerun the same command with `-U` to apply it
+  mechanically.
+- Use `ast-grep` for the bulk transformation and then do a small follow-up
+  cleanup pass for naming, formatting, or edge cases.
+
+## Language rules
+
+### TypeScript
+
+- when a helper takes a typed object parameter, add new override fields to that
+  input object and handle them inside the helper instead of spreading the
+  helper's return value just to patch one property afterward
+
 ## Package rules
 
 ### `openapi3-ts`
