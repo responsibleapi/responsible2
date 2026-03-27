@@ -5458,6 +5458,7 @@ const upload_protocol = named(
 const successfulResponse = resp({ description: "Successful response" })
 
 const liveBroadcastTags = [tags.liveBroadcasts]
+const videoTags = [tags.videos]
 
 const liveBroadcastContentOwnerQuery = () => ({
   "onBehalfOfContentOwner?": string({
@@ -5469,6 +5470,20 @@ const liveBroadcastContentOwnerQuery = () => ({
       "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
   }),
 })
+
+const videoContentOwnerQuery = () => ({
+  "onBehalfOfContentOwner?": string({
+    description:
+      "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
+  }),
+})
+
+const videoPartnerSecurity = () =>
+  oauthScopes(
+    "https://www.googleapis.com/auth/youtube",
+    "https://www.googleapis.com/auth/youtube.force-ssl",
+    "https://www.googleapis.com/auth/youtubepartner",
+  )
 
 const liveBroadcastListPart = () =>
   array(string(), {
@@ -7758,7 +7773,7 @@ export default responsibleAPI({
     }),
     "/youtube/v3/videos": scope({
       forAll: {
-        tags: [tags.videos],
+        tags: videoTags,
       },
       DELETE: {
         description: "Deletes a resource.",
@@ -7766,16 +7781,9 @@ export default responsibleAPI({
         req: {
           query: {
             id: string(),
-            "onBehalfOfContentOwner?": string({
-              description:
-                "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            }),
+            ...videoContentOwnerQuery(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
+          security: videoPartnerSecurity(),
         },
         res: {
           200: successfulResponse,
@@ -7822,10 +7830,7 @@ export default responsibleAPI({
               description:
                 "Return videos liked/disliked by the authenticated user. Does not support RateType.RATED_TYPE_NONE.",
             }),
-            "onBehalfOfContentOwner?": string({
-              description:
-                "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            }),
+            ...videoContentOwnerQuery(),
             "pageToken?": string({
               description:
                 "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved. *Note:* This parameter is supported for use in conjunction with the myRating and chart parameters, but it is not supported for use in conjunction with the id parameter.",
@@ -7869,10 +7874,7 @@ export default responsibleAPI({
               description:
                 "Notify the channel subscribers about the new video. As default, the notification is enabled.",
             }),
-            "onBehalfOfContentOwner?": string({
-              description:
-                "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            }),
+            ...videoContentOwnerQuery(),
             "onBehalfOfContentOwnerChannel?": string({
               description:
                 "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
@@ -8011,16 +8013,9 @@ export default responsibleAPI({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a video's privacy setting is contained in the status part. As such, if your request is updating a private video, and the request's part parameter value includes the status part, the video's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the video will revert to the default privacy setting. In addition, not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response.",
             }),
-            "onBehalfOfContentOwner?": string({
-              description:
-                "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-            }),
+            ...videoContentOwnerQuery(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
+          security: videoPartnerSecurity(),
           body: Video,
         },
         res: {
@@ -8030,76 +8025,53 @@ export default responsibleAPI({
           }),
         },
       },
-    }),
-    "/youtube/v3/videos/getRating": GET({
-      description:
-        "Retrieves the ratings that the authorized user gave to a list of specified videos.",
-      id: "youtube.videos.getRating",
-      req: {
-        query: {
-          id: array(string()),
-          "onBehalfOfContentOwner?": string({
-            description:
-              "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
+      "/getRating": GET({
+        description:
+          "Retrieves the ratings that the authorized user gave to a list of specified videos.",
+        id: "youtube.videos.getRating",
+        req: {
+          query: {
+            id: array(string()),
+            ...videoContentOwnerQuery(),
+          },
+          security: videoPartnerSecurity(),
+        },
+        res: {
+          200: resp({
+            description: "Successful response",
+            body: VideoGetRatingResponse,
           }),
         },
-        security: oauthScopes(
-          "https://www.googleapis.com/auth/youtube",
-          "https://www.googleapis.com/auth/youtube.force-ssl",
-          "https://www.googleapis.com/auth/youtubepartner",
-        ),
-      },
-      res: {
-        200: resp({
-          description: "Successful response",
-          body: VideoGetRatingResponse,
-        }),
-      },
-      tags: [tags.videos],
-    }),
-    "/youtube/v3/videos/rate": POST({
-      description:
-        "Adds a like or dislike rating to a video or removes a rating from a video.",
-      id: "youtube.videos.rate",
-      req: {
-        query: {
-          id: string(),
-          rating: string({
-            enum: ["none", "like", "dislike"],
-          }),
+      }),
+      "/rate": POST({
+        description:
+          "Adds a like or dislike rating to a video or removes a rating from a video.",
+        id: "youtube.videos.rate",
+        req: {
+          query: {
+            id: string(),
+            rating: string({
+              enum: ["none", "like", "dislike"],
+            }),
+          },
+          security: videoPartnerSecurity(),
         },
-        security: oauthScopes(
-          "https://www.googleapis.com/auth/youtube",
-          "https://www.googleapis.com/auth/youtube.force-ssl",
-          "https://www.googleapis.com/auth/youtubepartner",
-        ),
-      },
-      res: {
-        200: successfulResponse,
-      },
-      tags: [tags.videos],
-    }),
-    "/youtube/v3/videos/reportAbuse": POST({
-      description: "Report abuse for a video.",
-      id: "youtube.videos.reportAbuse",
-      req: {
-        query: {
-          "onBehalfOfContentOwner?": string({
-            description:
-              "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
-          }),
+        res: {
+          200: successfulResponse,
         },
-        security: oauthScopes(
-          "https://www.googleapis.com/auth/youtube",
-          "https://www.googleapis.com/auth/youtube.force-ssl",
-          "https://www.googleapis.com/auth/youtubepartner",
-        ),
-        body: VideoAbuseReport,
-      },
-      res: {
-        200: successfulResponse,
-      },
-      tags: [tags.videos],
+      }),
+      "/reportAbuse": POST({
+        description: "Report abuse for a video.",
+        id: "youtube.videos.reportAbuse",
+        req: {
+          query: videoContentOwnerQuery(),
+          security: videoPartnerSecurity(),
+          body: VideoAbuseReport,
+        },
+        res: {
+          200: successfulResponse,
+        },
+      }),
     }),
     "/youtube/v3/watermarks/set": POST({
       description:
