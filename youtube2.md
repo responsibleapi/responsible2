@@ -16,18 +16,6 @@
 These are the clearest cases where route regrouping would unlock real `forAll`
 reuse:
 
-- `videos`
-  - Current shape: `/youtube/v3/videos` plus `/getRating` plus `/rate` plus
-    `/reportAbuse`
-  - Shared today: `tags.videos`
-  - Five operations repeat
-    `youtubeScopes(youtube, youtube.force-ssl, youtubepartner)`.
-  - Four operations repeat `onBehalfOfContentOwner?`.
-- `watermarks`
-  - Current shape: `/youtube/v3/watermarks/set` plus
-    `/youtube/v3/watermarks/unset`
-  - Shared today: `tags.watermarks`, `channelId`, `onBehalfOfContentOwner?`
-  - `set` would just override body and use the wider upload security preset.
 
 `liveChat` is a weaker candidate. The URL prefix is shared, but `bans`,
 `messages`, and `moderators` have different tags and different query shapes, so
