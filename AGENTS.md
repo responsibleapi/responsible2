@@ -55,3 +55,7 @@ calls and return values
 ```sh
 git log --all --since='%day% 00:00:00' --until='%day% 23:59:59' --numstat --format=tformat: | awk 'NF==3 { if ($1 ~ /^[0-9]+$/) add += $1; if ($2 ~ /^[0-9]+$/) del += $2 } END { printf("+%d\n-%d\n", add, del) }'
 ```
+
+### commit
+
+`git commit` current session with extremely concise yet precise msg.
