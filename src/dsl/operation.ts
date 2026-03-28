@@ -1,3 +1,4 @@
+import type { NameWithOptionality } from "./dsl.ts"
 import type { HttpMethod } from "./methods.ts"
 import type { Nameable } from "./nameable.ts"
 import type { Param } from "./params.ts"
@@ -10,13 +11,16 @@ export interface OpReq {
   readonly security?: Security
   /* optional security means `value` OR `no authentication` */
   readonly "security?"?: Security
-  readonly pathParams?: Record<string, Schema>
-  readonly query?: Record<string, Schema>
-  readonly headers?: Record<string, Schema>
+  readonly pathParams?: Record<NameWithOptionality, Schema>
+  readonly query?: Record<NameWithOptionality, Schema>
+  readonly headers?: Record<NameWithOptionality, Schema>
   readonly body?: Schema | Record<Mime, Schema>
 
   /**
-   * helps reuse params. We could reuse them in {@link query} etc but
+   * helps reuse params. We could reuse them in {@link query} etc.
+   * using object spreading, but I don't like
+   * hidden `name` and `required` in {@link NameWithOptionality} during reuse.
+   * TBD.
    *
    * @dsl
    */
