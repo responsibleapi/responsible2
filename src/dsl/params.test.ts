@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest"
 import type { Assert, OneExtendsTwo } from "../type-assertions.ts"
 import { named } from "./nameable.ts"
+import type { Op } from "./operation.ts"
 import { queryParam, type PathParamRaw } from "./params.ts"
 import type { Schema } from "./schema.ts"
-import type { Op } from "./scope.ts"
 
 type ReqObject = Exclude<NonNullable<Op["req"]>, Schema>
 type Param = NonNullable<ReqObject["params"]>[number]

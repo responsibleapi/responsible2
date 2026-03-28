@@ -1,24 +1,6 @@
-// TODO: Merge this file into `src/dsl/dsl.ts`.
-
-import { type Nameable } from "./nameable.ts"
-import type { Schema } from "./schema.ts"
-import type { Op } from "./scope.ts"
-
-export type Mime = `${string}/${string}`
-
-interface RespParams {
-  body?: Schema | Record<Mime, Schema>
-  description?: string
-  headers?: Record<string, Schema>
-  cookies?: Record<string, Schema>
-}
-
-export type Resp = Nameable<RespParams>
+import type { Op } from "./operation.ts"
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "HEAD"
-
-/** this exists mostly to distinguish {@link Schema} from {@link Resp} */
-export const resp = (param: RespParams): RespParams => param
 
 export function GET(_op: Op): Op {
   throw new Error("TODO")

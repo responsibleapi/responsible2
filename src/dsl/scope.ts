@@ -1,41 +1,16 @@
 import type { oas31 } from "openapi3-ts"
 import type { RequireAtLeastTwo } from "../lib.ts"
-import type { HttpMethod, Mime, Resp } from "./methods.ts"
-import type { Param } from "./params.ts"
-import type { Schema } from "./schema.ts"
-import type { Security } from "./security.ts"
+import type { HttpMethod } from "./methods.ts"
+import type {
+  MatchStatus,
+  Op,
+  OpRes,
+  ReqAugmentation,
+  RespAugmentation,
+} from "./operation.ts"
 import type { OpTags, TagRegistry } from "./tags.ts"
 
-interface OpReq {
-  readonly security?: Security
-  /* optional security means `value` OR `no authentication` */
-  readonly "security?"?: Security
-  readonly pathParams?: Record<string, Schema>
-  readonly query?: Record<string, Schema>
-  readonly headers?: Record<string, Schema>
-  readonly body?: Schema | Record<Mime, Schema>
-
-  /**
-   * helps reuse params. We could reuse them in {@link query} etc but
-   *
-   * @dsl
-   */
-  readonly params?: readonly Param[]
-}
-
-interface ReqAugmentation extends OpReq {
-  readonly mime?: Mime
-}
-
-interface RespAugmentation {
-  readonly mime?: Mime
-  readonly headers?: Record<string, Schema>
-  readonly cookies?: Record<string, Schema>
-}
-
-type MatchStatus = number | `${number}..${number}`
-
-type OpRes = Record<number, Resp | Schema>
+export type Mime = `${string}/${string}`
 
 type ScopeRes =
   | {
@@ -44,23 +19,6 @@ type ScopeRes =
       add?: OpRes
     }
   | OpRes
-
-export interface Op<TTags extends TagRegistry = TagRegistry> {
-  id?: string
-  headID?: string
-  req?: OpReq | Schema
-  res?: OpRes
-  deprecated?: boolean
-  description?: string
-  summary?: string
-  tags?: OpTags<TTags>
-}
-
-export interface OpWithMethod<
-  TTags extends TagRegistry = TagRegistry,
-> extends Op<TTags> {
-  method: HttpMethod
-}
 
 type ScopeOrOp<TTags extends TagRegistry = TagRegistry> =
   | Op<TTags>

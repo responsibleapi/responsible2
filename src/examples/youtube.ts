@@ -1,5 +1,5 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
-import { GET, POST, resp } from "../dsl/methods.ts"
+import { GET, POST } from "../dsl/methods.ts"
 import { named } from "../dsl/nameable.ts"
 import { queryParam, type QueryParamRaw } from "../dsl/params.ts"
 import {
@@ -21,6 +21,7 @@ import {
   oauth2Security,
 } from "../dsl/security.ts"
 import { declareTags } from "../dsl/tags.ts"
+import { resp } from "../dsl/operation.ts"
 
 const ytOAuthScopes = {
   "https://www.googleapis.com/auth/youtube": "Manage your YouTube account",
