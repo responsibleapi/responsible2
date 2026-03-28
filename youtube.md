@@ -7,16 +7,6 @@ deeper in the tree.
 
 ## High-value changes with the existing DSL
 
-1. Reuse `onBehalfOfContentOwner` as a shared param instead of repeating it
-   inline. `onBehalfOfContentOwner` and `onBehalfOfContentOwnerChannel` are
-   already declared once (`src/examples/youtube.ts:5451`,
-   `src/examples/youtube.ts:5458`), but only the channel variant is reused
-   consistently. There are 23 inline `onBehalfOfContentOwner?` copies across
-   scopes like `channelSections`, `liveStreams`, `playlistItems`, `playlists`,
-   `search`, and `thumbnails`. Make `onBehalfOfContentOwner` a named param and
-   move those copies into `req.params`, which is the DSL’s intended reuse slot
-   for shared params (`src/dsl/operation.ts:19`).
-
 2. Push base OAuth bundles into `scope({ forAll: { req } })`. `scope` already
    documents additive request inheritance (`src/dsl/scope.ts:113`). `youtube.ts`
    still has 49 `oauthScopes(...)` calls, mostly four repeated bundles: 15x
