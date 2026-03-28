@@ -1,5 +1,6 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET, HEAD, POST } from "../dsl/methods.ts"
+import { resp } from "../dsl/operation.ts"
 import {
   array,
   boolean,
@@ -12,7 +13,6 @@ import {
 } from "../dsl/schema.ts"
 import { scope } from "../dsl/scope.ts"
 import { headerSecurity } from "../dsl/security.ts"
-import { resp } from "../dsl/operation.ts"
 
 const Email = () => string({ format: "email" })
 
@@ -133,42 +133,22 @@ const Show2 = () =>
 
 const EditShowReq = () =>
   object({
-    explicit: boolean(),
-    language: string(),
-    owner: string(),
-    ownerEmail: Email,
     "analyticsPrefix?": HttpURL,
     "author?": string(),
     "category1?": string(),
     "category2?": string(),
     "copyright?": string(),
     "description?": string(),
-    "image?": HttpURL,
-    "keywords?": string(),
-    "subcategory1?": string(),
-    "subcategory2?": string(),
-    "title?": string(),
-    "website?": HttpURL,
-  })
-
-const _EditShowReq2 = () =>
-  object({
-    "analyticsPrefix?": HttpURL,
-    "author?": string(),
-    "category1?": string(),
-    "category2?": string(),
-    "copyright?": string(),
-    "description?": string(),
-    "image?": HttpURL,
-    "keywords?": string(),
-    "subcategory1?": string(),
-    "subcategory2?": string(),
-    "title?": string(),
-    "website?": HttpURL,
     explicit: boolean(),
+    "image?": HttpURL,
+    "keywords?": string(),
     language: string(),
     owner: string(),
     ownerEmail: Email,
+    "subcategory1?": string(),
+    "subcategory2?": string(),
+    "title?": string(),
+    "website?": HttpURL,
   })
 
 const Mime = () => string({ pattern: /^[a-z]+\/.+$/ })
@@ -278,12 +258,14 @@ const authenticatedOps = scope({
       id: "showsByEmail",
       req: { pathParams: { email: Email } },
       res: {
-        200: array(object({
-          id: ShowID,
-          title: string({ minLength: 1 }),
-        })),
+        200: array(
+          object({
+            id: ShowID,
+            title: string({ minLength: 1 }),
+          }),
+        ),
       },
-    })
+    }),
   }),
   "/recent": GET({
     id: "recentFeeds",
@@ -291,7 +273,8 @@ const authenticatedOps = scope({
   }),
   "/checkout": POST({
     id: "stripeCheckout",
-    description: "Redirect to the checkout page or to billing if already subscribed",
+    description:
+      "Redirect to the checkout page or to billing if already subscribed",
     req: object({
       plan: Plan,
       interval: PlanInterval,
@@ -338,13 +321,15 @@ const authenticatedOps = scope({
     "/episode_downloads": GET({
       id: "episodeDownloads",
       res: {
-        200: array(object({
-          title: string(),
-          url: HttpURL,
-          downloads: int32({ minimum: 0 }),
-        })),
+        200: array(
+          object({
+            title: string(),
+            url: HttpURL,
+            downloads: int32({ minimum: 0 }),
+          }),
+        ),
       },
-    })
+    }),
   }),
   "/later": scope({
     GET: {
@@ -387,8 +372,8 @@ const authenticatedOps = scope({
       DELETE: {
         id: "removeLater",
         res: { 200: unknown() },
-      }
-    })
+      },
+    }),
   }),
   "/s3_presign_image": GET({
     id: "preSignedImageUploadURL",
@@ -409,7 +394,7 @@ const authenticatedOps = scope({
       200: ReverseResp,
       403: NotYourShow,
     },
-  })
+  }),
 })
 
 const jsonAPI = scope({
@@ -516,7 +501,7 @@ const jsonAPI = scope({
         },
       },
       res: { 200: ItemsResp },
-    })
+    }),
   }),
   "/cdn_log": POST({
     id: "logCDN",
@@ -536,7 +521,7 @@ const jsonAPI = scope({
       },
     },
   }),
-  "/auth": authenticatedOps
+  "/auth": authenticatedOps,
 })
 
 const googleAuth = scope({

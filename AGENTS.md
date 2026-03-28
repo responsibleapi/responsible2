@@ -41,8 +41,8 @@
 - Start with `ast-grep run` without `-U` to preview the rewrite and inspect the
   diff. Rerun with `-U` only after the preview looks correct.
 - Use plain `--rewrite` only when replacing matched node text is enough. If the
-  edit must also move or remove commas, brackets, or other separators, switch
-  to a YAML rule with `fix`.
+  edit must also move or remove commas, brackets, or other separators, switch to
+  a YAML rule with `fix`.
 - When removing a list/object item plus its trailing comma, use `fix` with
   `expandStart` and/or `expandEnd`.
 - When one match needs coordinated rewrites across multiple child nodes, prefer
