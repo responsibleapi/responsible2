@@ -32,23 +32,12 @@ export type PathRoutes<TTags extends TagRegistry = TagRegistry> = Record<
   ScopeOrOp<TTags>
 >
 
-/* Supports scopes that declare HTTP handlers alongside nested path routes. */
-type MethodRoutes<TTags extends TagRegistry = TagRegistry> = Partial<
+type ScopeRoutes<TTags extends TagRegistry = TagRegistry> = Partial<
   Record<HttpMethod, Op<TTags>>
->
+> &
+  Partial<PathRoutes<TTags>>
 
-/*
- * Real `routes` objects can contain both HTTP methods and nested path keys at
- * the same time, so this is a combined shape instead of a simple union.
- */
-type ScopeRoutes<TTags extends TagRegistry = TagRegistry> = PathRoutes<TTags> &
-  MethodRoutes<TTags>
-
-/*
- * `scope()` accepts a flat object where `forAll` sits alongside HTTP methods
- * and nested path keys.
- */
-type ScopeArg<TTags extends TagRegistry = TagRegistry> = {
+type ScopeInput<TTags extends TagRegistry = TagRegistry> = {
   forAll?: ScopeOpts<TTags>
 } & ScopeRoutes<TTags>
 
@@ -72,16 +61,18 @@ export interface Scope<TTags extends TagRegistry = TagRegistry> {
 }
 
 /**
- * it's done to prevent {@link scope} usage with single {@link HttpMethod}.
- * `forAll` is ignored here so defaults do not affect the route-shape validation.
- * for single methods, use DSL from {@link file://../methods.ts}
+ * Scopes without nested paths are pure method collections, so require at least
+ * two HTTP methods in that branch.
  *
- * If a scope has at least one nested path, it is valid as-is. Otherwise, we
- * validate just the method subset and require at least two HTTP methods.
+ * `forAll` is ignored here so defaults do not affect the route-shape
+ * validation. For single methods, use DSL from {@link file://../methods.ts}
+ *
+ * If a scope has at least one nested path, it is valid as-is. Otherwise we
+ * validate only the method subset.
  *
  * @dsl
  */
-type ValidScopeArg<T extends ScopeArg> =
+type ValidScopeArg<T extends ScopeInput> =
   Extract<keyof T, HttpPath> extends never
     ? Pick<T, Extract<keyof T, HttpMethod>> extends RequireAtLeastTwo<
         Record<HttpMethod, Op>
@@ -113,9 +104,8 @@ type ValidScopeArg<T extends ScopeArg> =
  *
  * @dsl
  */
-export function scope<const T extends ScopeArg>(arg: ValidScopeArg<T>): Scope {
-  const scopeArg: ScopeArg = arg
-  const { forAll, ...routes } = scopeArg
+export function scope<T extends ScopeInput>(arg: ValidScopeArg<T>): Scope {
+  const { forAll, ...routes }: ScopeInput = arg
 
   if (forAll === undefined) {
     return {
