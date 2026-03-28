@@ -7,14 +7,6 @@ deeper in the tree.
 
 ## High-value changes with the existing DSL
 
-2. Push base OAuth bundles into `scope({ forAll: { req } })`. `scope` already
-   documents additive request inheritance (`src/dsl/scope.ts:113`). `youtube.ts`
-   still has 49 `oauthScopes(...)` calls, mostly four repeated bundles: 15x
-   `youtube + force-ssl`, 13x `+ youtubepartner`, 9x
-   `+ readonly + youtubepartner`, 7x `+ readonly`. For resource scopes that
-   already exist, put the base bundle in `forAll.req.security` and let list/read
-   methods add `youtube.readonly`.
-
 ## Optional `dsl.ts` change
 
 5. Keep `src/dsl/dsl.ts` as-is unless you want a root API shape that matches

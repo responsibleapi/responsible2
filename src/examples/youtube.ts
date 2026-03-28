@@ -5489,11 +5489,9 @@ const videoPartnerSecurity = oauthScopes(
   "https://www.googleapis.com/auth/youtubepartner",
 )
 
-const videoUploadPartnerSecurity = oauthScopes(
+const youtubeForceSslSecurity = oauthScopes(
   "https://www.googleapis.com/auth/youtube",
   "https://www.googleapis.com/auth/youtube.force-ssl",
-  "https://www.googleapis.com/auth/youtube.upload",
-  "https://www.googleapis.com/auth/youtubepartner",
 )
 
 const watermarkChannelId = queryParam({
@@ -5913,11 +5911,8 @@ export default responsibleAPI({
                 "Return the ChannelSections owned by the authenticated user.",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
-            "https://www.googleapis.com/auth/youtubepartner",
           ),
         },
         res: {
@@ -5958,6 +5953,9 @@ export default responsibleAPI({
     "/youtube/v3/channels": scope({
       forAll: {
         tags: [tags.channels],
+        req: {
+          security: videoPartnerSecurity,
+        },
       },
       GET: {
         description: "Retrieves a list of resources, possibly filtered.",
@@ -6002,10 +6000,7 @@ export default responsibleAPI({
             }),
           },
           security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtube.readonly",
-            "https://www.googleapis.com/auth/youtubepartner",
             "https://www.googleapis.com/auth/youtubepartner-channel-audit",
           ),
         },
@@ -6027,11 +6022,6 @@ export default responsibleAPI({
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The API currently only allows the parameter value to be set to either brandingSettings or invideoPromotion. (You cannot update both of those parts with a single request.) Note that this method overrides the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
           body: Channel,
         },
         res: {
@@ -6332,6 +6322,7 @@ export default responsibleAPI({
         tags: liveBroadcastTags,
         req: {
           params: [onBehalfOfContentOwner, onBehalfOfContentOwnerChannel],
+          security: youtubeForceSslSecurity,
         },
         res: {
           add: {
@@ -6348,10 +6339,6 @@ export default responsibleAPI({
               description: "Broadcast to delete.",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
         },
         res: {
           200: successfulResponse,
@@ -6397,9 +6384,7 @@ export default responsibleAPI({
             }),
             "mine?": boolean(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
           ),
         },
@@ -6417,10 +6402,6 @@ export default responsibleAPI({
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
           body: LiveBroadcast,
         },
       },
@@ -6435,10 +6416,6 @@ export default responsibleAPI({
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a broadcast's privacy status is defined in the status part. As such, if your request is updating a private or unlisted broadcast, and the request's part parameter value includes the status part, the broadcast's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the broadcast will revert to the default privacy setting.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
           body: LiveBroadcast,
         },
       },
@@ -6460,10 +6437,6 @@ export default responsibleAPI({
               description: "Stream to bind, if not set unbind the current one.",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
         },
       }),
       "/cuepoint": POST({
@@ -6483,9 +6456,7 @@ export default responsibleAPI({
                 "Broadcast to insert ads to, or equivalently `external_video_id` for internal use.",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtubepartner",
           ),
           body: Cuepoint,
@@ -6514,16 +6485,15 @@ export default responsibleAPI({
               description: "Broadcast to transition.",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
         },
       }),
     }),
     "/youtube/v3/liveChat/bans": scope({
       forAll: {
         tags: [tags.liveChatBans],
+        req: {
+          security: youtubeForceSslSecurity,
+        },
       },
       DELETE: {
         description: "Deletes a chat ban.",
@@ -6532,10 +6502,6 @@ export default responsibleAPI({
           query: {
             id: string(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
         },
         res: {
           200: successfulResponse,
@@ -6551,10 +6517,6 @@ export default responsibleAPI({
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
           body: LiveChatBan,
         },
         res: {
@@ -6568,6 +6530,9 @@ export default responsibleAPI({
     "/youtube/v3/liveChat/messages": scope({
       forAll: {
         tags: [tags.liveChatMessages],
+        req: {
+          security: youtubeForceSslSecurity,
+        },
       },
       DELETE: {
         description: "Deletes a chat message.",
@@ -6576,10 +6541,6 @@ export default responsibleAPI({
           query: {
             id: string(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
         },
         res: {
           200: successfulResponse,
@@ -6616,9 +6577,7 @@ export default responsibleAPI({
                 "Specifies the size of the profile image that should be returned for each user.",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
           ),
         },
@@ -6639,10 +6598,6 @@ export default responsibleAPI({
                 "The *part* parameter serves two purposes. It identifies the properties that the write operation will set as well as the properties that the API response will include. Set the parameter value to snippet.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
           body: LiveChatMessage,
         },
         res: {
@@ -6656,6 +6611,9 @@ export default responsibleAPI({
     "/youtube/v3/liveChat/moderators": scope({
       forAll: {
         tags: [tags.liveChatModerators],
+        req: {
+          security: youtubeForceSslSecurity,
+        },
       },
       DELETE: {
         description: "Deletes a chat moderator.",
@@ -6664,10 +6622,6 @@ export default responsibleAPI({
           query: {
             id: string(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
         },
         res: {
           200: successfulResponse,
@@ -6691,9 +6645,7 @@ export default responsibleAPI({
                 "The id of the live chat for which moderators should be returned.",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
           ),
         },
@@ -6714,10 +6666,6 @@ export default responsibleAPI({
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
           body: LiveChatModerator,
         },
         res: {
@@ -6733,10 +6681,7 @@ export default responsibleAPI({
         tags: [tags.liveStreams],
         req: {
           params: [onBehalfOfContentOwner, onBehalfOfContentOwnerChannel],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
+          security: youtubeForceSslSecurity,
         },
         res: {
           add: {
@@ -6779,9 +6724,7 @@ export default responsibleAPI({
             }),
             "mine?": boolean(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
           ),
         },
@@ -6936,11 +6879,8 @@ export default responsibleAPI({
                 "Return the playlist items associated with the given video ID.",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
-            "https://www.googleapis.com/auth/youtubepartner",
           ),
         },
         res: {
@@ -7033,11 +6973,8 @@ export default responsibleAPI({
                 "Return the playlists owned by the authenticated user.",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
-            "https://www.googleapis.com/auth/youtubepartner",
           ),
         },
         res: {
@@ -7226,6 +7163,9 @@ export default responsibleAPI({
     "/youtube/v3/subscriptions": scope({
       forAll: {
         tags: [tags.subscriptions],
+        req: {
+          security: videoPartnerSecurity,
+        },
       },
       DELETE: {
         description: "Deletes a resource.",
@@ -7234,11 +7174,6 @@ export default responsibleAPI({
           query: {
             id: string(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
         },
         res: {
           200: successfulResponse,
@@ -7289,11 +7224,8 @@ export default responsibleAPI({
               description: "The order of the returned subscriptions",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
-            "https://www.googleapis.com/auth/youtubepartner",
           ),
         },
         res: {
@@ -7313,11 +7245,6 @@ export default responsibleAPI({
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
           body: Subscription,
         },
         res: {
@@ -7579,6 +7506,9 @@ export default responsibleAPI({
     "/youtube/v3/videos": scope({
       forAll: {
         tags: videoTags,
+        req: {
+          security: videoPartnerSecurity,
+        },
         res: {
           add: {
             200: successfulResponse,
@@ -7593,7 +7523,6 @@ export default responsibleAPI({
           query: {
             id: string(),
           },
-          security: videoPartnerSecurity,
         },
       },
       GET: {
@@ -7650,11 +7579,8 @@ export default responsibleAPI({
                 "Use chart that is specific to the specified video category",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
-            "https://www.googleapis.com/auth/youtubepartner",
           ),
         },
         res: {
@@ -7688,11 +7614,8 @@ export default responsibleAPI({
               description: "Should stabilize be applied to the upload.",
             }),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
+          security: oauthScope(
             "https://www.googleapis.com/auth/youtube.upload",
-            "https://www.googleapis.com/auth/youtubepartner",
           ),
           body: {
             "application/octet-stream": Video,
@@ -7820,7 +7743,6 @@ export default responsibleAPI({
             }),
             onBehalfOfContentOwner,
           ],
-          security: videoPartnerSecurity,
           body: Video,
         },
         res: {
@@ -7839,7 +7761,6 @@ export default responsibleAPI({
           query: {
             id: array(string()),
           },
-          security: videoPartnerSecurity,
         },
         res: {
           200: resp({
@@ -7859,7 +7780,6 @@ export default responsibleAPI({
               enum: ["none", "like", "dislike"],
             }),
           },
-          security: videoPartnerSecurity,
         },
       }),
       "/reportAbuse": POST({
@@ -7867,7 +7787,6 @@ export default responsibleAPI({
         id: "youtube.videos.reportAbuse",
         req: {
           params: [onBehalfOfContentOwner],
-          security: videoPartnerSecurity,
           body: VideoAbuseReport,
         },
       }),
@@ -7890,7 +7809,9 @@ export default responsibleAPI({
           "Allows upload of watermark image and setting it for a channel.",
         id: "youtube.watermarks.set",
         req: {
-          security: videoUploadPartnerSecurity,
+          security: oauthScope(
+            "https://www.googleapis.com/auth/youtube.upload",
+          ),
           body: {
             "application/octet-stream": InvideoBranding,
             "image/jpeg": InvideoBranding,
