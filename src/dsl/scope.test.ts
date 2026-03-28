@@ -19,12 +19,15 @@ type SingleMethodPureScope = {
   GET: TestOp
 }
 
-type WrappedPureScope = {
-  routes: PureScope
+type PureScopeWithDefaults = {
+  forAll: ScopeOpts
+  GET: TestOp
+  POST: TestOp
 }
 
-type WrappedSingleMethodPureScope = {
-  routes: SingleMethodPureScope
+type SingleMethodPureScopeWithDefaults = {
+  forAll: ScopeOpts
+  GET: TestOp
 }
 
 type ScopeArg<T extends (...args: never[]) => unknown> = Parameters<T>[0]
@@ -40,15 +43,20 @@ describe("scope", () => {
     type _Test = Assert<IsNever<ScopeArg<typeof scope<SingleMethodPureScope>>>>
   })
 
-  test("accepts a wrapped pure scope with at least two methods", () => {
+  test("accepts a flat scope with defaults and at least two methods", () => {
     type _Test = Assert<
-      OneExtendsTwo<WrappedPureScope, ScopeArg<typeof scope<WrappedPureScope>>>
+      OneExtendsTwo<
+        PureScopeWithDefaults,
+        ScopeArg<typeof scope<PureScopeWithDefaults>>
+      >
     >
   })
 
-  test("rejects wrapped routes with only one method", () => {
+  test("rejects a flat scope with defaults and only one method", () => {
     type _Test = Assert<
-      IsNever<ScopeArg<typeof scope<WrappedSingleMethodPureScope>>["routes"]>
+      IsNever<
+        ScopeArg<typeof scope<SingleMethodPureScopeWithDefaults>>
+      >
     >
   })
 

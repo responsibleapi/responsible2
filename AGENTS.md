@@ -1,6 +1,6 @@
 # AGENTS.md
 
-## Chat rules
+## Chat
 
 - never use absolute paths for clickable file links in this repo, refer to files
   and directories using repo-relative paths only
@@ -13,14 +13,20 @@
 - never run the whole test suite, run individual test files instead
 - use typechecking and linting for verification
 
+## Imports from packages
+
+- never import from "openapi3-ts/oas31",
+  `import type { oas31 } from "openapi3-ts"` instead
+- never import from "bun:test", import from "vitest" instead
+
 ## CLI tools
 
-- never use `node`, use `bun` instead
-- never use `bunx`, if a package is missing, ask to add it to `package.json`
+- never call `node`, call `bun` instead
+- never call `bunx`, if a package is missing, ask to add it to `package.json`
 - never run formatting unless explicitly asked to
-- [never use `vitest`](docs/package.jsonc), `bun test` instead
-- never use `wc`, use `scc` instead (both on files and folders)
-- both `rg` and `ast-grep` are available for use
+- [never call `vitest`](docs/package.jsonc), `bun test` instead
+- never call `wc`, call `scc` instead (both on files and folders)
+- both `rg` and `ast-grep` are available for calling
 
 ### `git`
 
@@ -55,13 +61,6 @@ Single pass compiler design:
 - Each nested level inherits and extends the context, and as you return up the
   stack, you merge the generated OpenAPI paths. No AST needed - just function
   calls and return values
-
-## Package rules
-
-### `openapi3-ts`
-
-- never `import type { ... } from "openapi3-ts/oas31"`,
-  `import type { oas31 } from "openapi3-ts"` instead.
 
 ## Docs
 

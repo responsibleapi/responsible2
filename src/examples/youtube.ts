@@ -1,6 +1,7 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET, POST } from "../dsl/methods.ts"
 import { named } from "../dsl/nameable.ts"
+import { resp } from "../dsl/operation.ts"
 import { queryParam, type QueryParamRaw } from "../dsl/params.ts"
 import {
   array,
@@ -21,7 +22,6 @@ import {
   oauth2Security,
 } from "../dsl/security.ts"
 import { declareTags } from "../dsl/tags.ts"
-import { resp } from "../dsl/operation.ts"
 
 const ytOAuthScopes = {
   "https://www.googleapis.com/auth/youtube": "Manage your YouTube account",
@@ -8143,25 +8143,23 @@ export default responsibleAPI({
           },
         },
       },
-      routes: {
-        "/set": POST({
-          description:
-            "Allows upload of watermark image and setting it for a channel.",
-          id: "youtube.watermarks.set",
-          req: {
-            security: videoUploadPartnerSecurity(),
-            body: {
-              "application/octet-stream": InvideoBranding,
-              "image/jpeg": InvideoBranding,
-              "image/png": InvideoBranding,
-            },
+      "/set": POST({
+        description:
+          "Allows upload of watermark image and setting it for a channel.",
+        id: "youtube.watermarks.set",
+        req: {
+          security: videoUploadPartnerSecurity(),
+          body: {
+            "application/octet-stream": InvideoBranding,
+            "image/jpeg": InvideoBranding,
+            "image/png": InvideoBranding,
           },
-        }),
-        "/unset": POST({
-          description: "Allows removal of channel watermark.",
-          id: "youtube.watermarks.unset",
-        }),
-      },
+        },
+      }),
+      "/unset": POST({
+        description: "Allows removal of channel watermark.",
+        id: "youtube.watermarks.unset",
+      }),
     }),
   },
 })

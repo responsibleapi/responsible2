@@ -53,12 +53,16 @@ type ScopeRoutes<TTags extends TagRegistry = TagRegistry> = Routes<TTags> &
   MethodRoutes<TTags>
 
 /*
- * `scope()` accepts either the bare routes object or the full `{ routes,
- * forAll? }` wrapper.
+ * `scope()` accepts a flat object where `forAll` sits alongside HTTP methods
+ * and nested path keys.
  */
-type ScopeArg<TTags extends TagRegistry = TagRegistry> =
-  | ScopeRoutes<TTags>
-  | Scope<TTags>
+type ScopeArg<TTags extends TagRegistry = TagRegistry> = {
+  forAll?: ScopeOpts<TTags>
+} & ScopeRoutes<TTags>
+
+type ScopeArgRoutes<T extends ScopeArg> = {
+  [K in Extract<keyof T, HttpMethod | HttpPath>]: Exclude<T[K], undefined>
+}
 
 export interface ScopeOpts<TTags extends TagRegistry = TagRegistry> {
   req?: ReqAugmentation
@@ -94,15 +98,13 @@ type ValidScopeRoutes<T extends ScopeRoutes> =
 
 /**
  * DO NOT modify this, it's done to prevent {@link scope} usage with single {@link HttpMethod}.
+ * `forAll` is ignored here so defaults do not affect the route-shape validation.
  * for single methods, use DSL from {@link file://../methods.ts}
  *
  * @dsl
  */
-type ValidScopeArg<T extends ScopeArg> = T extends Scope
-  ? Omit<T, "routes"> & { routes: ValidScopeRoutes<T["routes"]> }
-  : T extends ScopeRoutes
-    ? ValidScopeRoutes<T>
-    : never
+type ValidScopeArg<T extends ScopeArg> =
+  ValidScopeRoutes<ScopeArgRoutes<T>> extends never ? never : T
 
 /**
  * Use this when declaring multiple routes under the same subpath.
@@ -122,15 +124,24 @@ type ValidScopeArg<T extends ScopeArg> = T extends Scope
  *   response local for now. In practice, `forAll.res.add.200` is for sibling
  *   operations that do not already define their own `200`.
  *
+ * The `const` type parameter preserves literal method and path keys so the
+ * type-level route validation runs before those keys widen to generic strings.
+ *
  * @dsl
  */
 export function scope<const T extends ScopeArg>(arg: ValidScopeArg<T>): Scope {
-  if ("routes" in arg) {
-    return arg
+  const scopeArg: ScopeArg = arg
+  const { forAll, ...routes } = scopeArg
+
+  if (forAll === undefined) {
+    return {
+      routes,
+    }
   }
 
   return {
-    routes: arg,
+    forAll,
+    routes,
   }
 }
 
