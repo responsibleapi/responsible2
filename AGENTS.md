@@ -55,7 +55,7 @@
 
 - never edit declarations tagged with `@dsl`. If you need to change them, ask
   first
-- full DSL documentation is spreadout in `@dsl` tagged JSDocs, you can concat
+- full DSL documentation is spread out in `@dsl` tagged JSDocs, you can concat
   them to get the whole picture
 
 ## Compiler design

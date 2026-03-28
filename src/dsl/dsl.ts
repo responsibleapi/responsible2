@@ -1,5 +1,5 @@
 import type { oas31 } from "openapi3-ts"
-import type { Routes, ScopeOpts } from "./scope.ts"
+import type { PathRoutes, ScopeOpts } from "./scope.ts"
 
 export type OptionalKey = `${string}?`
 
@@ -24,7 +24,7 @@ type PartialDoc = Partial<Omit<oas31.OpenAPIObject, "components">>
 interface ResponsibleAPI {
   partialDoc: PartialDoc
   forAll: ScopeOpts
-  routes: Routes
+  routes: PathRoutes
 }
 
 export function responsibleAPI(_api: ResponsibleAPI): oas31.OpenAPIObject {

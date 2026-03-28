@@ -5526,9 +5526,11 @@ const partQuery = ({
   required?: boolean
 }): QueryParamRaw =>
   queryParam({
+    explode: true,
     name: "part",
     required,
     schema: description ? array(string(), { description }) : array(string()),
+    style: "form",
   })
 
 const hlParam = ({ description }: { description?: string }): QueryParamRaw =>

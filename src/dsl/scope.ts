@@ -26,8 +26,8 @@ type ScopeOrOp<TTags extends TagRegistry = TagRegistry> =
 
 type HttpPath = `/${string}`
 
-/* for root level, only paths */
-export type Routes<TTags extends TagRegistry = TagRegistry> = Record<
+/** for root level, only {@link HttpPath} */
+export type PathRoutes<TTags extends TagRegistry = TagRegistry> = Record<
   HttpPath,
   ScopeOrOp<TTags>
 >
@@ -49,7 +49,7 @@ type PureMethodRoutes<TTags extends TagRegistry = TagRegistry> =
  * Real `routes` objects can contain both HTTP methods and nested path keys at
  * the same time, so this is a combined shape instead of a simple union.
  */
-type ScopeRoutes<TTags extends TagRegistry = TagRegistry> = Routes<TTags> &
+type ScopeRoutes<TTags extends TagRegistry = TagRegistry> = PathRoutes<TTags> &
   MethodRoutes<TTags>
 
 /*
@@ -84,7 +84,7 @@ export interface Scope<TTags extends TagRegistry = TagRegistry> {
 }
 
 /**
- * DO NOT modify this, it's done to prevent {@link scope} usage with single {@link HttpMethod}.
+ * it's done to prevent {@link scope} usage with single {@link HttpMethod}.
  * for single methods, use DSL from {@link file://../methods.ts}
  *
  * @dsl
@@ -97,7 +97,7 @@ type ValidScopeRoutes<T extends ScopeRoutes> =
     : T
 
 /**
- * DO NOT modify this, it's done to prevent {@link scope} usage with single {@link HttpMethod}.
+ * it's done to prevent {@link scope} usage with single {@link HttpMethod}.
  * `forAll` is ignored here so defaults do not affect the route-shape validation.
  * for single methods, use DSL from {@link file://../methods.ts}
  *
