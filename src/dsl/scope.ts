@@ -24,9 +24,11 @@ type ScopeOrOp<TTags extends TagRegistry = TagRegistry> =
   | Op<TTags>
   | Scope<TTags>
 
+type HttpPath = `/${string}`
+
 /* for root level, only paths */
 export type Routes<TTags extends TagRegistry = TagRegistry> = Record<
-  `/${string}`,
+  HttpPath,
   ScopeOrOp<TTags>
 >
 
@@ -76,7 +78,7 @@ export interface Scope<TTags extends TagRegistry = TagRegistry> {
  * @dsl
  */
 type ValidScopeRoutes<T extends ScopeRoutes> =
-  Extract<keyof T, `/${string}`> extends never
+  Extract<keyof T, HttpPath> extends never
     ? T extends PureMethodRoutes
       ? T
       : never
