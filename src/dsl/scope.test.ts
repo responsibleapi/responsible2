@@ -15,22 +15,23 @@ type TestOp = {
   }
 }
 
-type PureScope = {
-  GET: TestOp
-  POST: TestOp
-}
-
 type ScopeArg<T extends (...args: never[]) => unknown> = Parameters<T>[0]
+type ScopeInput<T extends Parameters<typeof scope>[0]> = ScopeArg<
+  typeof scope<T>
+>
 
 describe("scope", () => {
   test("accepts a pure scope with at least two methods", () => {
-    type _Test = Assert<
-      OneExtendsTwo<PureScope, ScopeArg<typeof scope<PureScope>>>
-    >
+    type PureScope = {
+      GET: TestOp
+      POST: TestOp
+    }
+
+    type _Test = Assert<OneExtendsTwo<PureScope, ScopeInput<PureScope>>>
   })
 
   test("rejects a pure scope with only one method", () => {
-    type _Test = Assert<IsNever<ScopeArg<typeof scope<{ GET: TestOp }>>>>
+    type _Test = Assert<IsNever<ScopeInput<{ GET: TestOp }>>>
   })
 
   test("accepts a flat scope with defaults and at least two methods", () => {
@@ -41,17 +42,12 @@ describe("scope", () => {
     }
 
     type _Test = Assert<
-      OneExtendsTwo<
-        PureScopeWithDefaults,
-        ScopeArg<typeof scope<PureScopeWithDefaults>>
-      >
+      OneExtendsTwo<PureScopeWithDefaults, ScopeInput<PureScopeWithDefaults>>
     >
   })
 
   test("rejects a flat scope with defaults and only one method", () => {
-    type _Test = Assert<
-      IsNever<ScopeArg<typeof scope<{ forAll: ScopeOpts; GET: TestOp }>>>
-    >
+    type _Test = Assert<IsNever<ScopeInput<{ forAll: ScopeOpts; GET: TestOp }>>>
   })
 
   test("accepts a scope with a single method and a single path", () => {
@@ -60,9 +56,7 @@ describe("scope", () => {
       "/videos": TestOp
     }
 
-    type _Test = Assert<
-      OneExtendsTwo<MixedScope, ScopeArg<typeof scope<MixedScope>>>
-    >
+    type _Test = Assert<OneExtendsTwo<MixedScope, ScopeInput<MixedScope>>>
   })
 
   test("accepts a scope with a single path", () => {
@@ -70,9 +64,7 @@ describe("scope", () => {
       "/videos": TestOp
     }
 
-    type _Test = Assert<
-      OneExtendsTwo<PathOnlyScope, ScopeArg<typeof scope<PathOnlyScope>>>
-    >
+    type _Test = Assert<OneExtendsTwo<PathOnlyScope, ScopeInput<PathOnlyScope>>>
   })
 
   test("accepts declared tags in scope defaults", () => {
