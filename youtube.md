@@ -1,10 +1,3 @@
-# `youtube.ts` duplication / rescoping notes
-
-`src/examples/youtube.ts` already uses the right pattern once: root-level
-`forAll.req.params` for the shared Google query params
-(`src/examples/youtube.ts:5623`). The biggest wins are to reuse that same shape
-deeper in the tree.
-
 ## High-value changes with the existing DSL
 
 ## Optional `dsl.ts` change
@@ -15,10 +8,3 @@ deeper in the tree.
    `scope` uses. Letting the root accept a `Scope`-like object, or a
    `root: Scope`, would make very large examples feel less special-cased. It is
    ergonomic only; the cleanup above does not require it.
-
-## Probably not worth abstracting further
-
-`partQuery`, `hlParam`, and `maxResultsParam` (`src/examples/youtube.ts:5530`)
-already look like the right abstraction level. Their descriptions and
-constraints vary enough that pushing them into `src/dsl/dsl.ts` would likely
-hide real API differences more than it would reduce noise.
