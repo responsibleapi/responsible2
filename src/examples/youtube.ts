@@ -5488,20 +5488,18 @@ const videosListPageToken = queryParam({
   schema: string(),
 })
 
-const videoPartnerSecurity = () =>
-  oauthScopes(
-    "https://www.googleapis.com/auth/youtube",
-    "https://www.googleapis.com/auth/youtube.force-ssl",
-    "https://www.googleapis.com/auth/youtubepartner",
-  )
+const videoPartnerSecurity = oauthScopes(
+  "https://www.googleapis.com/auth/youtube",
+  "https://www.googleapis.com/auth/youtube.force-ssl",
+  "https://www.googleapis.com/auth/youtubepartner",
+)
 
-const videoUploadPartnerSecurity = () =>
-  oauthScopes(
-    "https://www.googleapis.com/auth/youtube",
-    "https://www.googleapis.com/auth/youtube.force-ssl",
-    "https://www.googleapis.com/auth/youtube.upload",
-    "https://www.googleapis.com/auth/youtubepartner",
-  )
+const videoUploadPartnerSecurity = oauthScopes(
+  "https://www.googleapis.com/auth/youtube",
+  "https://www.googleapis.com/auth/youtube.force-ssl",
+  "https://www.googleapis.com/auth/youtube.upload",
+  "https://www.googleapis.com/auth/youtubepartner",
+)
 
 const watermarkChannelId = queryParam({
   name: "channelId",
@@ -5870,6 +5868,10 @@ export default responsibleAPI({
     "/youtube/v3/channelSections": scope({
       forAll: {
         tags: [tags.channelSections],
+        req: {
+          params: [onBehalfOfContentOwner],
+          security: videoPartnerSecurity,
+        },
         res: {
           add: {
             200: resp({
@@ -5883,15 +5885,9 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.channelSections.delete",
         req: {
-          params: [onBehalfOfContentOwner],
           query: {
             id: string(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
         },
         res: {
           200: successfulResponse,
@@ -5902,7 +5898,6 @@ export default responsibleAPI({
         id: "youtube.channelSections.list",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more channelSection resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, and contentDetails. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channelSection resource, the snippet property contains other properties, such as a display title for the channelSection. If you set *part=snippet*, the API response will also contain all of those nested properties.",
@@ -5942,18 +5937,12 @@ export default responsibleAPI({
         id: "youtube.channelSections.insert",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
             }),
             onBehalfOfContentOwnerChannel,
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
           body: ChannelSection,
         },
       },
@@ -5962,17 +5951,11 @@ export default responsibleAPI({
         id: "youtube.channelSections.update",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
           body: ChannelSection,
         },
       },
@@ -6765,6 +6748,13 @@ export default responsibleAPI({
     "/youtube/v3/liveStreams": scope({
       forAll: {
         tags: [tags.liveStreams],
+        req: {
+          params: liveBroadcastContentOwnerParams,
+          security: oauthScopes(
+            "https://www.googleapis.com/auth/youtube",
+            "https://www.googleapis.com/auth/youtube.force-ssl",
+          ),
+        },
         res: {
           add: {
             200: resp({
@@ -6778,14 +6768,9 @@ export default responsibleAPI({
         description: "Deletes an existing stream for the authenticated user.",
         id: "youtube.liveStreams.delete",
         req: {
-          params: [onBehalfOfContentOwner, onBehalfOfContentOwnerChannel],
           query: {
             id: string(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
         },
         res: {
           200: successfulResponse,
@@ -6797,13 +6782,11 @@ export default responsibleAPI({
         id: "youtube.liveStreams.list",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more liveStream resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, cdn, and status.",
             }),
             listMaxResults,
-            onBehalfOfContentOwnerChannel,
             pageToken,
           ],
           query: {
@@ -6831,17 +6814,11 @@ export default responsibleAPI({
         id: "youtube.liveStreams.insert",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, content_details, and status.",
             }),
-            onBehalfOfContentOwnerChannel,
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
           body: LiveStream,
         },
       },
@@ -6850,17 +6827,11 @@ export default responsibleAPI({
         id: "youtube.liveStreams.update",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. If the request body does not specify a value for a mutable property, the existing value for that property will be removed.",
             }),
-            onBehalfOfContentOwnerChannel,
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-          ),
           body: LiveStream,
         },
       },
@@ -6934,6 +6905,10 @@ export default responsibleAPI({
     "/youtube/v3/playlistItems": scope({
       forAll: {
         tags: [tags.playlistItems],
+        req: {
+          params: [onBehalfOfContentOwner],
+          security: videoPartnerSecurity,
+        },
         res: {
           add: {
             200: resp({
@@ -6947,15 +6922,9 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.playlistItems.delete",
         req: {
-          params: [onBehalfOfContentOwner],
           query: {
             id: string(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
         },
         res: {
           200: successfulResponse,
@@ -6966,7 +6935,6 @@ export default responsibleAPI({
         id: "youtube.playlistItems.list",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more playlistItem resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlistItem resource, the snippet property contains numerous fields, including the title, description, position, and resourceId properties. As such, if you set *part=snippet*, the API response will contain all of those properties.",
@@ -7004,17 +6972,11 @@ export default responsibleAPI({
         id: "youtube.playlistItems.insert",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
           body: PlaylistItem,
         },
       },
@@ -7023,17 +6985,11 @@ export default responsibleAPI({
         id: "youtube.playlistItems.update",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a playlist item can specify a start time and end time, which identify the times portion of the video that should play when users watch the video in the playlist. If your request is updating a playlist item that sets these values, and the request's part parameter value includes the contentDetails part, the playlist item's start and end times will be updated to whatever value the request body specifies. If the request body does not specify values, the existing start and end times will be removed and replaced with the default settings.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
           body: PlaylistItem,
         },
       },
@@ -7041,6 +6997,10 @@ export default responsibleAPI({
     "/youtube/v3/playlists": scope({
       forAll: {
         tags: [tags.playlists],
+        req: {
+          params: [onBehalfOfContentOwner],
+          security: videoPartnerSecurity,
+        },
         res: {
           add: {
             200: resp({
@@ -7054,15 +7014,9 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.playlists.delete",
         req: {
-          params: [onBehalfOfContentOwner],
           query: {
             id: string(),
           },
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
         },
         res: {
           200: successfulResponse,
@@ -7073,7 +7027,6 @@ export default responsibleAPI({
         id: "youtube.playlists.list",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter specifies a comma-separated list of one or more playlist resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlist resource, the snippet property contains properties like author, title, description, tags, and timeCreated. As such, if you set *part=snippet*, the API response will contain all of those properties.",
@@ -7116,18 +7069,12 @@ export default responsibleAPI({
         id: "youtube.playlists.insert",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
             }),
             onBehalfOfContentOwnerChannel,
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
           body: Playlist,
         },
       },
@@ -7136,17 +7083,11 @@ export default responsibleAPI({
         id: "youtube.playlists.update",
         req: {
           params: [
-            onBehalfOfContentOwner,
             partQuery({
               description:
                 "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for mutable properties that are contained in any parts that the request body specifies. For example, a playlist's description is contained in the snippet part, which must be included in the request body. If the request does not specify a value for the snippet.description property, the playlist's existing description will be deleted.",
             }),
           ],
-          security: oauthScopes(
-            "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/youtube.force-ssl",
-            "https://www.googleapis.com/auth/youtubepartner",
-          ),
           body: Playlist,
         },
       },
@@ -7669,7 +7610,7 @@ export default responsibleAPI({
           query: {
             id: string(),
           },
-          security: videoPartnerSecurity(),
+          security: videoPartnerSecurity,
         },
       },
       GET: {
@@ -7896,7 +7837,7 @@ export default responsibleAPI({
             }),
             onBehalfOfContentOwner,
           ],
-          security: videoPartnerSecurity(),
+          security: videoPartnerSecurity,
           body: Video,
         },
         res: {
@@ -7915,7 +7856,7 @@ export default responsibleAPI({
           query: {
             id: array(string()),
           },
-          security: videoPartnerSecurity(),
+          security: videoPartnerSecurity,
         },
         res: {
           200: resp({
@@ -7935,7 +7876,7 @@ export default responsibleAPI({
               enum: ["none", "like", "dislike"],
             }),
           },
-          security: videoPartnerSecurity(),
+          security: videoPartnerSecurity,
         },
       }),
       "/reportAbuse": POST({
@@ -7943,7 +7884,7 @@ export default responsibleAPI({
         id: "youtube.videos.reportAbuse",
         req: {
           params: [onBehalfOfContentOwner],
-          security: videoPartnerSecurity(),
+          security: videoPartnerSecurity,
           body: VideoAbuseReport,
         },
       }),
@@ -7953,7 +7894,7 @@ export default responsibleAPI({
         tags: [tags.watermarks],
         req: {
           params: [onBehalfOfContentOwner, watermarkChannelId],
-          security: videoPartnerSecurity(),
+          security: videoPartnerSecurity,
         },
         res: {
           add: {
@@ -7966,7 +7907,7 @@ export default responsibleAPI({
           "Allows upload of watermark image and setting it for a channel.",
         id: "youtube.watermarks.set",
         req: {
-          security: videoUploadPartnerSecurity(),
+          security: videoUploadPartnerSecurity,
           body: {
             "application/octet-stream": InvideoBranding,
             "image/jpeg": InvideoBranding,
