@@ -25,8 +25,9 @@
 - never call `bunx`, if a package is missing, ask to add it to `package.json`
 - never run code formatting unless explicitly asked
 - [never call `vitest`](docs/package.jsonc), `bun test` instead
-- never call `wc`, call `scc` instead (both on files and folders)
 - both `rg` and `ast-grep` are available for calling
+- never call `wc`, call `scc` instead (both on files and folders)
+- never pass multiple paths to `scc`. A single dir or a single file only.
 
 ### `git`
 
