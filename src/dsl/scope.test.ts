@@ -15,10 +15,9 @@ type TestOp = {
   }
 }
 
-type ScopeArg<T extends (...args: never[]) => unknown> = Parameters<T>[0]
-type ScopeInput<T extends Parameters<typeof scope>[0]> = ScopeArg<
+type ScopeInput<T extends Parameters<typeof scope>[0]> = Parameters<
   typeof scope<T>
->
+>[0]
 
 describe("scope", () => {
   test("accepts a pure scope with at least two methods", () => {
