@@ -44,7 +44,17 @@
 - never edit declarations tagged with `@dsl`. If you need to change them, ask
   first
 - full DSL documentation is spreadout in `@dsl` tagged JSDocs, you can concat
-  them to get the full story
+  them to get the whole picture
+
+## Compiler design
+
+Still TODO.
+
+Single pass compiler design:
+
+- Each nested level inherits and extends the context, and as you return up the
+  stack, you merge the generated OpenAPI paths. No AST needed - just function
+  calls and return values
 
 ## Package rules
 
@@ -56,16 +66,6 @@
 ## Docs
 
 - field-by-field `package.json` rationale lives in `docs/package.jsonc`
-
-## TODO
-
-### Compiler
-
-Single pass compiler design:
-
-Each nested level inherits and extends the context, and as you return up the
-stack, you merge the generated OpenAPI paths. No AST needed - just function
-calls and return values
 
 ## Custom commands
 
