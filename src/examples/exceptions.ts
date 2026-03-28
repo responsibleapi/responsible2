@@ -81,7 +81,7 @@ export const exceptionsAPI = responsibleAPI({
       GET: {
         id: "appErrors",
         res: { 200: array(OneErr) },
-      }
+      },
     }),
     "/errors/:errID": GET({
       id: "errorOccurrences",
