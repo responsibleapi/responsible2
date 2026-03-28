@@ -23,17 +23,6 @@ deeper in the tree.
    nested `"/bind"`, `"/cuepoint"`, and `"/transition"` routes so they inherit
    `tags`, `liveBroadcastContentOwnerParams`, and the shared response helpers.
 
-4. Hoist partner defaults inside the partner-heavy scopes. `channelSections`
-   (`src/examples/youtube.ts:5877`), `liveStreams`
-   (`src/examples/youtube.ts:6796`), `playlistItems`
-   (`src/examples/youtube.ts:6982`), and `playlists`
-   (`src/examples/youtube.ts:7105`) all repeat the same partner query param plus
-   near-identical partner security on every method. Once
-   `onBehalfOfContentOwner` is reusable via `params`, move it into
-   `forAll.req.params`; put the partner write security in `forAll.req.security`;
-   let only the GET methods add `youtube.readonly`. `liveStreams` is the
-   cleanest target because every method already uses both content-owner params.
-
 ## Optional `dsl.ts` change
 
 5. Keep `src/dsl/dsl.ts` as-is unless you want a root API shape that matches
