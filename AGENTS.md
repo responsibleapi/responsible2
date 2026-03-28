@@ -23,7 +23,7 @@
 
 - never call `node`, call `bun` instead
 - never call `bunx`, if a package is missing, ask to add it to `package.json`
-- never run formatting unless explicitly asked to
+- never run code formatting unless explicitly asked
 - [never call `vitest`](docs/package.jsonc), `bun test` instead
 - never call `wc`, call `scc` instead (both on files and folders)
 - both `rg` and `ast-grep` are available for calling
@@ -40,6 +40,15 @@
   refactors, especially when the same shape appears many times in one file.
 - Prefer `ast-grep run` without `-U` first to preview the rewrite and inspect
   the diff before applying it.
+- Use plain `--rewrite` only when replacing the matched node text is enough.
+  If the edit must also delete or move surrounding commas, brackets, or other
+  separators, switch to a YAML rule with `fix`.
+- When a rewrite needs to remove a list/object item and its trailing comma, use
+  `fix` as `FixConfig` with `expandStart` and/or `expandEnd` instead of trying
+  to force it through a string-only rewrite.
+- When one match needs coordinated rewrites across multiple child nodes, prefer
+  `rewriters` plus `transform.rewrite` instead of a single large `--rewrite`
+  template.
 - After the preview looks correct, rerun the same command with `-U` to apply it
   mechanically.
 - Use `ast-grep` for the bulk transformation and then do a small follow-up

@@ -253,192 +253,163 @@ const authenticatedOps = scope({
       },
     },
   },
-  routes: {
-    "/unsubscribe": POST({
-      id: "unsubscribe",
-      description: "Unsubscribe the email from product updates",
-      req: object({ email: Email }),
+  "/unsubscribe": POST({
+    id: "unsubscribe",
+    description: "Unsubscribe the email from product updates",
+    req: object({ email: Email }),
+    res: { 200: unknown() },
+  }),
+  "/user": scope({
+    GET: {
+      id: "getUser",
+      res: { 200: UserResp },
+    },
+    /** why is this a POST */
+    POST: {
+      id: "patchUser",
+      req: object({ updates: boolean() }),
+      res: { 200: UserResp },
+    },
+    DELETE: {
+      id: "deleteUser",
       res: { 200: unknown() },
-    }),
-
-    "/user": scope({
-      GET: {
-        id: "getUser",
-        res: { 200: UserResp },
+    },
+    "/:email/shows": GET({
+      id: "showsByEmail",
+      req: { pathParams: { email: Email } },
+      res: {
+        200: array(object({
+          id: ShowID,
+          title: string({ minLength: 1 }),
+        })),
       },
-
-      /** why is this a POST */
-      POST: {
-        id: "patchUser",
-        req: object({ updates: boolean() }),
-        res: { 200: UserResp },
-      },
-
-      DELETE: {
-        id: "deleteUser",
-        res: { 200: unknown() },
-      },
-
-      "/:email/shows": GET({
-        id: "showsByEmail",
-        req: { pathParams: { email: Email } },
-        res: {
-          200: array(
-            object({
-              id: ShowID,
-              title: string({ minLength: 1 }),
-            }),
-          ),
-        },
-      }),
+    })
+  }),
+  "/recent": GET({
+    id: "recentFeeds",
+    res: { 200: RecentResp },
+  }),
+  "/checkout": POST({
+    id: "stripeCheckout",
+    description: "Redirect to the checkout page or to billing if already subscribed",
+    req: object({
+      plan: Plan,
+      interval: PlanInterval,
+      success_url: HttpURL,
+      cancel_url: HttpURL,
     }),
-
-    "/recent": GET({
-      id: "recentFeeds",
-      res: { 200: RecentResp },
-    }),
-
-    "/checkout": POST({
-      id: "stripeCheckout",
-      description:
-        "Redirect to the checkout page or to billing if already subscribed",
-      req: object({
-        plan: Plan,
-        interval: PlanInterval,
-        success_url: HttpURL,
-        cancel_url: HttpURL,
-      }),
-      res: { 201: UrlResp },
-    }),
-
-    "/billing": POST({
-      id: "stripeBilling",
-      req: object({ return_url: HttpURL }),
-      res: { 201: UrlResp },
-    }),
-
-    "/show/:show_id": scope({
-      forAll: {
-        req: {
-          pathParams: { show_id: ShowID },
-        },
-        res: {
-          add: {
-            403: NotYourShow,
-            404: resp({ description: "404" }),
-          },
-        },
+    res: { 201: UrlResp },
+  }),
+  "/billing": POST({
+    id: "stripeBilling",
+    req: object({ return_url: HttpURL }),
+    res: { 201: UrlResp },
+  }),
+  "/show/:show_id": scope({
+    forAll: {
+      req: {
+        pathParams: { show_id: ShowID },
       },
-      routes: {
-        PUT: {
-          id: "editShow",
-          req: EditShowReq,
-          res: { 200: Show },
-        },
-
-        DELETE: {
-          id: "deleteFeed",
-          res: { 200: unknown() },
-        },
-
-        "/downloads": GET({
-          id: "getDownloads",
-          req: {
-            query: {
-              "timezone?": string({ minLength: 1 }),
-            },
-          },
-          res: { 200: DownloadsChart },
-        }),
-
-        "/episode_downloads": GET({
-          id: "episodeDownloads",
-          res: {
-            200: array(
-              object({
-                title: string(),
-                url: HttpURL,
-                downloads: int32({ minimum: 0 }),
-              }),
-            ),
-          },
-        }),
-      },
-    }),
-
-    "/later": scope({
-      GET: {
-        id: "getLater",
-        deprecated: true,
-        res: { 200: Show },
-      },
-
-      POST: {
-        id: "submitLater",
-        req: SubmitReq,
-        res: {
-          200: Show,
-          402: UpgradeToAddMoreToListenLater,
+      res: {
+        add: {
           403: NotYourShow,
+          404: resp({ description: "404" }),
         },
       },
-
-      "/v2/v2": GET({
-        id: "getLater2",
-        req: {
-          query: {
-            "before?": ItemID,
-            "after?": ItemID,
-          },
-        },
-        res: { 200: Show2 },
-      }),
-
-      "/:item_id": scope({
-        forAll: {
-          req: {
-            pathParams: { item_id: ItemID },
-          },
-        },
-        routes: {
-          POST: {
-            id: "addLater",
-            res: {
-              200: unknown(),
-              402: UpgradeToAddMoreToListenLater,
-            },
-          },
-
-          DELETE: {
-            id: "removeLater",
-            res: { 200: unknown() },
-          },
-        },
-      }),
-    }),
-
-    "/s3_presign_image": GET({
-      id: "preSignedImageUploadURL",
+    },
+    PUT: {
+      id: "editShow",
+      req: EditShowReq,
+      res: { 200: Show },
+    },
+    DELETE: {
+      id: "deleteFeed",
+      res: { 200: unknown() },
+    },
+    "/downloads": GET({
+      id: "getDownloads",
       req: {
         query: {
-          filename: string({ minLength: 1 }),
+          "timezone?": string({ minLength: 1 }),
         },
       },
-      res: {
-        200: PreSignedUploadURL,
-        402: resp({ description: "402" }),
-      },
+      res: { 200: DownloadsChart },
     }),
-
-    "/reverse": POST({
-      id: "reversePlaylist",
-      req: ReverseReq,
+    "/episode_downloads": GET({
+      id: "episodeDownloads",
       res: {
-        200: ReverseResp,
+        200: array(object({
+          title: string(),
+          url: HttpURL,
+          downloads: int32({ minimum: 0 }),
+        })),
+      },
+    })
+  }),
+  "/later": scope({
+    GET: {
+      id: "getLater",
+      deprecated: true,
+      res: { 200: Show },
+    },
+    POST: {
+      id: "submitLater",
+      req: SubmitReq,
+      res: {
+        200: Show,
+        402: UpgradeToAddMoreToListenLater,
         403: NotYourShow,
       },
+    },
+    "/v2/v2": GET({
+      id: "getLater2",
+      req: {
+        query: {
+          "before?": ItemID,
+          "after?": ItemID,
+        },
+      },
+      res: { 200: Show2 },
     }),
-  },
+    "/:item_id": scope({
+      forAll: {
+        req: {
+          pathParams: { item_id: ItemID },
+        },
+      },
+      POST: {
+        id: "addLater",
+        res: {
+          200: unknown(),
+          402: UpgradeToAddMoreToListenLater,
+        },
+      },
+      DELETE: {
+        id: "removeLater",
+        res: { 200: unknown() },
+      }
+    })
+  }),
+  "/s3_presign_image": GET({
+    id: "preSignedImageUploadURL",
+    req: {
+      query: {
+        filename: string({ minLength: 1 }),
+      },
+    },
+    res: {
+      200: PreSignedUploadURL,
+      402: resp({ description: "402" }),
+    },
+  }),
+  "/reverse": POST({
+    id: "reversePlaylist",
+    req: ReverseReq,
+    res: {
+      200: ReverseResp,
+      403: NotYourShow,
+    },
+  })
 })
 
 const jsonAPI = scope({
@@ -453,131 +424,119 @@ const jsonAPI = scope({
       },
     },
   },
-  routes: {
-    "/login": POST({
-      id: "requestOtp",
-      req: LoginReq,
-      res: {
-        200: object({
-          login: string({ enum: ["NEW", "EXISTING"] }),
-        }),
-      },
-    }),
-
-    "/otp": POST({
-      id: "submitOtp",
-      req: object({
-        email: Email,
-        otp: string({ minLength: 1 }),
-        "updates?": boolean(),
+  "/login": POST({
+    id: "requestOtp",
+    req: LoginReq,
+    res: {
+      200: object({
+        login: string({ enum: ["NEW", "EXISTING"] }),
       }),
+    },
+  }),
+  "/otp": POST({
+    id: "submitOtp",
+    req: object({
+      email: Email,
+      otp: string({ minLength: 1 }),
+      "updates?": boolean(),
+    }),
+    res: {
+      201: object({
+        jwt: string({ minLength: 1 }),
+      }),
+      401: {
+        description: "Incorrect OTP",
+      },
+    },
+  }),
+  "/submit": POST({
+    id: "submitUrl",
+    req: {
+      "security?": AuthorizationHeader,
+      body: SubmitReq,
+    },
+    res: {
+      200: object({
+        showID: ShowID,
+        "plan?": Plan,
+      }),
+      401: {
+        description: "Submitting playlists requires a login",
+      },
+      403: {
+        description: "403",
+      },
+      404: unknown(),
+    },
+  }),
+  "/show/:show_id": scope({
+    forAll: {
+      req: {
+        pathParams: { show_id: ShowID },
+      },
       res: {
-        201: object({
-          jwt: string({ minLength: 1 }),
-        }),
-        401: {
-          description: "Incorrect OTP",
+        add: {
+          404: resp({ description: "404" }),
         },
       },
-    }),
-
-    "/submit": POST({
-      id: "submitUrl",
+    },
+    GET: {
+      deprecated: true,
+      id: "getShow",
+      res: { 200: Show },
+    },
+    "/v2": GET({
+      id: "getShow2",
       req: {
         "security?": AuthorizationHeader,
-        body: SubmitReq,
-      },
-      res: {
-        200: object({
-          showID: ShowID,
-          "plan?": Plan,
-        }),
-        401: {
-          description: "Submitting playlists requires a login",
+        query: {
+          "before?": ItemID,
+          "after?": ItemID,
         },
-        403: {
-          description: "403",
-        },
-        404: unknown(),
       },
+      res: { 200: Show2 },
     }),
-
-    "/show/:show_id": scope({
-      forAll: {
-        req: {
-          pathParams: { show_id: ShowID },
-        },
-        res: {
-          add: {
-            404: resp({ description: "404" }),
-          },
-        },
-      },
-      routes: {
-        GET: {
-          deprecated: true,
-          id: "getShow",
-          res: { 200: Show },
-        },
-
-        "/v2": GET({
-          id: "getShow2",
-          req: {
-            "security?": AuthorizationHeader,
-            query: {
-              "before?": ItemID,
-              "after?": ItemID,
-            },
-          },
-          res: { 200: Show2 },
-        }),
-
-        "/items2": GET({
-          id: "getItems2",
-          req: {
-            query: {
-              "before?": ItemID,
-              "after?": ItemID,
-            },
-          },
-          res: { 200: ItemsResp2 },
-        }),
-
-        "/items": GET({
-          id: "getItems",
-          deprecated: true,
-          req: {
-            query: {
-              "before?": string({ format: "date-time" }),
-              "limit?": int32({ minimum: 1 }),
-            },
-          },
-          res: { 200: ItemsResp },
-        }),
-      },
-    }),
-
-    "/cdn_log": POST({
-      id: "logCDN",
+    "/items2": GET({
+      id: "getItems2",
       req: {
-        body: {
-          "application/json": WorkerEvent,
-          /** workaround for a current worker to avoid redeploying it 😏 */
-          "text/plain": WorkerEvent,
+        query: {
+          "before?": ItemID,
+          "after?": ItemID,
         },
       },
-      res: {
-        201: {
-          headers: {
-            /** wtf is this */
-            "content-length?": int32({ minimum: 0, maximum: 0 }),
-          },
-        },
-      },
+      res: { 200: ItemsResp2 },
     }),
-
-    "/auth": authenticatedOps,
-  },
+    "/items": GET({
+      id: "getItems",
+      deprecated: true,
+      req: {
+        query: {
+          "before?": string({ format: "date-time" }),
+          "limit?": int32({ minimum: 1 }),
+        },
+      },
+      res: { 200: ItemsResp },
+    })
+  }),
+  "/cdn_log": POST({
+    id: "logCDN",
+    req: {
+      body: {
+        "application/json": WorkerEvent,
+        /** workaround for a current worker to avoid redeploying it 😏 */
+        "text/plain": WorkerEvent,
+      },
+    },
+    res: {
+      201: {
+        headers: {
+          /** wtf is this */
+          "content-length?": int32({ minimum: 0, maximum: 0 }),
+        },
+      },
+    },
+  }),
+  "/auth": authenticatedOps
 })
 
 const googleAuth = scope({

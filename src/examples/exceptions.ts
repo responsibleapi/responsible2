@@ -73,17 +73,15 @@ export const exceptionsAPI = responsibleAPI({
           pathParams: { appID: AppID },
         },
       },
-      routes: {
-        POST: {
-          id: "newError",
-          req: NewErr,
-          res: { 201: unknown() },
-        },
-        GET: {
-          id: "appErrors",
-          res: { 200: array(OneErr) },
-        },
+      POST: {
+        id: "newError",
+        req: NewErr,
+        res: { 201: unknown() },
       },
+      GET: {
+        id: "appErrors",
+        res: { 200: array(OneErr) },
+      }
     }),
     "/errors/:errID": GET({
       id: "errorOccurrences",
