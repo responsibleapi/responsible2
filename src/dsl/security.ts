@@ -101,42 +101,22 @@ export const oauth2Security = <
   ...param,
 })
 
-const formatErrorDetail = (value: unknown): string =>
-  JSON.stringify(value) ?? String(value)
-
-const describeUnnamedSecurityScheme = (scheme: NamedSecurityScheme): string =>
-  `inline value ${formatErrorDetail(scheme())}`
-
-function getSecuritySchemeName(scheme: NamedSecurityScheme): string {
-  const { name } = scheme
-
-  if (typeof name !== "string" || name.length === 0) {
-    throw new Error(
-      `security requirements need a named scheme; got ${describeUnnamedSecurityScheme(scheme)}; use a named function or named()`,
-    )
-  }
-
-  return name
-}
-
 function toSecurityRequirement(
   security: SecurityOperand,
 ): oas31.SecurityRequirementObject {
   if (typeof security === "function") {
-    return { [getSecuritySchemeName(security)]: [] }
+    return { [security.name]: [] }
   }
 
   return security
 }
 
-export function oauth2Requirement<T extends NamedOAuth2SecurityScheme>(
+export const oauth2Requirement = <T extends NamedOAuth2SecurityScheme>(
   scheme: T,
   scopes: readonly OAuth2ScopeName<T>[],
-): oas31.SecurityRequirementObject {
-  return {
-    [getSecuritySchemeName(scheme)]: [...scopes],
-  }
-}
+): oas31.SecurityRequirementObject => ({
+  [scheme.name]: [...scopes],
+})
 
 export const securityAND = (
   ...items: SecurityOperands
