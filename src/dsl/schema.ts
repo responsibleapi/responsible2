@@ -1,3 +1,4 @@
+import { isOptional, type NameWithOptionality } from "./dsl.ts"
 import type { Nameable } from "./nameable.ts"
 
 type KnownStringFormat =
@@ -130,12 +131,8 @@ export const dict = (k: DictKeySchema, v: Schema, opts?: DictOpts): Dict => ({
   additionalProperties: v,
 })
 
-type OptionalKey = `${string}?`
-
-const isOptional = (k: string): k is OptionalKey => k.endsWith("?")
-
 export const object = (
-  props: Readonly<Record<string, Schema>> = {},
+  props: Readonly<Record<NameWithOptionality, Schema>> = {},
   opts?: ObjectOpts,
 ): Obj => ({
   ...opts,

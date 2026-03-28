@@ -14,6 +14,12 @@ interface OpReq {
   readonly query?: Record<string, Schema>
   readonly headers?: Record<string, Schema>
   readonly body?: Schema | Record<Mime, Schema>
+
+  /**
+   * helps reuse params. We could reuse them in {@link query} etc but
+   *
+   * @dsl
+   */
   readonly params?: readonly Param[]
 }
 
