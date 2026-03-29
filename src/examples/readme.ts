@@ -1,6 +1,9 @@
+import type { oas31 } from "openapi3-ts"
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET, POST } from "../dsl/methods.ts"
+import { named } from "../dsl/nameable.ts"
 import { resp } from "../dsl/operation.ts"
+import { queryParam } from "../dsl/params.ts"
 import {
   allOf,
   array,
@@ -11,6 +14,7 @@ import {
   string,
 } from "../dsl/schema.ts"
 import { scope } from "../dsl/scope.ts"
+import { declareTags } from "../dsl/tags.ts"
 
 const apply = () =>
   object({
@@ -102,22 +106,6 @@ const apiSpecificationID = () =>
       "ID of the API specification. The unique ID for each API can be found by navigating to your **API Definitions** page.",
   })
 
-const page = () =>
-  int32({
-    description: "Used to specify further pages (starts at 1).",
-    default: 1,
-    minimum: 1,
-  })
-
-const perPage = () =>
-  int32({
-    description:
-      "Number of items to include in pagination (up to 100, defaults to 10).",
-    default: 10,
-    minimum: 1,
-    maximum: 100,
-  })
-
 const readmeVersion = () =>
   string({
     description:
@@ -159,6 +147,52 @@ const versionID = () =>
       "Semver identifier for the project version. For best results, use the formatted `version_clean` value listed in the response from the [Get Versions endpoint](/reference/getversions).",
     example: "v1.0.0",
   })
+
+const pageQuery = named(
+  "page",
+  queryParam({
+    name: "page",
+    description: "Used to specify further pages (starts at 1).",
+    schema: int32({
+      default: 1,
+      minimum: 1,
+    }),
+  }),
+)
+
+const perPageQuery = named(
+  "perPage",
+  queryParam({
+    name: "perPage",
+    description:
+      "Number of items to include in pagination (up to 100, defaults to 10).",
+    schema: int32({
+      default: 10,
+      minimum: 1,
+      maximum: 100,
+    }),
+  }),
+)
+
+const paginationParams = [perPageQuery, pageQuery] as const
+
+const tags = declareTags({
+  "API Registry": {},
+  "API Specification": {},
+  "Apply to ReadMe": {},
+  Categories: {},
+  Changelog: {},
+  "Custom Pages": {},
+  Docs: {},
+  Errors: {},
+  Projects: {},
+  Version: {},
+} as const)
+
+const apiKey = named<oas31.SecuritySchemeObject>("apiKey", {
+  type: "http",
+  scheme: "basic",
+})
 
 const baseError = () =>
   object({
@@ -384,24 +418,15 @@ export default responsibleAPI({
       },
     },
     servers: [{ url: "http://dash.readme.local:3000/api/v1" }],
-    tags: [
-      { name: "API Registry" },
-      { name: "API Specification" },
-      { name: "Apply to ReadMe" },
-      { name: "Categories" },
-      { name: "Changelog" },
-      { name: "Custom Pages" },
-      { name: "Docs" },
-      { name: "Errors" },
-      { name: "Projects" },
-      { name: "Version" },
-    ],
+    tags: Object.values(tags),
   },
   forAll: {},
   routes: {
     "/api-registry/:uuid": GET({
       id: "getAPIRegistry",
+      summary: "Retrieve an entry from the API Registry",
       description: "Get an API definition file that's been uploaded to ReadMe.",
+      tags: [tags["API Registry"]],
       req: {
         pathParams: { uuid: apiRegistryUUID },
       },
@@ -418,20 +443,23 @@ export default responsibleAPI({
     }),
     "/api-specification": scope({
       forAll: {
+        tags: [tags["API Specification"]],
         req: {
+          security: apiKey,
           headers: {
             "x-readme-version?": readmeVersion,
           },
         },
+        res: {
+          add: authResponses,
+        },
       },
       GET: {
         id: "getAPISpecification",
+        summary: "Get metadata",
         description: "Get API specification metadata.",
         req: {
-          query: {
-            "perPage?": perPage,
-            "page?": page,
-          },
+          params: paginationParams,
         },
         res: {
           200: resp({
@@ -442,7 +470,6 @@ export default responsibleAPI({
             description: "The supplied version header was empty.",
             body: { "application/json": errorWithCode("VERSION_EMPTY") },
           }),
-          ...authResponses,
           404: resp({
             description:
               "There is no project version matching x-readme-version.",
@@ -452,6 +479,7 @@ export default responsibleAPI({
       },
       POST: {
         id: "uploadAPISpecification",
+        summary: "Upload specification",
         description:
           "Upload an API specification to ReadMe. Or, to use a newer solution see https://docs.readme.com/docs/automatically-sync-api-specification-with-github.",
         req: {
@@ -474,7 +502,6 @@ export default responsibleAPI({
               ]),
             },
           }),
-          ...authResponses,
           408: resp({
             description: "The API specification upload timed out.",
             body: { "application/json": errorWithCode("SPEC_TIMEOUT") },
@@ -484,12 +511,18 @@ export default responsibleAPI({
     }),
     "/api-specification/:id": scope({
       forAll: {
+        tags: [tags["API Specification"]],
         req: {
+          security: apiKey,
           pathParams: { id: apiSpecificationID },
+        },
+        res: {
+          add: authResponses,
         },
       },
       PUT: {
         id: "updateAPISpecification",
+        summary: "Update specification",
         description: "Update an API specification in ReadMe.",
         req: {
           body: {
@@ -513,10 +546,8 @@ export default responsibleAPI({
               ]),
             },
           }),
-          ...authResponses,
           404: resp({
             description: "There is no API specification with that ID.",
-            body: { "application/json": errorWithCode("SPEC_NOTFOUND") },
           }),
           408: resp({
             description: "The API specification upload timed out.",
@@ -526,6 +557,7 @@ export default responsibleAPI({
       },
       DELETE: {
         id: "deleteAPISpecification",
+        summary: "Delete specification",
         description: "Delete an API specification in ReadMe.",
         res: {
           204: resp({
@@ -535,7 +567,6 @@ export default responsibleAPI({
             description: "The supplied API specification ID was invalid.",
             body: { "application/json": errorWithCode("SPEC_ID_INVALID") },
           }),
-          ...authResponses,
           404: resp({
             description: "There is no API specification with that ID.",
             body: { "application/json": errorWithCode("SPEC_NOTFOUND") },
@@ -545,11 +576,13 @@ export default responsibleAPI({
     }),
     "/apply": scope({
       forAll: {
+        tags: [tags["Apply to ReadMe"]],
         req: { mime: "application/json" },
         res: { mime: "application/json" },
       },
       GET: {
         id: "getOpenRoles",
+        summary: "Get open roles",
         description: "Returns all the roles we're hiring for at ReadMe!",
         res: {
           200: resp({
@@ -560,6 +593,7 @@ export default responsibleAPI({
       },
       POST: {
         id: "applyToReadMe",
+        summary: "Submit your application!",
         description:
           "This endpoint will let you apply to a job at ReadMe programatically, without having to go through our UI!",
         req: {
@@ -574,7 +608,9 @@ export default responsibleAPI({
     }),
     "/categories": scope({
       forAll: {
+        tags: [tags.Categories],
         req: {
+          security: apiKey,
           headers: {
             "x-readme-version?": readmeVersion,
           },
@@ -582,23 +618,21 @@ export default responsibleAPI({
       },
       GET: {
         id: "getCategories",
+        summary: "Get all categories",
         description: "Returns all the categories for a specified version.",
         req: {
-          query: {
-            "perPage?": perPage,
-            "page?": page,
-          },
+          params: paginationParams,
         },
         res: {
           200: resp({
             description: "The list of categories.",
             headers: paginationHeaders,
           }),
-          ...authResponses,
         },
       },
       POST: {
         id: "createCategory",
+        summary: "Create category",
         description: "Create a new category inside of this project.",
         req: {
           body: { "application/json": createCategory() },
@@ -616,7 +650,9 @@ export default responsibleAPI({
     }),
     "/categories/:slug": scope({
       forAll: {
+        tags: [tags.Categories],
         req: {
+          security: apiKey,
           pathParams: { slug: categorySlug },
           headers: {
             "x-readme-version?": readmeVersion,
@@ -625,6 +661,7 @@ export default responsibleAPI({
       },
       GET: {
         id: "getCategory",
+        summary: "Get category",
         description: "Returns the category with this slug.",
         res: {
           200: resp({
@@ -638,6 +675,7 @@ export default responsibleAPI({
       },
       PUT: {
         id: "updateCategory",
+        summary: "Update category",
         description: "Change the properties of a category.",
         req: {
           body: { "application/json": category() },
@@ -658,6 +696,7 @@ export default responsibleAPI({
       },
       DELETE: {
         id: "deleteCategory",
+        summary: "Delete category",
         description:
           "Delete the category with this slug.\n>⚠️Heads Up!\n> This will also delete all of the docs within this category.",
         res: {
@@ -673,8 +712,11 @@ export default responsibleAPI({
     }),
     "/categories/:slug/docs": GET({
       id: "getCategoryDocs",
+      summary: "Get docs for category",
       description: "Returns the docs and children docs within this category.",
+      tags: [tags.Categories],
       req: {
+        security: apiKey,
         pathParams: { slug: categorySlug },
         headers: {
           "x-readme-version?": readmeVersion,
@@ -692,25 +734,29 @@ export default responsibleAPI({
       },
     }),
     "/changelogs": scope({
+      forAll: {
+        tags: [tags.Changelog],
+        req: {
+          security: apiKey,
+        },
+      },
       GET: {
         id: "getChangelogs",
+        summary: "Get changelogs",
         description: "Returns a list of changelogs.",
         req: {
-          query: {
-            "perPage?": perPage,
-            "page?": page,
-          },
+          params: paginationParams,
         },
         res: {
           200: resp({
             description: "The list of changelogs.",
             headers: paginationHeaders,
           }),
-          ...authResponses,
         },
       },
       POST: {
         id: "createChangelog",
+        summary: "Create changelog",
         description: "Create a new changelog entry.",
         req: {
           body: { "application/json": changelog() },
@@ -722,18 +768,20 @@ export default responsibleAPI({
           400: resp({
             description: "There was a validation error during creation.",
           }),
-          ...authResponses,
         },
       },
     }),
     "/changelogs/:slug": scope({
       forAll: {
+        tags: [tags.Changelog],
         req: {
+          security: apiKey,
           pathParams: { slug: changelogSlug },
         },
       },
       GET: {
         id: "getChangelog",
+        summary: "Get changelog",
         description: "Returns the changelog with this slug.",
         res: {
           200: resp({
@@ -742,11 +790,11 @@ export default responsibleAPI({
           404: resp({
             description: "There is no changelog with that slug.",
           }),
-          ...authResponses,
         },
       },
       PUT: {
         id: "updateChangelog",
+        summary: "Update changelog",
         description: "Update a changelog with this slug.",
         req: {
           body: { "application/json": changelog() },
@@ -761,43 +809,49 @@ export default responsibleAPI({
           404: resp({
             description: "There is no changelog with that slug.",
           }),
-          ...authResponses,
         },
       },
       DELETE: {
         id: "deleteChangelog",
+        summary: "Delete changelog",
         description: "Delete the changelog with this slug.",
         res: {
           204: resp({
-            description: "The changelog was successfully updated.",
+            description: "The changelog was successfully deleted.",
           }),
           404: resp({
             description: "There is no changelog with that slug.",
           }),
-          ...authResponses,
         },
       },
     }),
     "/custompages": scope({
+      forAll: {
+        tags: [tags["Custom Pages"]],
+        req: {
+          security: apiKey,
+        },
+        res: {
+          add: authResponses,
+        },
+      },
       GET: {
         id: "getCustomPages",
+        summary: "Get custom pages",
         description: "Returns a list of custom pages.",
         req: {
-          query: {
-            "perPage?": perPage,
-            "page?": page,
-          },
+          params: paginationParams,
         },
         res: {
           200: resp({
             description: "The list of custom pages.",
             headers: paginationHeaders,
           }),
-          ...authResponses,
         },
       },
       POST: {
         id: "createCustomPage",
+        summary: "Create custom page",
         description: "Create a new custom page inside of this project.",
         req: {
           body: { "application/json": customPage() },
@@ -810,24 +864,28 @@ export default responsibleAPI({
             description: "The custom page payload was invalid.",
             body: { "application/json": errorWithCode("CUSTOMPAGE_INVALID") },
           }),
-          ...authResponses,
         },
       },
     }),
     "/custompages/:slug": scope({
       forAll: {
+        tags: [tags["Custom Pages"]],
         req: {
+          security: apiKey,
           pathParams: { slug: customPageSlug },
+        },
+        res: {
+          add: authResponses,
         },
       },
       GET: {
         id: "getCustomPage",
+        summary: "Get custom page",
         description: "Returns the custom page with this slug.",
         res: {
           200: resp({
             description: "The custom page exists and has been returned.",
           }),
-          ...authResponses,
           404: resp({
             description: "There is no custom page with that slug.",
             body: {
@@ -838,6 +896,7 @@ export default responsibleAPI({
       },
       PUT: {
         id: "updateCustomPage",
+        summary: "Update custom page",
         description: "Update a custom page with this slug.",
         req: {
           body: { "application/json": customPage() },
@@ -850,7 +909,6 @@ export default responsibleAPI({
             description: "The custom page payload was invalid.",
             body: { "application/json": errorWithCode("CUSTOMPAGE_INVALID") },
           }),
-          ...authResponses,
           404: resp({
             description: "There is no custom page with that slug.",
             body: {
@@ -861,12 +919,12 @@ export default responsibleAPI({
       },
       DELETE: {
         id: "deleteCustomPage",
+        summary: "Delete custom page",
         description: "Delete the custom page with this slug.",
         res: {
           204: resp({
-            description: "The custom page was successfully updated.",
+            description: "The custom page was successfully deleted.",
           }),
-          ...authResponses,
           404: resp({
             description: "There is no custom page with that slug.",
             body: {
@@ -878,21 +936,26 @@ export default responsibleAPI({
     }),
     "/docs/:slug": scope({
       forAll: {
+        tags: [tags.Docs],
         req: {
+          security: apiKey,
           pathParams: { slug: docSlug },
           headers: {
             "x-readme-version?": readmeVersion,
           },
         },
+        res: {
+          add: authResponses,
+        },
       },
       GET: {
         id: "getDoc",
+        summary: "Get doc",
         description: "Returns the doc with this slug.",
         res: {
           200: resp({
             description: "The doc exists and has been returned.",
           }),
-          ...authResponses,
           404: resp({
             description: "There is no doc with that slug.",
             body: { "application/json": errorWithCode("DOC_NOTFOUND") },
@@ -901,6 +964,7 @@ export default responsibleAPI({
       },
       PUT: {
         id: "updateDoc",
+        summary: "Update doc",
         description: "Update a doc with this slug.",
         req: {
           body: { "application/json": doc() },
@@ -913,7 +977,6 @@ export default responsibleAPI({
             description: "The doc payload was invalid.",
             body: { "application/json": errorWithCode("DOC_INVALID") },
           }),
-          ...authResponses,
           404: resp({
             description: "There is no doc with that slug.",
             body: { "application/json": errorWithCode("DOC_NOTFOUND") },
@@ -922,12 +985,12 @@ export default responsibleAPI({
       },
       DELETE: {
         id: "deleteDoc",
+        summary: "Delete doc",
         description: "Delete the doc with this slug.",
         res: {
           204: resp({
-            description: "The doc was successfully updated.",
+            description: "The doc was successfully deleted.",
           }),
-          ...authResponses,
           404: resp({
             description: "There is no doc with that slug.",
             body: { "application/json": errorWithCode("DOC_NOTFOUND") },
@@ -937,8 +1000,11 @@ export default responsibleAPI({
     }),
     "/docs": POST({
       id: "createDoc",
+      summary: "Create doc",
       description: "Create a new doc inside of this project.",
+      tags: [tags.Docs],
       req: {
+        security: apiKey,
         headers: {
           "x-readme-version?": readmeVersion,
         },
@@ -957,8 +1023,11 @@ export default responsibleAPI({
     }),
     "/docs/search": POST({
       id: "searchDocs",
+      summary: "Search docs",
       description: "Returns all docs that match the search.",
+      tags: [tags.Docs],
       req: {
+        security: apiKey,
         headers: {
           "x-readme-version?": readmeVersion,
         },
@@ -977,7 +1046,12 @@ export default responsibleAPI({
     }),
     "/errors": GET({
       id: "getErrors",
+      summary: "Get errors",
       description: "Returns with all of the error page types for this project.",
+      tags: [tags.Errors],
+      req: {
+        security: apiKey,
+      },
       res: {
         200: resp({
           description: "An array of the errors.",
@@ -987,7 +1061,12 @@ export default responsibleAPI({
     }),
     "/": GET({
       id: "getProject",
+      summary: "Get metadata about the current project",
       description: "Returns project data for the API key.",
+      tags: [tags.Projects],
+      req: {
+        security: apiKey,
+      },
       res: {
         200: resp({
           description: "Project data",
@@ -997,19 +1076,29 @@ export default responsibleAPI({
       },
     }),
     "/version": scope({
+      forAll: {
+        tags: [tags.Version],
+        req: {
+          security: apiKey,
+        },
+        res: {
+          add: authResponses,
+        },
+      },
       GET: {
         id: "getVersions",
+        summary: "Get versions",
         description:
           "Retrieve a list of versions associated with a project API key.",
         res: {
           200: resp({
             description: "A list of versions.",
           }),
-          ...authResponses,
         },
       },
       POST: {
         id: "createVersion",
+        summary: "Create version",
         description: "Create a new version.",
         req: {
           body: { "application/json": version() },
@@ -1028,7 +1117,6 @@ export default responsibleAPI({
               ]),
             },
           }),
-          ...authResponses,
           404: resp({
             description: "The forked version was not found.",
             body: {
@@ -1040,18 +1128,23 @@ export default responsibleAPI({
     }),
     "/version/:versionId": scope({
       forAll: {
+        tags: [tags.Version],
         req: {
+          security: apiKey,
           pathParams: { versionId: versionID },
+        },
+        res: {
+          add: authResponses,
         },
       },
       GET: {
         id: "getVersion",
+        summary: "Get version",
         description: "Returns the version with this version ID.",
         res: {
           200: resp({
             description: "The version exists and has been returned.",
           }),
-          ...authResponses,
           404: resp({
             description: "There is no version with that version ID.",
             body: { "application/json": errorWithCode("VERSION_NOTFOUND") },
@@ -1060,6 +1153,7 @@ export default responsibleAPI({
       },
       PUT: {
         id: "updateVersion",
+        summary: "Update version",
         description: "Update an existing version.",
         req: {
           body: { "application/json": version() },
@@ -1074,7 +1168,6 @@ export default responsibleAPI({
               "application/json": errorWithCode("VERSION_CANT_DEMOTE_STABLE"),
             },
           }),
-          ...authResponses,
           404: resp({
             description: "There is no version with that version ID.",
             body: { "application/json": errorWithCode("VERSION_NOTFOUND") },
@@ -1083,6 +1176,7 @@ export default responsibleAPI({
       },
       DELETE: {
         id: "deleteVersion",
+        summary: "Delete version",
         description: "Delete a version",
         res: {
           200: resp({
@@ -1094,7 +1188,6 @@ export default responsibleAPI({
               "application/json": errorWithCode("VERSION_CANT_REMOVE_STABLE"),
             },
           }),
-          ...authResponses,
           404: resp({
             description: "There is no version with that version ID.",
             body: { "application/json": errorWithCode("VERSION_NOTFOUND") },
