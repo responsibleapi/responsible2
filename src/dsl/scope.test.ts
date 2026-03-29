@@ -5,7 +5,7 @@ import type {
   IsNever,
   OneExtendsTwo,
 } from "../type-assertions.ts"
-import type { ScopeOpts } from "./scope.ts"
+import type { ScopeOpts, ScopeRes } from "./scope.ts"
 import { scope } from "./scope.ts"
 import { declareTags } from "./tags.ts"
 
@@ -49,8 +49,18 @@ describe("scope", () => {
     type _Test = Assert<IsNever<ScopeInput<{ forAll: ScopeOpts; GET: TestOp }>>>
   })
 
-  test("rejects forAll.res.match in scope defaults", () => {
-    // TODO write a type assertion
+  test("rejects empty objects and unrelated props in scope defaults", () => {
+    type _EmptyObject = Assert<IsNever<ScopeRes<{}>>>
+
+    type _RandomProp = Assert<
+      IsNever<
+        ScopeRes<{
+          noSuchProp: {
+            mime: "application/json"
+          }
+        }>
+      >
+    >
   })
 
   test("accepts a scope with a single method and a single path", () => {

@@ -12,13 +12,29 @@ import type { OpTags, TagRegistry } from "./tags.ts"
 
 export type Mime = `${string}/${string}`
 
-type ScopeRes =
-  | AtLeastOne<{
-      mime?: Mime
-      defaults?: Record<MatchStatus, RespAugmentation>
-      add?: OpRes
-    }>
-  | OpRes
+type ScopeResAugmentation = NonNullable<
+  AtLeastOne<{
+    mime?: Mime
+    defaults?: Record<MatchStatus, RespAugmentation>
+    add?: OpRes
+  }>
+>
+
+type ScopeResShape = ScopeResAugmentation | OpRes
+
+/**
+ * This validates a concrete scope-level response object. The default keeps the
+ * public DSL surface broad, while specific inputs can collapse to `never` when
+ * they are neither a response augmentation object nor a numeric status map.
+ */
+export type ScopeRes<T extends object = ScopeResShape> =
+  T extends ScopeResAugmentation
+    ? T
+    : keyof T extends never
+      ? never
+      : Exclude<keyof T, number> extends never
+        ? T
+        : never
 
 type ScopeOrOp<TTags extends TagRegistry = TagRegistry> =
   | Op<TTags>
