@@ -6,7 +6,13 @@
 type NonFunction<T> = T extends (...args: any[]) => unknown ? never : T
 
 /**
- * {@link Function.name} becomes `$ref` in OpenAPI
+ * In DSL positions that accept {@link Nameable}, the thunk itself is the
+ * reusable component reference.
+ *
+ * Its {@link Function.name} becomes the OpenAPI component key, so pass the
+ * thunk directly, for example `req.body: apply`, not `req.body: apply()`.
+ * Calling the thunk materializes the underlying value and therefore forces an
+ * inline schema instead of a `$ref`.
  *
  * @dsl
  */
@@ -17,7 +23,8 @@ export type NamedThunk<T> = [NonFunction<T>] extends [never]
 export type Nameable<T> = NamedThunk<T> | NonFunction<T>
 
 /**
- * Creates a named function on the fly. Used for illegal names like "_.xgafv"
+ * Creates a named thunk for component reuse in DSL positions that accept
+ * {@link Nameable}. Pass the returned thunk itself when you want a `$ref`.
  */
 export const named = <T>(name: string, value: NonFunction<T>): NamedThunk<T> =>
   Object.defineProperty(() => value, "name", {

@@ -227,7 +227,7 @@ const baseError = () =>
 
 const errorWithCode = (code: string) =>
   allOf([
-    baseError(),
+    baseError,
     object({
       "error?": string({ default: code }),
     }),
@@ -249,7 +249,7 @@ const category = () =>
 
 const createCategory = () =>
   allOf([
-    category(),
+    category,
     object({
       title: string(),
     }),
@@ -633,7 +633,7 @@ export default responsibleAPI({
         summary: "Create category",
         description: "Create a new category inside of this project.",
         req: {
-          body: createCategory(),
+          body: createCategory,
         },
         res: {
           201: resp({
@@ -677,7 +677,7 @@ export default responsibleAPI({
         summary: "Update category",
         description: "Change the properties of a category.",
         req: {
-          body: category(),
+          body: category,
         },
         res: {
           200: resp({
@@ -759,7 +759,7 @@ export default responsibleAPI({
         summary: "Create changelog",
         description: "Create a new changelog entry.",
         req: {
-          body: changelog(),
+          body: changelog,
         },
         res: {
           201: resp({
@@ -798,7 +798,7 @@ export default responsibleAPI({
         summary: "Update changelog",
         description: "Update a changelog with this slug.",
         req: {
-          body: changelog(),
+          body: changelog,
         },
         res: {
           200: resp({
@@ -856,7 +856,7 @@ export default responsibleAPI({
         summary: "Create custom page",
         description: "Create a new custom page inside of this project.",
         req: {
-          body: customPage(),
+          body: customPage,
         },
         res: {
           201: resp({
@@ -902,7 +902,7 @@ export default responsibleAPI({
         summary: "Update custom page",
         description: "Update a custom page with this slug.",
         req: {
-          body: customPage(),
+          body: customPage,
         },
         res: {
           200: resp({
@@ -971,7 +971,7 @@ export default responsibleAPI({
         summary: "Update doc",
         description: "Update a doc with this slug.",
         req: {
-          body: doc(),
+          body: doc,
         },
         res: {
           200: resp({
@@ -1012,7 +1012,7 @@ export default responsibleAPI({
         headers: {
           "x-readme-version?": readmeVersion,
         },
-        body: { "application/json": doc() },
+        body: { "application/json": doc },
       },
       res: {
         201: resp({
@@ -1074,7 +1074,7 @@ export default responsibleAPI({
       res: {
         200: resp({
           description: "Project data",
-          body: { "application/json": condensedProjectData() },
+          body: { "application/json": condensedProjectData },
         }),
         ...authResponses,
       },
@@ -1106,7 +1106,7 @@ export default responsibleAPI({
         summary: "Create version",
         description: "Create a new version.",
         req: {
-          body: version(),
+          body: version,
         },
         res: {
           200: resp({
@@ -1162,7 +1162,7 @@ export default responsibleAPI({
         summary: "Update version",
         description: "Update an existing version.",
         req: {
-          body: version(),
+          body: version,
         },
         res: {
           200: resp({
