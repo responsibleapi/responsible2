@@ -5,13 +5,13 @@
     "check": "bun run check:fast",
     "check:fast": "bun run --parallel typecheck lint test",
     "check:full": "bun run --parallel --no-exit-on-error typecheck lint test",
-    "fmt": "bun oxfmt",
-    "fmt:check": "bun oxfmt --check",
-    "lint": "bun oxlint src",
-    "lint:fix": "bun oxlint --fix src",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint --fix src",
     "test": "bun test",
-    "test-dont-use": "bun vitest run src/",
-    "typecheck": "bun tsc"
+    "test-dont-use": "vitest run src/",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@seriousme/openapi-schema-validator": "^2.8.0",
@@ -24,5 +24,6 @@
     "oxlint-tsgolint": "^0.18.1",
     "typescript": "^6.0.2",
     "vitest": "4.1.2"
-  }
+  },
+  "x-package-json-docs": "docs/package.jsonc"
 }
