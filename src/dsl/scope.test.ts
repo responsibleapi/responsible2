@@ -93,19 +93,4 @@ describe("scope", () => {
       >
     >
   })
-
-  test("rejects inline tag objects in scope defaults", () => {
-    const tags = declareTags({
-      videos: {},
-    } as const)
-
-    type _Test = Assert<
-      IsNever<
-        Extract<
-          { readonly name: "videos" },
-          NonNullable<ScopeOpts<typeof tags>["tags"]>[number]
-        >
-      >
-    >
-  })
 })

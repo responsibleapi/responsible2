@@ -8,8 +8,6 @@
  */
 import type { oas31 } from "openapi3-ts"
 
-const declaredTagBrand = Symbol("declaredTagBrand")
-
 type TagNoName = Omit<oas31.TagObject, "name">
 
 /**
@@ -18,13 +16,18 @@ type TagNoName = Omit<oas31.TagObject, "name">
  */
 export type TagDeclarations = Readonly<Record<string, TagNoName>>
 
+/**
+ * A declared tag is a plain {@link oas31.TagObject} with the registry key as
+ * `name`, so callers can use strict deep equality against `TagObject` without
+ * extra branded fields.
+ */
 export type DeclaredTag<
   TName extends string = string,
   TTag extends TagNoName = TagNoName,
-> = TTag & {
-  readonly name: TName
-  readonly [declaredTagBrand]: true
-}
+> = oas31.TagObject &
+  TTag & {
+    readonly name: TName
+  }
 
 export type DeclaredTags<TTags extends TagDeclarations = TagDeclarations> = {
   readonly [K in keyof TTags]: DeclaredTag<Extract<K, string>, TTags[K]>
@@ -39,25 +42,23 @@ export type OpTags<TTags extends DeclaredTags = DeclaredTags> =
 const declareTag = <TName extends string, TTag extends TagNoName>(
   name: TName,
   tag: TTag,
-): DeclaredTag<TName, TTag> => ({
-  ...tag,
-  name,
-  [declaredTagBrand]: true,
-})
+): DeclaredTag<TName, TTag> => ({ ...tag, name })
 
 /**
- * Wrap the raw tag registry so the DSL can brand each entry with its key as the
- * OpenAPI tag name. That gives operations a closed set of reusable tag values
- * instead of ad-hoc objects or repeated string literals.
+ * Wrap the raw tag registry so each entry uses its key as the OpenAPI tag
+ * `name`. That gives operations a closed set of reusable tag values instead of
+ * ad-hoc objects or repeated string literals.
  *
  * @dsl
  */
 export const declareTags = <TTags extends TagDeclarations>(
   tags: TTags,
-): DeclaredTags<TTags> =>
-  Object.fromEntries(
-    Object.entries(tags).map(([name, declaredTag]) => [
-      name,
-      declareTag(name, declaredTag),
-    ]),
-  ) as DeclaredTags<TTags>
+): DeclaredTags<TTags> => {
+  const entries = Object.entries(tags).map(([name, declaredTag]) => [
+    name,
+    declareTag(name, declaredTag),
+  ])
+
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+  return Object.fromEntries(entries) as DeclaredTags<TTags>
+}

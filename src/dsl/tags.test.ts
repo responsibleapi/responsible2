@@ -1,5 +1,6 @@
+import type { oas31 } from "openapi3-ts"
 import { describe, expect, test } from "vitest"
-import type { Assert, IsEqual } from "../type-assertions.ts"
+import type { Assert, IsEqual, OneExtendsTwo } from "../type-assertions.ts"
 import { declareTags } from "./tags.ts"
 
 describe("tags", () => {
@@ -24,5 +25,14 @@ describe("tags", () => {
     } as const)
 
     type _Test = Assert<IsEqual<(typeof tags)["videos"]["name"], "videos">>
+  })
+
+  test("declared tags are oas31.TagObject for strict deep equality checks", () => {
+    const tags = declareTags({
+      videos: { description: "Video endpoints" },
+    } as const)
+
+    type VideoTag = (typeof tags)["videos"]
+    type _ExtendsTagObject = Assert<OneExtendsTwo<VideoTag, oas31.TagObject>>
   })
 })
