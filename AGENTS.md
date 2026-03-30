@@ -1,10 +1,5 @@
 # AGENTS.md
 
-## Chat
-
-- never use absolute paths for clickable file links in this repo, refer to files
-  and directories using repo-relative paths only
-
 ## Current state of things
 
 - 100% TypeScript codebase
@@ -26,8 +21,9 @@
 ## CLI tools
 
 - never call `node`, call `bun` instead
-- never call `npx` or `bunx`, if a package is missing, ask to add it to
-  `package.json`
+- never call `npx` or `bunx`:
+  - if a package is missing, ask to add it to `package.json`
+  - if a package is present, call through `bun`
 - never run code formatting unless explicitly asked
 - [never call `vitest`](docs/package.jsonc), `bun test` instead
 - `rg`, `ast-grep`, `jq` are available for calling
