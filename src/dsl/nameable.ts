@@ -25,7 +25,8 @@ export type Nameable<T> = NamedThunk<T> | Scalar<T>
  * {@link Nameable}. Pass the returned thunk itself when you want a `$ref`.
  */
 export const named = <T>(name: string, value: Scalar<T>): NamedThunk<T> => {
-  const thunk: NamedThunk<T> = () => value
+  // oxlint-disable-next-line typescript-eslint/no-unsafe-type-assertion
+  const thunk = (() => value) as NamedThunk<T>
 
   Object.defineProperty(thunk, "name", { configurable: true, value: name })
 

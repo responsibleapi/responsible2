@@ -13,6 +13,10 @@
 - never run the whole test suite, run individual test files instead
 - use typechecking and linting for verification
 
+## Code quality
+
+- never add `oxlint-disable-next-line` unless explicitly asked
+
 ## Imports from packages
 
 - never import from "openapi3-ts/oas31",
