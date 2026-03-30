@@ -164,7 +164,7 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "400",
             "headers": {
               "Content-Length": {
                 "required": true,
