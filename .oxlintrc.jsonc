@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["jsdoc"],
+  "plugins": ["typescript", "jsdoc"],
   "categories": {
     "correctness": "error",
     "nursery": "off",
@@ -26,7 +26,14 @@
   },
   "overrides": [
     {
-      "files": ["src/**/*.ts", "src/**/*.mts", "src/**/*.cts"],
+      "files": [
+        "src/**/*.ts",
+        "src/**/*.mts",
+        "src/**/*.cts",
+        "scripts/**/*.ts",
+        "scripts/**/*.mts",
+        "scripts/**/*.cts"
+      ],
       "rules": {
         "@typescript-eslint/consistent-type-imports": [
           "error",
@@ -36,6 +43,14 @@
           }
         ],
         "@typescript-eslint/no-deprecated": "error",
+        "@typescript-eslint/no-restricted-types": [
+          "error",
+          {
+            "types": {
+              "any": "Use a specific type instead."
+            }
+          }
+        ],
         "@typescript-eslint/no-unsafe-type-assertion": "error",
         "@typescript-eslint/no-unused-vars": [
           "error",
