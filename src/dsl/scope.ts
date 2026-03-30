@@ -1,13 +1,7 @@
 import type { oas31 } from "openapi3-ts"
 import type { AtLeastOne, AtLeastTwo } from "../lib.ts"
-import type { HttpMethod } from "./methods.ts"
-import type {
-  MatchStatus,
-  Op,
-  OpRes,
-  ReqAugmentation,
-  RespAugmentation,
-} from "./operation.ts"
+import type { HttpMethod, MethodRoutes } from "./methods.ts"
+import type { MatchStatus, Op, OpRes, ReqAugmentation, RespAugmentation } from "./operation.ts"
 import type { OpTags, TagRegistry } from "./tags.ts"
 
 export type Mime = `${string}/${string}`
@@ -48,9 +42,7 @@ export type PathRoutes<TTags extends TagRegistry = TagRegistry> = Record<
   ScopeOrOp<TTags>
 >
 
-type ScopeRoutes<TTags extends TagRegistry = TagRegistry> = Partial<
-  Record<HttpMethod, Op<TTags>>
-> &
+type ScopeRoutes<TTags extends TagRegistry = TagRegistry> = MethodRoutes<TTags> &
   Partial<PathRoutes<TTags>>
 
 type ScopeInput<TTags extends TagRegistry = TagRegistry> = {

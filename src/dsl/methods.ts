@@ -1,8 +1,17 @@
-import type { Op } from "./operation.ts"
+import type { Op, OpGET } from "./operation.ts"
+import type { TagRegistry } from "./tags.ts"
+
+export type MethodRoutes<TTags extends TagRegistry = TagRegistry> = {
+  GET?: OpGET<TTags>
+  POST?: Op<TTags>
+  PUT?: Op<TTags>
+  DELETE?: Op<TTags>
+  HEAD?: Op<TTags>
+}
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "HEAD"
 
-export function GET(_op: Op): Op {
+export function GET(_op: OpGET): OpGET {
   throw new Error("TODO")
 }
 

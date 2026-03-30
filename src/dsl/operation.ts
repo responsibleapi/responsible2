@@ -63,20 +63,23 @@ export type OpRes = Record<number, Resp | Schema>
 
 export interface Op<TTags extends TagRegistry = TagRegistry> {
   id?: string
-
-  /**
-   * id for synthetic HEAD. Only valid for GET ops
-   *
-   * @dsl
-   */
-  headID?: string
-
   req?: OpReq | Schema
   res?: OpRes
   deprecated?: boolean
   description?: string
   summary?: string
   tags?: OpTags<TTags>
+}
+
+export interface OpGET<
+  TTags extends TagRegistry = TagRegistry,
+> extends Op<TTags> {
+  /**
+   * id for synthetic HEAD. Only valid for GET ops
+   *
+   * @dsl
+   */
+  headID?: string
 }
 
 export interface OpWithMethod<
