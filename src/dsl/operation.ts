@@ -17,7 +17,7 @@ export interface PathParams extends Record<string, Schema> {
   readonly [name: OptionalKey]: never
 }
 
-export interface OpReq {
+export interface GetOpReq {
   readonly security?: Security
   /* optional security means `value` OR `no authentication` */
   readonly "security?"?: Security
@@ -25,7 +25,6 @@ export interface OpReq {
   readonly pathParams?: PathParams
   readonly query?: Record<NameWithOptionality, Schema>
   readonly headers?: Record<NameWithOptionality, Schema>
-  readonly body?: Schema | Record<Mime, Schema>
 
   /**
    * The dedicated reuse mechanism for OpenAPI parameters.
@@ -36,6 +35,10 @@ export interface OpReq {
    * @dsl
    */
   readonly params?: readonly Param[]
+}
+
+export interface OpReq extends GetOpReq {
+  readonly body?: Schema | Record<Mime, Schema>
 }
 
 export interface ReqAugmentation extends OpReq {
@@ -69,9 +72,15 @@ export type Resp = Nameable<RespParams>
 
 export type OpRes = Record<number, Resp | Schema>
 
-export interface Op<TTags extends DeclaredTags = DeclaredTags> {
+/**
+ * Shared fields for {@link GetOp} and {@link Op}.
+ *
+ * `TTags` is a {@link DeclaredTags} registry (from `declareTags`) so `tags` is a tuple of
+ * those tag objects; the default keeps bare `Op` / `GetOp` and the HTTP method
+ * helpers type-checkable without an explicit type argument.
+ */
+interface OpBase<TTags extends DeclaredTags = DeclaredTags> {
   id?: string
-  req?: OpReq | Schema
   res?: OpRes
   deprecated?: boolean
   description?: string
@@ -79,10 +88,17 @@ export interface Op<TTags extends DeclaredTags = DeclaredTags> {
   tags?: OpTags<TTags>
 }
 
-export interface GetOp<TTags extends DeclaredTags = DeclaredTags> extends Omit<
-  Op<TTags>,
-  "req"
-> {
+export interface Op<
+  TTags extends DeclaredTags = DeclaredTags,
+> extends OpBase<TTags> {
+  req?: OpReq | Schema
+}
+
+export interface GetOp<
+  TTags extends DeclaredTags = DeclaredTags,
+> extends OpBase<TTags> {
+  req?: GetOpReq
+
   /**
    * id for synthetic HEAD. Only valid for GET ops
    *
