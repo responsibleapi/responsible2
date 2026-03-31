@@ -9,7 +9,7 @@ const Err = object({ messsage: string() })
 
 const SomeSuccess = object({ one: int32() })
 
-describe("dslish", () => {
+describe("dsl", () => {
   test("tst", async () => {
     const rapi = responsibleAPI({
       partialDoc: {

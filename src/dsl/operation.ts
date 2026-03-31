@@ -13,7 +13,7 @@ import type { DeclaredTags, OpTags } from "./tags.ts"
  *
  * @dsl
  */
-interface PathParams extends Record<string, Schema> {
+export interface PathParams extends Record<string, Schema> {
   readonly [name: OptionalKey]: never
 }
 
@@ -79,9 +79,10 @@ export interface Op<TTags extends DeclaredTags = DeclaredTags> {
   tags?: OpTags<TTags>
 }
 
-export interface OpGET<
-  TTags extends DeclaredTags = DeclaredTags,
-> extends Op<TTags> {
+export interface OpGET<TTags extends DeclaredTags = DeclaredTags> extends Omit<
+  Op<TTags>,
+  "req"
+> {
   /**
    * id for synthetic HEAD. Only valid for GET ops
    *

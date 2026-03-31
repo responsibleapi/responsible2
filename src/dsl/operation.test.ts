@@ -1,6 +1,11 @@
 import { describe, test } from "vitest"
-import type { Assert, IsEqual, IsNever } from "../type-assertions.ts"
-import type { Op, OpGET } from "./operation.ts"
+import type {
+  Assert,
+  IsEqual,
+  IsNever,
+  OneExtendsTwo,
+} from "../type-assertions.ts"
+import type { Op, OpGET, PathParams } from "./operation.ts"
 import { declareTags } from "./tags.ts"
 
 describe("operation", () => {
@@ -22,6 +27,21 @@ describe("operation", () => {
       IsEqual<
         NonNullable<Op<typeof tags>["tags"]>,
         readonly (typeof tags.videos | typeof tags.channels)[]
+      >
+    >
+  })
+
+  test("accepts non-optional path param names", () => {
+    type _Test = Assert<
+      OneExtendsTwo<{ videoID: { type: "string" } }, PathParams>
+    >
+  })
+
+  test('rejects path param names ending with "?"', () => {
+    type _Test = Assert<
+      IsEqual<
+        OneExtendsTwo<{ "videoID?": { type: "string" } }, PathParams>,
+        false
       >
     >
   })
