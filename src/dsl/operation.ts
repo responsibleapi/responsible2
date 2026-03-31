@@ -79,7 +79,7 @@ export interface Op<TTags extends DeclaredTags = DeclaredTags> {
   tags?: OpTags<TTags>
 }
 
-export interface OpGET<TTags extends DeclaredTags = DeclaredTags> extends Omit<
+export interface GetOp<TTags extends DeclaredTags = DeclaredTags> extends Omit<
   Op<TTags>,
   "req"
 > {

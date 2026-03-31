@@ -1,8 +1,8 @@
-import type { Op, OpGET } from "./operation.ts"
+import type { Op, GetOp } from "./operation.ts"
 import type { DeclaredTags } from "./tags.ts"
 
 export type MethodRoutes<TTags extends DeclaredTags = DeclaredTags> = {
-  GET?: OpGET<TTags>
+  GET?: GetOp<TTags>
   POST?: Op<TTags>
   PUT?: Op<TTags>
   DELETE?: Op<TTags>
@@ -11,7 +11,7 @@ export type MethodRoutes<TTags extends DeclaredTags = DeclaredTags> = {
 
 export type HttpMethod = keyof MethodRoutes
 
-export function GET(_op: OpGET): OpGET {
+export function GET(_op: GetOp): GetOp {
   throw new Error("TODO")
 }
 

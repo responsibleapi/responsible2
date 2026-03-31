@@ -5,7 +5,7 @@ import type {
   IsNever,
   OneExtendsTwo,
 } from "../type-assertions.ts"
-import type { Op, OpGET, PathParams } from "./operation.ts"
+import type { Op, GetOp, PathParams } from "./operation.ts"
 import { declareTags } from "./tags.ts"
 
 describe("operation", () => {
@@ -13,7 +13,7 @@ describe("operation", () => {
     type _OpRejectsHeadID = Assert<IsNever<Extract<"headID", keyof Op>>>
 
     type _OpGETAcceptsHeadID = Assert<
-      IsEqual<Extract<"headID", keyof OpGET>, "headID">
+      IsEqual<Extract<"headID", keyof GetOp>, "headID">
     >
   })
 
