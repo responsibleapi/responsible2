@@ -1,6 +1,6 @@
 # TODO
 
-## readme.test.ts
+## `readme.test.ts`
 
 - Missing DSL for `components.headers` (golden file defines reusable headers
   under `components.headers`; the compiler does not emit that bucket yet).

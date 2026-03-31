@@ -3,9 +3,9 @@ import { isOptional, type NameWithOptionality } from "../dsl/dsl.ts"
 import type { Nameable } from "../dsl/nameable.ts"
 import { decodeNameable } from "../dsl/nameable.ts"
 import type { ReqAugmentation } from "../dsl/operation.ts"
-import type { Param, ParamRaw } from "../dsl/params.ts"
-import type { Security } from "../dsl/security.ts"
+import type { ReusableParam, ParamRaw } from "../dsl/params.ts"
 import type { Schema } from "../dsl/schema.ts"
+import type { Security } from "../dsl/security.ts"
 import { deepEqualJson } from "./json-equal.ts"
 import { openApiPathTemplateNames } from "./path.ts"
 import { compileSchema, type SchemaCompileState } from "./schema.ts"
@@ -17,14 +17,7 @@ export function stripSecurityFields(
     return undefined
   }
 
-  const {
-    mime,
-    pathParams,
-    query,
-    headers,
-    params,
-    body,
-  } = req
+  const { mime, pathParams, query, headers, params, body } = req
 
   const out: ReqAugmentation = {
     ...(mime !== undefined ? { mime } : {}),
@@ -47,7 +40,9 @@ export function pickSecurity(
 
   return {
     ...(req.security !== undefined ? { security: req.security } : {}),
-    ...(req["security?"] !== undefined ? { "security?": req["security?"] } : {}),
+    ...(req["security?"] !== undefined
+      ? { "security?": req["security?"] }
+      : {}),
   }
 }
 
@@ -205,7 +200,9 @@ function paramRawToParameterObject(
   const paramName = raw.name ?? hintName
 
   if (paramName === undefined || paramName === "") {
-    throw new Error("Parameter has no name; set `name` on the parameter or use a named parameter thunk.")
+    throw new Error(
+      "Parameter has no name; set `name` on the parameter or use a named parameter thunk.",
+    )
   }
 
   if (raw.schema === undefined) {
@@ -239,7 +236,7 @@ function paramRawToParameterObject(
 
 export function compileParamComponent(
   state: SchemaCompileState,
-  param: Param,
+  param: ReusableParam,
 ): oas31.ParameterObject | oas31.ReferenceObject {
   const { name: thunkName, value } = decodeNameable(param)
   const resolvedName =
@@ -318,7 +315,9 @@ function resolvePathParamSchemas(
     }
 
     if (v.schema === undefined) {
-      throw new Error(`Path parameter "${paramName}" in \`params\` has no schema.`)
+      throw new Error(
+        `Path parameter "${paramName}" in \`params\` has no schema.`,
+      )
     }
 
     pathParams[paramName] = v.schema
@@ -369,7 +368,9 @@ export function compileOperationParameters(
     const slot = paramSlotKey("path", name)
 
     if (seen.has(slot)) {
-      throw new Error(`Duplicate path parameter "${name}" for path "${oasPath}".`)
+      throw new Error(
+        `Duplicate path parameter "${name}" for path "${oasPath}".`,
+      )
     }
 
     seen.add(slot)
@@ -398,7 +399,9 @@ export function compileOperationParameters(
       const slot = paramSlotKey("query", paramName)
 
       if (seen.has(slot)) {
-        throw new Error(`Duplicate query parameter "${paramName}" in \`params\`.`)
+        throw new Error(
+          `Duplicate query parameter "${paramName}" in \`params\`.`,
+        )
       }
 
       seen.add(slot)

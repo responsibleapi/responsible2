@@ -1,7 +1,7 @@
 import type { NameWithOptionality, OptionalKey } from "./dsl.ts"
 import type { HttpMethod } from "./methods.ts"
 import type { Nameable } from "./nameable.ts"
-import type { Param } from "./params.ts"
+import type { ReusableParam } from "./params.ts"
 import type { Schema } from "./schema.ts"
 import type { Mime } from "./scope.ts"
 import type { Security } from "./security.ts"
@@ -34,7 +34,7 @@ export interface GetOpReq {
    *
    * @dsl
    */
-  readonly params?: readonly Param[]
+  readonly params?: readonly ReusableParam[]
 }
 
 export interface OpReq extends GetOpReq {

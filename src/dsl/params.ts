@@ -23,11 +23,8 @@ export interface PathParamRaw extends ParamBase {
 
 export type ParamRaw = QueryParamRaw | PathParamRaw
 
-/**
- *
- * @dsl
- */
-export type Param = Nameable<ParamRaw>
+/** @dsl */
+export type ReusableParam = Nameable<ParamRaw>
 
 export const queryParam = (r: Omit<QueryParamRaw, "in">): QueryParamRaw => ({
   ...r,
