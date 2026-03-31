@@ -18,7 +18,11 @@ import type {
 import type { Schema } from "../dsl/schema.ts"
 import type { HttpPath, Mime, PathRoutes, ScopeOpts, ScopeRes } from "../dsl/scope.ts"
 import { isScope } from "../dsl/scope.ts"
-import { emitInlineSchema } from "./schema.ts"
+import {
+  compileSchema,
+  createSchemaCompileState,
+  type SchemaCompileState,
+} from "./schema.ts"
 
 type PartialDoc = Partial<Omit<oas31.OpenAPIObject, "components">>
 
@@ -204,16 +208,16 @@ function normalizeOpReq(req: Op["req"] | GetOp["req"] | undefined): OpReq | unde
     return undefined
   }
 
+  if (isDslSchema(req)) {
+    return { body: req }
+  }
+
   if (typeof req !== "object" || req === null) {
     return undefined
   }
 
   if (isOpReqShaped(req)) {
     return req
-  }
-
-  if (isDslSchema(req)) {
-    return { body: req }
   }
 
   throw new Error("Invalid request shape")
@@ -258,6 +262,7 @@ function normalizeRespEntry(entry: Resp | Schema): RespParams {
 }
 
 function compileHeaderMap(
+  schemaState: SchemaCompileState,
   headers: Record<string, Schema> | undefined,
 ): oas31.HeadersObject | undefined {
   if (headers === undefined || Object.keys(headers).length === 0) {
@@ -272,7 +277,7 @@ function compileHeaderMap(
 
     out[name] = {
       required,
-      schema: emitInlineSchema(sch),
+      schema: compileSchema(schemaState, sch),
     }
   }
 
@@ -294,6 +299,7 @@ function isMimeMap(body: Schema | Record<Mime, Schema>): body is Record<Mime, Sc
 }
 
 function compileContent(
+  schemaState: SchemaCompileState,
   body: Schema | Record<Mime, Schema>,
   defaultMime: Mime | undefined,
 ): oas31.ContentObject {
@@ -301,7 +307,7 @@ function compileContent(
     const c: oas31.ContentObject = {}
 
     for (const [mime, sch] of Object.entries(body)) {
-      c[mime] = { schema: emitInlineSchema(sch) }
+      c[mime] = { schema: compileSchema(schemaState, sch) }
     }
 
     return c
@@ -310,11 +316,12 @@ function compileContent(
   const mime = defaultMime ?? "application/octet-stream"
 
   return {
-    [mime]: { schema: emitInlineSchema(body) },
+    [mime]: { schema: compileSchema(schemaState, body) },
   }
 }
 
 function compileRequestBody(
+  schemaState: SchemaCompileState,
   merged: ReqAugmentation,
 ): oas31.RequestBodyObject | undefined {
   if (merged.body === undefined) {
@@ -323,7 +330,7 @@ function compileRequestBody(
 
   return {
     required: true,
-    content: compileContent(merged.body, merged.mime),
+    content: compileContent(schemaState, merged.body, merged.mime),
   }
 }
 
@@ -360,6 +367,7 @@ function concreteResponse(code: number, op: RouteMethodOp, add: OpRes): Resp | S
 }
 
 function compileResponses(
+  schemaState: SchemaCompileState,
   op: RouteMethodOp,
   scopeRes: ScopeOpts["res"],
 ): oas31.ResponsesObject {
@@ -373,8 +381,8 @@ function compileResponses(
     const concrete = normalizeRespEntry(raw)
     const mime = aug.mime ?? undefined
 
-    const hAug = compileHeaderMap(aug.headers) ?? {}
-    const hCon = compileHeaderMap(concrete.headers) ?? {}
+    const hAug = compileHeaderMap(schemaState, aug.headers) ?? {}
+    const hCon = compileHeaderMap(schemaState, concrete.headers) ?? {}
     const headers: oas31.HeadersObject = { ...hAug, ...hCon }
     const headerObj =
       Object.keys(headers).length > 0 ? headers : undefined
@@ -382,7 +390,7 @@ function compileResponses(
     let content: oas31.ContentObject | undefined
 
     if (concrete.body !== undefined) {
-      content = compileContent(concrete.body, mime)
+      content = compileContent(schemaState, concrete.body, mime)
     }
 
     const response: oas31.ResponseObject = {
@@ -397,9 +405,13 @@ function compileResponses(
   return out
 }
 
-function compileDirectOp(op: RouteMethodOp, scope: ScopeOpts): oas31.OperationObject {
+function compileDirectOp(
+  schemaState: SchemaCompileState,
+  op: RouteMethodOp,
+  scope: ScopeOpts,
+): oas31.OperationObject {
   const mergedReq = mergeInheritedReq(scope.req, op)
-  const requestBody = compileRequestBody(mergedReq)
+  const requestBody = compileRequestBody(schemaState, mergedReq)
 
   return {
     ...(op.summary !== undefined ? { summary: op.summary } : {}),
@@ -407,7 +419,7 @@ function compileDirectOp(op: RouteMethodOp, scope: ScopeOpts): oas31.OperationOb
     ...(op.deprecated === true ? { deprecated: true } : {}),
     ...(op.id !== undefined ? { operationId: op.id } : {}),
     ...(requestBody !== undefined ? { requestBody } : {}),
-    responses: compileResponses(op, scope.res),
+    responses: compileResponses(schemaState, op, scope.res),
   }
 }
 
@@ -416,6 +428,7 @@ export function compileResponsibleAPI(api: ResponsibleAPIInput): oas31.OpenAPIOb
     throw new Error("partialDoc must include openapi and info")
   }
 
+  const schemaState = createSchemaCompileState()
   const scope: ScopeOpts = api.forAll
   const paths: oas31.PathsObject = {
     ...(api.partialDoc.paths ?? {}),
@@ -449,7 +462,7 @@ export function compileResponsibleAPI(api: ResponsibleAPIInput): oas31.OpenAPIOb
 
     const pathItem: oas31.PathItemObject = {
       ...(typeof existing === "object" && existing !== null ? existing : {}),
-      [oasMethod]: compileDirectOp(op, scope),
+      [oasMethod]: compileDirectOp(schemaState, op, scope),
     }
 
     paths[path] = pathItem
@@ -458,10 +471,15 @@ export function compileResponsibleAPI(api: ResponsibleAPIInput): oas31.OpenAPIOb
   const { openapi, info, tags, servers, security, externalDocs, webhooks } =
     api.partialDoc
 
+  const schemaKeys = Object.keys(schemaState.components.schemas)
+  const components: oas31.ComponentsObject | undefined =
+    schemaKeys.length > 0 ? { schemas: schemaState.components.schemas } : undefined
+
   return {
     openapi,
     info,
     paths,
+    ...(components !== undefined ? { components } : {}),
     ...(tags !== undefined ? { tags } : {}),
     ...(servers !== undefined ? { servers } : {}),
     ...(security !== undefined ? { security } : {}),

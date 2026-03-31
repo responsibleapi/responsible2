@@ -1,18 +1,26 @@
 import type { oas31 } from "openapi3-ts"
-import { decodeNameable, type Nameable } from "../dsl/nameable.ts"
+import { decodeNameable } from "../dsl/nameable.ts"
 import type { Obj, RawSchema, Schema } from "../dsl/schema.ts"
 
 type Dict = Extract<RawSchema, { type: "object"; propertyNames: unknown }>
 
-function assertInline<T>(n: Nameable<T>, kind: string): T {
-  const { name, value } = decodeNameable(n)
-
-  if (name !== undefined && name !== "") {
-    throw new Error(`Named ${kind} "${name}" is not supported yet`)
-  }
-
-  return value
+export interface SchemaCompileState {
+  components: { schemas: oas31.SchemasObject }
+  inProgress: { schemas: Set<string> }
 }
+
+export function createSchemaCompileState(): SchemaCompileState {
+  return {
+    components: { schemas: {} },
+    inProgress: { schemas: new Set() },
+  }
+}
+
+function schemaRef(name: string): oas31.ReferenceObject {
+  return { $ref: `#/components/schemas/${name}` }
+}
+
+type EmittedSchema = oas31.SchemaObject | oas31.ReferenceObject
 
 function emitString(s: Extract<RawSchema, { type: "string" }>): oas31.SchemaObject {
   const pattern = s["pattern"]
@@ -29,11 +37,11 @@ function emitString(s: Extract<RawSchema, { type: "string" }>): oas31.SchemaObje
   return out as oas31.SchemaObject
 }
 
-function emitObject(s: Obj): oas31.SchemaObject {
-  const properties: Record<string, oas31.SchemaObject> = {}
+function emitObject(state: SchemaCompileState, s: Obj): oas31.SchemaObject {
+  const properties: Record<string, EmittedSchema> = {}
 
   for (const [k, v] of Object.entries(s.properties)) {
-    properties[k] = emitInlineSchema(v)
+    properties[k] = compileSchema(state, v)
   }
 
   const { properties: _p, ...rest } = s
@@ -45,34 +53,64 @@ function emitObject(s: Obj): oas31.SchemaObject {
   } as oas31.SchemaObject
 }
 
-function emitDict(s: Dict): oas31.SchemaObject {
+function emitDict(state: SchemaCompileState, s: Dict): oas31.SchemaObject {
   const { propertyNames, additionalProperties, ...rest } = s
 
   return {
     ...(rest as Record<string, unknown>),
     type: "object",
-    propertyNames: emitInlineSchema(propertyNames),
-    additionalProperties: emitInlineSchema(additionalProperties),
+    propertyNames: compileSchema(state, propertyNames),
+    additionalProperties: compileSchema(state, additionalProperties),
   } as oas31.SchemaObject
 }
 
-export function emitInlineSchema(schema: Schema): oas31.SchemaObject {
-  const raw = assertInline(schema, "schema")
+/**
+ * Compiles a DSL {@link Schema} to an OpenAPI schema or `$ref`, registering
+ * named thunks in {@link SchemaCompileState.components} (reserve-in-progress
+ * first so recursion terminates).
+ */
+export function compileSchema(
+  state: SchemaCompileState,
+  schema: Schema,
+): EmittedSchema {
+  const { name, value } = decodeNameable(schema)
 
-  return emitRawSchema(raw)
+  if (name === undefined || name === "") {
+    return compileRawSchema(state, value)
+  }
+
+  if (state.components.schemas[name] !== undefined) {
+    return schemaRef(name)
+  }
+
+  if (state.inProgress.schemas.has(name)) {
+    return schemaRef(name)
+  }
+
+  state.inProgress.schemas.add(name)
+
+  try {
+    const compiled = compileRawSchema(state, value)
+
+    state.components.schemas[name] = compiled
+  } finally {
+    state.inProgress.schemas.delete(name)
+  }
+
+  return schemaRef(name)
 }
 
-function emitRawSchema(s: RawSchema): oas31.SchemaObject {
+function compileRawSchema(state: SchemaCompileState, s: RawSchema): oas31.SchemaObject {
   if ("oneOf" in s) {
-    return { oneOf: s.oneOf.map(emitInlineSchema) }
+    return { oneOf: s.oneOf.map(x => compileSchema(state, x)) }
   }
 
   if ("anyOf" in s) {
-    return { anyOf: s.anyOf.map(emitInlineSchema) }
+    return { anyOf: s.anyOf.map(x => compileSchema(state, x)) }
   }
 
   if ("allOf" in s) {
-    return { allOf: s.allOf.map(emitInlineSchema) }
+    return { allOf: s.allOf.map(x => compileSchema(state, x)) }
   }
 
   if (!("type" in s)) {
@@ -82,10 +120,10 @@ function emitRawSchema(s: RawSchema): oas31.SchemaObject {
   switch (s.type) {
     case "object": {
       if ("propertyNames" in s) {
-        return emitDict(s)
+        return emitDict(state, s)
       }
 
-      return emitObject(s)
+      return emitObject(state, s)
     }
 
     case "array": {
@@ -94,7 +132,7 @@ function emitRawSchema(s: RawSchema): oas31.SchemaObject {
       return {
         ...rest,
         type: "array",
-        items: emitInlineSchema(items),
+        items: compileSchema(state, items),
       } as oas31.SchemaObject
     }
 
