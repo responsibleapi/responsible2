@@ -240,7 +240,7 @@ const authenticatedOps = scope({
       id: "getUser",
       res: { 200: UserResp },
     },
-    /** why is this a POST */
+    /** Why is this a POST */
     POST: {
       id: "patchUser",
       req: object({ updates: boolean() }),
@@ -395,7 +395,9 @@ const authenticatedOps = scope({
 
 const jsonAPI = scope({
   forAll: {
-    req: { mime: "application/json" },
+    req: {
+      mime: "application/json",
+    },
     res: {
       defaults: {
         "200..299": {
@@ -504,14 +506,14 @@ const jsonAPI = scope({
     req: {
       body: {
         "application/json": WorkerEvent,
-        /** workaround for a current worker to avoid redeploying it 😏 */
+        /** Workaround for a current worker to avoid redeploying it 😏 */
         "text/plain": WorkerEvent,
       },
     },
     res: {
       201: {
         headers: {
-          /** wtf is this */
+          /** Wtf is this */
           "content-length?": int32({ minimum: 0, maximum: 0 }),
         },
       },

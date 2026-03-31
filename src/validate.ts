@@ -12,7 +12,7 @@ function assertValid(
   }
 }
 
-/** returns {@link oas31.OpenAPIObject} to be passed to expect() */
+/** Returns {@link oas31.OpenAPIObject} to be passed to expect() */
 export async function validate(
   doc: Partial<oas31.OpenAPIObject> | Record<string, unknown>,
 ): Promise<oas31.OpenAPIObject> {
