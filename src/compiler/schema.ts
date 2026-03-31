@@ -158,7 +158,9 @@ export function compileSchema(
   state.inProgress.schemas.add(name)
 
   try {
-    const compiled = compileRawSchema(state, value)
+    const compiled = compileRawSchema(state, value, {
+      preserveIntNumDescription: true,
+    })
 
     state.components.schemas[name] = compiled
   } finally {
@@ -168,7 +170,11 @@ export function compileSchema(
   return schemaRef(name)
 }
 
-function compileRawSchema(state: SchemaCompileState, s: RawSchema): oas31.SchemaObject {
+function compileRawSchema(
+  state: SchemaCompileState,
+  s: RawSchema,
+  opts?: { preserveIntNumDescription?: boolean },
+): oas31.SchemaObject {
   if ("oneOf" in s) {
     return { oneOf: s.oneOf.map(x => compileSchema(state, x)) }
   }
@@ -208,7 +214,10 @@ function compileRawSchema(state: SchemaCompileState, s: RawSchema): oas31.Schema
       return emitString(s)
 
     default: {
-      if (s.type === "integer" || s.type === "number") {
+      if (
+        (s.type === "integer" || s.type === "number") &&
+        !opts?.preserveIntNumDescription
+      ) {
         const { description: _desc, ...rest } = s
 
         return { ...rest } as oas31.SchemaObject

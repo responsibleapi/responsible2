@@ -607,11 +607,12 @@ function compileResponses(
       const compiledProbe = compileSchema(schemaState, concrete.body)
 
       if (isEmptyInlineSchema(compiledProbe)) {
-        if (code >= 200 && code < 300) {
+        if (mime !== "application/json") {
           return undefined
         }
 
-        if (mime !== "application/json") {
+        /* 201 + empty JSON matches exceptions golden; other 2xx omit (listenbox 200: unknown). */
+        if (code >= 200 && code < 300 && code !== 201) {
           return undefined
         }
       }
