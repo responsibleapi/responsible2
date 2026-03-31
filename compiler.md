@@ -381,14 +381,7 @@ Scope:
 
 Stop condition:
 
-- at least one large example passes end-to-end
-
-Feedback:
-
-- `bun test src/examples/listenbox.test.ts`
-- `bun test src/examples/readme.test.ts`
-- `bun run typecheck`
-- `bun run lint`
+- `bun check` passes
 
 ### Story 7: last-mile edge cases
 
@@ -401,14 +394,7 @@ Scope:
 
 Stop condition:
 
-- all remaining focused compiler tests pass
-- all example tests that are still meant to be authoritative pass
-
-Feedback:
-
-- targeted `bun test <file>` only
-- `bun run typecheck`
-- `bun run lint`
+- `bun check` passes
 
 ## What I would not do in the first iteration
 
