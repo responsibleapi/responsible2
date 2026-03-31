@@ -99,13 +99,15 @@ function foldAugmentations(
 function parseScopeRes(res: ScopeRes | undefined): {
   defaults: Partial<Record<MatchStatus, RespAugmentation>>
   add: OpRes
+  wildcard: RespAugmentation
 } {
   if (res === undefined) {
-    return { defaults: {}, add: {} }
+    return { defaults: {}, add: {}, wildcard: {} }
   }
 
   let defaults: Partial<Record<MatchStatus, RespAugmentation>> = {}
   let add: OpRes = {}
+  let wildcard: RespAugmentation = {}
 
   if ("defaults" in res && res.defaults !== undefined) {
     defaults = res.defaults
@@ -115,7 +117,13 @@ function parseScopeRes(res: ScopeRes | undefined): {
     add = res.add
   }
 
-  return { defaults, add }
+  if ("mime" in res) {
+    const boxed: { mime?: unknown } = res
+    const mime = isMimeValue(boxed.mime) ? boxed.mime : undefined
+    wildcard = mime !== undefined ? { mime } : {}
+  }
+
+  return { defaults, add, wildcard }
 }
 
 function assertInlineComponent<T>(n: Nameable<T>, kind: string): T {
@@ -153,6 +161,10 @@ function isDslSchema(x: unknown): x is Schema {
     return false
   }
 
+  if (Object.keys(x).length === 0) {
+    return true
+  }
+
   if ("type" in x) {
     const t: unknown = (x as { type?: unknown }).type
 
@@ -181,6 +193,10 @@ function isHttpMethod(s: string): s is HttpMethod {
 
 function isHttpPath(s: string): s is HttpPath {
   return s.length > 0 && s.startsWith("/")
+}
+
+function isRecord(x: unknown): x is Record<string, unknown> {
+  return typeof x === "object" && x !== null
 }
 
 function assertRouteMethodOp(node: OpBase): asserts node is RouteMethodOp {
@@ -302,18 +318,21 @@ function mergedReqAndSecurityForOp(
 interface CompileScopeContext {
   mergedReq: ReqAugmentation | undefined
   securityLayers: Pick<ReqAugmentation, "security" | "security?">[]
+  resWildcardLayers: RespAugmentation[]
   resDefaultsLayers: Partial<Record<MatchStatus, RespAugmentation>>[]
   resAdd: OpRes
   mergedTags: ScopeOpts["tags"]
 }
 
 function compileScopeContextFromForAll(forAll: ScopeOpts): CompileScopeContext {
-  const { defaults, add } = parseScopeRes(forAll.res)
+  const { defaults, add, wildcard } = parseScopeRes(forAll.res)
 
   return {
     mergedReq:
       forAll.req !== undefined ? stripSecurityFields(forAll.req) : undefined,
     securityLayers: securityLayerFromScopeReq(forAll.req),
+    resWildcardLayers:
+      Object.keys(wildcard).length > 0 ? [wildcard] : [],
     resDefaultsLayers:
       Object.keys(defaults).length > 0 ? [defaults] : [],
     resAdd: add,
@@ -329,13 +348,17 @@ function mergeCompileScope(
     return parent
   }
 
-  const { defaults, add } = parseScopeRes(childForAll.res)
+  const { defaults, add, wildcard } = parseScopeRes(childForAll.res)
 
   return {
     mergedReq: mergeReqAugmentations(parent.mergedReq, childForAll.req),
     securityLayers: [
       ...parent.securityLayers,
       ...securityLayerFromScopeReq(childForAll.req),
+    ],
+    resWildcardLayers: [
+      ...parent.resWildcardLayers,
+      ...(Object.keys(wildcard).length > 0 ? [wildcard] : []),
     ],
     resDefaultsLayers: [
       ...parent.resDefaultsLayers,
@@ -485,13 +508,18 @@ function compileResponses(
   schemaState: SchemaCompileState,
   op: RouteMethodOp,
   ctx: CompileScopeContext,
+  opts?: { stripBodies?: boolean },
 ): oas31.ResponsesObject {
-  const { resDefaultsLayers, resAdd: add } = ctx
+  const { resWildcardLayers, resDefaultsLayers, resAdd: add } = ctx
   const statuses = responseStatuses(op, add)
   const out: oas31.ResponsesObject = {}
 
   for (const code of statuses) {
     let aug: RespAugmentation = {}
+
+    for (const layer of resWildcardLayers) {
+      aug = mergeRespAugmentations(aug, layer)
+    }
 
     for (const layer of resDefaultsLayers) {
       const partial = foldAugmentations(layer, code)
@@ -509,7 +537,7 @@ function compileResponses(
 
     let content: oas31.ContentObject | undefined
 
-    if (concrete.body !== undefined) {
+    if (opts?.stripBodies !== true && concrete.body !== undefined) {
       content = compileContent(schemaState, concrete.body, mime)
     }
 
@@ -525,18 +553,46 @@ function compileResponses(
   return out
 }
 
+function isGetWithHeadID(
+  op: RouteMethodOp,
+): op is GetOp & { method: "GET"; headID: string } {
+  if (op.method !== "GET") {
+    return false
+  }
+
+  if (!("headID" in op)) {
+    return false
+  }
+
+  const headID = op.headID
+
+  return typeof headID === "string" && headID.length > 0
+}
+
+function synthesizeHeadOpFromGet(op: GetOp & { method: "GET"; headID: string }): RouteMethodOp {
+  const { headID, ...rest } = op
+
+  return {
+    ...rest,
+    method: "HEAD",
+    id: headID,
+  }
+}
+
 function compileDirectOp(
   schemaState: SchemaCompileState,
   op: RouteMethodOp,
   ctx: CompileScopeContext,
   oasPath: string,
+  opts?: { stripResponseBodies?: boolean; omitRequestBody?: boolean },
 ): oas31.OperationObject {
   const { mergedReq, securityReqs } = mergedReqAndSecurityForOp(
     schemaState,
     ctx,
     op,
   )
-  const requestBody = compileRequestBody(schemaState, mergedReq)
+  const requestBody =
+    opts?.omitRequestBody === true ? undefined : compileRequestBody(schemaState, mergedReq)
   const parameters = compileOperationParameters(schemaState, mergedReq, oasPath)
   const tagNames =
     op.tags !== undefined
@@ -554,7 +610,9 @@ function compileDirectOp(
     ...(parameters !== undefined ? { parameters } : {}),
     ...(requestBody !== undefined ? { requestBody } : {}),
     ...(securityReqs.length > 0 ? { security: securityReqs } : {}),
-    responses: compileResponses(schemaState, op, ctx),
+    responses: compileResponses(schemaState, op, ctx, {
+      stripBodies: opts?.stripResponseBodies === true,
+    }),
   }
 }
 
@@ -575,7 +633,18 @@ function placeOperation(
 
   const pathItem: oas31.PathItemObject = {
     ...(typeof existing === "object" && existing !== null ? existing : {}),
-    [oasMethod]: compileDirectOp(schemaState, op, ctx, oasPath),
+    [oasMethod]: compileDirectOp(schemaState, op, ctx, oasPath, {
+      stripResponseBodies: op.method === "HEAD",
+      omitRequestBody: op.method === "HEAD",
+    }),
+  }
+
+  if (isGetWithHeadID(op) && !("head" in pathItem)) {
+    const headOp = synthesizeHeadOpFromGet(op)
+    pathItem.head = compileDirectOp(schemaState, headOp, ctx, oasPath, {
+      stripResponseBodies: true,
+      omitRequestBody: true,
+    })
   }
 
   paths[oasPath] = pathItem
@@ -595,7 +664,7 @@ function compileRoutes(
       continue
     }
 
-    if (node === null || typeof node !== "object") {
+    if (!isRecord(node)) {
       throw new Error(`Invalid route value for key "${routeKey}"`)
     }
 
@@ -606,8 +675,13 @@ function compileRoutes(
         )
       }
 
-      assertRouteMethodOp(node)
-      placeOperation(schemaState, paths, pathPrefix, ctx, node)
+      const method = routeKey
+      const op: RouteMethodOp =
+        "method" in node
+          ? (assertRouteMethodOp(node), node)
+          : ({ ...(node as OpBase), method } satisfies RouteMethodOp)
+
+      placeOperation(schemaState, paths, pathPrefix, ctx, op)
       continue
     }
 

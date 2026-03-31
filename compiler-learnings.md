@@ -37,15 +37,24 @@
   handled before the object check so `res: { 201: () => object(...) }` style
   entries compile (needed for examples that use lazy schema functions).
 
-## Deferred / follow-ups
+## Story 5: response defaults and HEAD synthesis
 
-- **`http-benchmark.test.ts`**:
-  `expect(validate(httpBenchmarkAPI)).toEqual(theJSON)` still fails:
-  `http-benchmark.json` mixes string-typed numeric constraints
-  (`"minimum": "1"`, etc.) and a custom `400` description where the compiler
-  emits numeric JSON and default `description` from the status code. Aligning
-  the golden requires regenerating or editing `src/examples/http-benchmark.json`
-  (project docs mark `src/examples/` as do-not-edit for routine work).
+- **Wildcard response defaults**: `forAll.res.mime` now behaves like a wildcard
+  default applied to every compiled response status (including those injected by
+  `forAll.res.add`). This fixes examples like `exceptions` where every response
+  should inherit `"application/json"` without writing a `defaults` range.
+- **Range matching**: `res.defaults` keys support both exact statuses (e.g.
+  `404`) and inclusive ranges (`"400..499"`); matching augmentations are applied
+  parent-to-child, then the concrete response is compiled.
+- **`add` inheritance precedence**: Inherited `res.add` provides missing
+  statuses for operations, but a local `op.res[code]` always wins over inherited
+  `add[code]`.
+- **HEAD behavior**:
+  - explicit `HEAD(...)` responses compile with **no response content** (headers
+    remain), since OpenAPI HEAD responses should not describe bodies.
+  - `GET({ headID })` synthesizes a `HEAD` operation at the same path (unless an
+    explicit `HEAD` already exists) with `operationId = headID` and responses
+    cloned from GET but with bodies stripped.
 
 ## DSL gotcha
 
