@@ -5,8 +5,8 @@ import type { PathRoutes, ScopeOpts } from "./scope.ts"
 export type OptionalKey = `${string}?`
 
 /**
- * holds info both about the name AND optionality of something
- * used in schemas and req params
+ * Holds info both about the name AND optionality of something used in schemas
+ * and req params
  *
  * @dsl
  */
@@ -21,14 +21,14 @@ export const isOptional = (k: NameWithOptionality): k is OptionalKey =>
  *
  * @dsl
  */
-type PartialDoc = Partial<Omit<oas31.OpenAPIObject, "components">>
+export type PartialDoc = Partial<Omit<oas31.OpenAPIObject, "components">>
 
-interface ResponsibleAPI {
+export interface ResponsibleApiInput {
   partialDoc: PartialDoc
   forAll: ScopeOpts
   routes: PathRoutes
 }
 
-export function responsibleAPI(api: ResponsibleAPI): oas31.OpenAPIObject {
+export function responsibleAPI(api: ResponsibleApiInput): oas31.OpenAPIObject {
   return compileResponsibleAPI(api)
 }

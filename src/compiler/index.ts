@@ -1,15 +1,11 @@
 import type { oas31 } from "openapi3-ts"
-import { isOptional } from "../dsl/dsl.ts"
-import { dslPathToOpenApiPath, joinHttpPaths } from "./path.ts"
 import {
-  compileOperationParameters,
-  compileSecurityFromAug,
-  pickSecurity,
-  securityLayerFromScopeReq,
-  stripSecurityFields,
-} from "./request.ts"
-import { decodeNameable, type Nameable } from "../dsl/nameable.ts"
+  isOptional,
+  type PartialDoc,
+  type ResponsibleApiInput,
+} from "../dsl/dsl.ts"
 import type { HttpMethod } from "../dsl/methods.ts"
+import { decodeNameable, type Nameable } from "../dsl/nameable.ts"
 import type {
   GetOp,
   MatchStatus,
@@ -24,21 +20,21 @@ import type {
   RouteMethodOp,
 } from "../dsl/operation.ts"
 import type { Schema } from "../dsl/schema.ts"
-import type { HttpPath, Mime, PathRoutes, ScopeOpts, ScopeRes } from "../dsl/scope.ts"
+import type { HttpPath, Mime, ScopeOpts, ScopeRes } from "../dsl/scope.ts"
 import { isScope } from "../dsl/scope.ts"
+import { dslPathToOpenApiPath, joinHttpPaths } from "./path.ts"
+import {
+  compileOperationParameters,
+  compileSecurityFromAug,
+  pickSecurity,
+  securityLayerFromScopeReq,
+  stripSecurityFields,
+} from "./request.ts"
 import {
   compileSchema,
   createSchemaCompileState,
   type SchemaCompileState,
 } from "./schema.ts"
-
-type PartialDoc = Partial<Omit<oas31.OpenAPIObject, "components">>
-
-interface ResponsibleAPIInput {
-  partialDoc: PartialDoc
-  forAll: ScopeOpts
-  routes: PathRoutes
-}
 
 const OAS_METHOD: Record<HttpMethod, keyof oas31.PathItemObject> = {
   GET: "get",
@@ -188,7 +184,9 @@ function isDslSchema(x: unknown): x is Schema {
 }
 
 function isHttpMethod(s: string): s is HttpMethod {
-  return s === "GET" || s === "POST" || s === "PUT" || s === "DELETE" || s === "HEAD"
+  return (
+    s === "GET" || s === "POST" || s === "PUT" || s === "DELETE" || s === "HEAD"
+  )
 }
 
 function isHttpPath(s: string): s is HttpPath {
@@ -227,7 +225,9 @@ function isOpReqShaped(x: object): x is OpReq {
   )
 }
 
-function normalizeOpReq(req: Op["req"] | GetOp["req"] | undefined): OpReq | undefined {
+function normalizeOpReq(
+  req: Op["req"] | GetOp["req"] | undefined,
+): OpReq | undefined {
   if (req === undefined) {
     return undefined
   }
@@ -331,10 +331,8 @@ function compileScopeContextFromForAll(forAll: ScopeOpts): CompileScopeContext {
     mergedReq:
       forAll.req !== undefined ? stripSecurityFields(forAll.req) : undefined,
     securityLayers: securityLayerFromScopeReq(forAll.req),
-    resWildcardLayers:
-      Object.keys(wildcard).length > 0 ? [wildcard] : [],
-    resDefaultsLayers:
-      Object.keys(defaults).length > 0 ? [defaults] : [],
+    resWildcardLayers: Object.keys(wildcard).length > 0 ? [wildcard] : [],
+    resDefaultsLayers: Object.keys(defaults).length > 0 ? [defaults] : [],
     resAdd: add,
     mergedTags: forAll.tags,
   }
@@ -366,9 +364,7 @@ function mergeCompileScope(
     ],
     resAdd: { ...parent.resAdd, ...add },
     mergedTags:
-      childForAll.tags !== undefined
-        ? childForAll.tags
-        : parent.mergedTags,
+      childForAll.tags !== undefined ? childForAll.tags : parent.mergedTags,
   }
 }
 
@@ -422,7 +418,9 @@ function compileHeaderMap(
   return out
 }
 
-function isMimeMap(body: Schema | Record<Mime, Schema>): body is Record<Mime, Schema> {
+function isMimeMap(
+  body: Schema | Record<Mime, Schema>,
+): body is Record<Mime, Schema> {
   if (typeof body !== "object" || body === null || "type" in body) {
     return false
   }
@@ -488,7 +486,11 @@ function responseStatuses(op: RouteMethodOp, add: OpRes): number[] {
   return [...keys].sort((a, b) => a - b)
 }
 
-function concreteResponse(code: number, op: RouteMethodOp, add: OpRes): Resp | Schema {
+function concreteResponse(
+  code: number,
+  op: RouteMethodOp,
+  add: OpRes,
+): Resp | Schema {
   const fromOp = op.res?.[code]
 
   if (fromOp !== undefined) {
@@ -532,8 +534,7 @@ function compileResponses(
     const hAug = compileHeaderMap(schemaState, aug.headers) ?? {}
     const hCon = compileHeaderMap(schemaState, concrete.headers) ?? {}
     const headers: oas31.HeadersObject = { ...hAug, ...hCon }
-    const headerObj =
-      Object.keys(headers).length > 0 ? headers : undefined
+    const headerObj = Object.keys(headers).length > 0 ? headers : undefined
 
     let content: oas31.ContentObject | undefined
 
@@ -569,7 +570,9 @@ function isGetWithHeadID(
   return typeof headID === "string" && headID.length > 0
 }
 
-function synthesizeHeadOpFromGet(op: GetOp & { method: "GET"; headID: string }): RouteMethodOp {
+function synthesizeHeadOpFromGet(
+  op: GetOp & { method: "GET"; headID: string },
+): RouteMethodOp {
   const { headID, ...rest } = op
 
   return {
@@ -592,7 +595,9 @@ function compileDirectOp(
     op,
   )
   const requestBody =
-    opts?.omitRequestBody === true ? undefined : compileRequestBody(schemaState, mergedReq)
+    opts?.omitRequestBody === true
+      ? undefined
+      : compileRequestBody(schemaState, mergedReq)
   const parameters = compileOperationParameters(schemaState, mergedReq, oasPath)
   const tagNames =
     op.tags !== undefined
@@ -606,7 +611,9 @@ function compileDirectOp(
     ...(op.description !== undefined ? { description: op.description } : {}),
     ...(op.deprecated === true ? { deprecated: true } : {}),
     ...(op.id !== undefined ? { operationId: op.id } : {}),
-    ...(tagNames !== undefined && tagNames.length > 0 ? { tags: tagNames } : {}),
+    ...(tagNames !== undefined && tagNames.length > 0
+      ? { tags: tagNames }
+      : {}),
     ...(parameters !== undefined ? { parameters } : {}),
     ...(requestBody !== undefined ? { requestBody } : {}),
     ...(securityReqs.length > 0 ? { security: securityReqs } : {}),
@@ -707,8 +714,13 @@ function compileRoutes(
   }
 }
 
-export function compileResponsibleAPI(api: ResponsibleAPIInput): oas31.OpenAPIObject {
-  if (api.partialDoc.openapi === undefined || api.partialDoc.info === undefined) {
+export function compileResponsibleAPI(
+  api: ResponsibleApiInput,
+): oas31.OpenAPIObject {
+  if (
+    api.partialDoc.openapi === undefined ||
+    api.partialDoc.info === undefined
+  ) {
     throw new Error("partialDoc must include openapi and info")
   }
 
