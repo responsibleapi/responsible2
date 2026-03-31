@@ -47,7 +47,21 @@ export interface ReqAugmentation extends OpReq {
 
 export interface RespAugmentation {
   readonly mime?: Mime
-  readonly headers?: Record<NameWithOptionality, Schema | ReusableHeader>
+  readonly headers?: Record<NameWithOptionality, Schema>
+
+  /**
+   * Reusable response headers follow the same array-first composition pattern
+   * as {@link GetOpReq.params}. We intentionally do not introduce a dedicated
+   * `resHeaders()` helper because a wrapper API would propagate through
+   * adjacent param/header typings and complicate otherwise simple record
+   * literals.
+   *
+   * Keep one-off response headers inline in {@link headers}; declare shared
+   * reusable headers here.
+   *
+   * @dsl
+   */
+  readonly headerParams?: readonly ReusableHeader[]
   readonly cookies?: Record<NameWithOptionality, Schema>
 }
 
@@ -64,7 +78,20 @@ export interface RespParams {
    */
   description?: string
 
-  headers?: Record<NameWithOptionality, Schema | ReusableHeader>
+  headers?: Record<NameWithOptionality, Schema>
+  /**
+   * Reusable response headers follow the same array-first composition pattern
+   * as {@link GetOpReq.params}. We intentionally do not introduce a dedicated
+   * `resHeaders()` helper because a wrapper API would propagate through
+   * adjacent param/header typings and complicate otherwise simple record
+   * literals.
+   *
+   * Keep one-off response headers inline in {@link headers}; declare shared
+   * reusable headers here.
+   *
+   * @dsl
+   */
+  headerParams?: readonly ReusableHeader[]
   cookies?: Record<NameWithOptionality, Schema>
 }
 

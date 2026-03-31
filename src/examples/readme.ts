@@ -419,10 +419,10 @@ const xTotalCountHeader = named(
   }),
 )
 
-const paginationHeaders = {
-  Link: linkPaginationHeader,
-  "x-total-count": xTotalCountHeader,
-}
+const paginationHeaderParams = [
+  linkPaginationHeader,
+  xTotalCountHeader,
+] as const
 
 const authResponses = {
   401: resp({
@@ -500,7 +500,7 @@ export default responsibleAPI({
         res: {
           200: resp({
             description: "Successfully retrieved API specification metadata.",
-            headers: paginationHeaders,
+            headerParams: paginationHeaderParams,
           }),
           400: resp({
             description: "The supplied version header was empty.",
@@ -661,7 +661,7 @@ export default responsibleAPI({
         res: {
           200: resp({
             description: "The list of categories.",
-            headers: paginationHeaders,
+            headerParams: paginationHeaderParams,
           }),
         },
       },
@@ -784,7 +784,7 @@ export default responsibleAPI({
         res: {
           200: resp({
             description: "The list of changelogs.",
-            headers: paginationHeaders,
+            headerParams: paginationHeaderParams,
           }),
         },
       },
@@ -881,7 +881,7 @@ export default responsibleAPI({
         res: {
           200: resp({
             description: "The list of custom pages.",
-            headers: paginationHeaders,
+            headerParams: paginationHeaderParams,
           }),
         },
       },
