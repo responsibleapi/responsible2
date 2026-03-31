@@ -1,5 +1,10 @@
 import type { oas31 } from "openapi3-ts"
 import { isOptional } from "../dsl/dsl.ts"
+import {
+  dslPathToOpenApiPath,
+  joinHttpPaths,
+  openApiPathTemplateNames,
+} from "./path.ts"
 import { decodeNameable, type Nameable } from "../dsl/nameable.ts"
 import type { HttpMethod } from "../dsl/methods.ts"
 import type {
@@ -223,29 +228,103 @@ function normalizeOpReq(req: Op["req"] | GetOp["req"] | undefined): OpReq | unde
   throw new Error("Invalid request shape")
 }
 
-function mergeInheritedReq(
+function mergeReqAugmentations(
   parent: ReqAugmentation | undefined,
-  op: RouteMethodOp,
-): ReqAugmentation {
+  child: ReqAugmentation | undefined,
+): ReqAugmentation | undefined {
+  if (parent === undefined && child === undefined) {
+    return undefined
+  }
+
   const p = parent ?? {}
-  const raw = op.req
-  const child = normalizeOpReq(raw) ?? {}
-  const mergedMime = readReqMimeRaw(raw) ?? p["mime"]
-  const mergedBody = child.body !== undefined ? child.body : p.body
+  const c = child ?? {}
+  const mergedMime = c.mime ?? p.mime
+  const mergedBody = c.body !== undefined ? c.body : p.body
 
   const base: ReqAugmentation = {
     ...p,
-    ...child,
-    pathParams: { ...p.pathParams, ...child.pathParams },
-    query: { ...p.query, ...child.query },
-    headers: { ...p.headers, ...child.headers },
-    params: [...(p.params ?? []), ...(child.params ?? [])],
+    ...c,
+    pathParams: { ...p.pathParams, ...c.pathParams },
+    query: { ...p.query, ...c.query },
+    headers: { ...p.headers, ...c.headers },
+    params: [...(p.params ?? []), ...(c.params ?? [])],
   }
 
   return {
     ...base,
     ...(mergedMime !== undefined ? { mime: mergedMime } : {}),
     ...(mergedBody !== undefined ? { body: mergedBody } : {}),
+  }
+}
+
+function mergeInheritedReq(
+  parent: ReqAugmentation | undefined,
+  op: RouteMethodOp,
+): ReqAugmentation {
+  const raw = op.req
+  const child = normalizeOpReq(raw) ?? {}
+  const mimeFromRaw = readReqMimeRaw(raw)
+  const normalizedChild: ReqAugmentation =
+    mimeFromRaw !== undefined ? { ...child, mime: mimeFromRaw } : child
+
+  return mergeReqAugmentations(parent, normalizedChild) ?? {}
+}
+
+interface CompileScopeContext {
+  mergedReq: ReqAugmentation | undefined
+  resDefaultsLayers: Partial<Record<MatchStatus, RespAugmentation>>[]
+  resAdd: OpRes
+  mergedTags: ScopeOpts["tags"]
+}
+
+function compileScopeContextFromForAll(forAll: ScopeOpts): CompileScopeContext {
+  const { defaults, add } = parseScopeRes(forAll.res)
+
+  return {
+    mergedReq: forAll.req,
+    resDefaultsLayers:
+      Object.keys(defaults).length > 0 ? [defaults] : [],
+    resAdd: add,
+    mergedTags: forAll.tags,
+  }
+}
+
+function mergeCompileScope(
+  parent: CompileScopeContext,
+  childForAll: ScopeOpts | undefined,
+): CompileScopeContext {
+  if (childForAll === undefined) {
+    return parent
+  }
+
+  const { defaults, add } = parseScopeRes(childForAll.res)
+
+  return {
+    mergedReq: mergeReqAugmentations(parent.mergedReq, childForAll.req),
+    resDefaultsLayers: [
+      ...parent.resDefaultsLayers,
+      ...(Object.keys(defaults).length > 0 ? [defaults] : []),
+    ],
+    resAdd: { ...parent.resAdd, ...add },
+    mergedTags:
+      childForAll.tags !== undefined
+        ? childForAll.tags
+        : parent.mergedTags,
+  }
+}
+
+function mergeRespAugmentations(
+  a: RespAugmentation,
+  b: RespAugmentation,
+): RespAugmentation {
+  const headers = { ...a.headers, ...b.headers }
+  const cookies = { ...a.cookies, ...b.cookies }
+  const mime = b.mime ?? a.mime
+
+  return {
+    ...(mime !== undefined ? { mime } : {}),
+    ...(Object.keys(headers).length > 0 ? { headers } : {}),
+    ...(Object.keys(cookies).length > 0 ? { cookies } : {}),
   }
 }
 
@@ -369,14 +448,19 @@ function concreteResponse(code: number, op: RouteMethodOp, add: OpRes): Resp | S
 function compileResponses(
   schemaState: SchemaCompileState,
   op: RouteMethodOp,
-  scopeRes: ScopeOpts["res"],
+  ctx: CompileScopeContext,
 ): oas31.ResponsesObject {
-  const { defaults, add } = parseScopeRes(scopeRes)
+  const { resDefaultsLayers, resAdd: add } = ctx
   const statuses = responseStatuses(op, add)
   const out: oas31.ResponsesObject = {}
 
   for (const code of statuses) {
-    const aug = foldAugmentations(defaults, code)
+    let aug: RespAugmentation = {}
+
+    for (const layer of resDefaultsLayers) {
+      const partial = foldAugmentations(layer, code)
+      aug = mergeRespAugmentations(aug, partial)
+    }
     const raw = concreteResponse(code, op, add)
     const concrete = normalizeRespEntry(raw)
     const mime = aug.mime ?? undefined
@@ -405,21 +489,147 @@ function compileResponses(
   return out
 }
 
+function compilePathParameters(
+  schemaState: SchemaCompileState,
+  mergedReq: ReqAugmentation,
+  oasPath: string,
+): oas31.ParameterObject[] | undefined {
+  const namesInPath = openApiPathTemplateNames(oasPath)
+  const pathParams = mergedReq.pathParams ?? {}
+  const out: oas31.ParameterObject[] = []
+
+  for (const key of Object.keys(pathParams)) {
+    if (isOptional(key)) {
+      throw new Error(`Optional path param key "${key}" is not allowed`)
+    }
+  }
+
+  for (const name of namesInPath) {
+    const sch = pathParams[name]
+
+    if (sch === undefined) {
+      throw new Error(
+        `Missing pathParams schema for "${name}" in path ${oasPath}`,
+      )
+    }
+
+    out.push({
+      name,
+      in: "path",
+      required: true,
+      schema: compileSchema(schemaState, sch),
+    })
+  }
+
+  for (const key of Object.keys(pathParams)) {
+    if (!namesInPath.includes(key)) {
+      throw new Error(`pathParams key "${key}" is not used in path ${oasPath}`)
+    }
+  }
+
+  return out.length > 0 ? out : undefined
+}
+
 function compileDirectOp(
   schemaState: SchemaCompileState,
   op: RouteMethodOp,
-  scope: ScopeOpts,
+  ctx: CompileScopeContext,
+  oasPath: string,
 ): oas31.OperationObject {
-  const mergedReq = mergeInheritedReq(scope.req, op)
+  const mergedReq = mergeInheritedReq(ctx.mergedReq, op)
   const requestBody = compileRequestBody(schemaState, mergedReq)
+  const parameters = compilePathParameters(schemaState, mergedReq, oasPath)
+  const tagNames =
+    op.tags !== undefined
+      ? op.tags.map(t => t.name)
+      : ctx.mergedTags !== undefined && ctx.mergedTags.length > 0
+        ? ctx.mergedTags.map(t => t.name)
+        : undefined
 
   return {
     ...(op.summary !== undefined ? { summary: op.summary } : {}),
     ...(op.description !== undefined ? { description: op.description } : {}),
     ...(op.deprecated === true ? { deprecated: true } : {}),
     ...(op.id !== undefined ? { operationId: op.id } : {}),
+    ...(tagNames !== undefined && tagNames.length > 0 ? { tags: tagNames } : {}),
+    ...(parameters !== undefined ? { parameters } : {}),
     ...(requestBody !== undefined ? { requestBody } : {}),
-    responses: compileResponses(schemaState, op, scope.res),
+    responses: compileResponses(schemaState, op, ctx),
+  }
+}
+
+function placeOperation(
+  schemaState: SchemaCompileState,
+  paths: oas31.PathsObject,
+  dslPath: string,
+  ctx: CompileScopeContext,
+  op: RouteMethodOp,
+): void {
+  const oasPath = dslPathToOpenApiPath(dslPath)
+  const oasMethod = OAS_METHOD[op.method]
+  const existing = paths[oasPath]
+
+  if (existing !== undefined && oasMethod in existing) {
+    throw new Error(`Duplicate operation for ${op.method} ${oasPath}`)
+  }
+
+  const pathItem: oas31.PathItemObject = {
+    ...(typeof existing === "object" && existing !== null ? existing : {}),
+    [oasMethod]: compileDirectOp(schemaState, op, ctx, oasPath),
+  }
+
+  paths[oasPath] = pathItem
+}
+
+function compileRoutes(
+  schemaState: SchemaCompileState,
+  routes: Record<string, unknown>,
+  ctx: CompileScopeContext,
+  pathPrefix: string,
+  paths: oas31.PathsObject,
+): void {
+  for (const routeKey of Object.keys(routes)) {
+    const node = routes[routeKey]
+
+    if (node === undefined) {
+      continue
+    }
+
+    if (node === null || typeof node !== "object") {
+      throw new Error(`Invalid route value for key "${routeKey}"`)
+    }
+
+    if (isHttpMethod(routeKey)) {
+      if (pathPrefix === "" || pathPrefix === "/") {
+        throw new Error(
+          "HTTP method routes must be nested under a non-root path scope",
+        )
+      }
+
+      assertRouteMethodOp(node)
+      placeOperation(schemaState, paths, pathPrefix, ctx, node)
+      continue
+    }
+
+    if (!isHttpPath(routeKey)) {
+      throw new Error(`Invalid route key "${routeKey}"`)
+    }
+
+    const fullDslPath = joinHttpPaths(pathPrefix, routeKey)
+
+    if (isScope(node)) {
+      const nextCtx = mergeCompileScope(ctx, node.forAll)
+      compileRoutes(
+        schemaState,
+        node.routes as Record<string, unknown>,
+        nextCtx,
+        fullDslPath,
+        paths,
+      )
+    } else {
+      assertRouteMethodOp(node)
+      placeOperation(schemaState, paths, fullDslPath, ctx, node)
+    }
   }
 }
 
@@ -429,44 +639,18 @@ export function compileResponsibleAPI(api: ResponsibleAPIInput): oas31.OpenAPIOb
   }
 
   const schemaState = createSchemaCompileState()
-  const scope: ScopeOpts = api.forAll
+  const rootCtx = compileScopeContextFromForAll(api.forAll)
   const paths: oas31.PathsObject = {
     ...(api.partialDoc.paths ?? {}),
   }
 
-  for (const pathUntyped of Object.keys(api.routes)) {
-    if (!isHttpPath(pathUntyped)) {
-      continue
-    }
-
-    const path = pathUntyped
-    const node = api.routes[path]
-
-    if (node === undefined) {
-      continue
-    }
-
-    if (isScope(node)) {
-      throw new Error("Nested scopes are not supported yet")
-    }
-
-    assertRouteMethodOp(node)
-    const op = node
-    const oasMethod = OAS_METHOD[op.method]
-
-    const existing = paths[path]
-
-    if (existing !== undefined && oasMethod in existing) {
-      throw new Error(`Duplicate operation for ${op.method} ${path}`)
-    }
-
-    const pathItem: oas31.PathItemObject = {
-      ...(typeof existing === "object" && existing !== null ? existing : {}),
-      [oasMethod]: compileDirectOp(schemaState, op, scope),
-    }
-
-    paths[path] = pathItem
-  }
+  compileRoutes(
+    schemaState,
+    api.routes as Record<string, unknown>,
+    rootCtx,
+    "",
+    paths,
+  )
 
   const { openapi, info, tags, servers, security, externalDocs, webhooks } =
     api.partialDoc
