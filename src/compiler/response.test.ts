@@ -219,12 +219,12 @@ describe("compiler response defaults and HEAD", () => {
 
     expect(await validate(rapi)).toEqual(rapi)
 
-    expect(rapi.paths?.["/c"]?.get?.responses?.["200"]?.headers?.["set-cookie"]).toEqual(
-      {
-        required: true,
-        schema: { type: "string", pattern: "sid=[^;]+" },
-      },
-    )
+    expect(
+      rapi.paths?.["/c"]?.get?.responses?.["200"]?.headers?.["set-cookie"],
+    ).toEqual({
+      required: true,
+      schema: { type: "string", pattern: "sid=[^;]+" },
+    })
   })
 
   test("rejects multiple cookies on one response", () => {
@@ -259,7 +259,7 @@ describe("compiler response defaults and HEAD", () => {
           req: { mime: "application/json" },
           res: {
             defaults: {
-              "200": { cookies: { a: string() } },
+              "200": resp({ cookies: { a: string() } }),
             },
           },
         },
@@ -289,7 +289,7 @@ describe("reusable response headers", () => {
     }),
   )
 
-  test("headers map emits components.headers and $ref on the response", async () => {
+  test("headerParams emits components.headers and $ref on the response", async () => {
     const rapi = responsibleAPI({
       partialDoc: {
         openapi: "3.1.0",
@@ -301,7 +301,7 @@ describe("reusable response headers", () => {
           res: {
             200: resp({
               description: "ok",
-              headers: { "X-Trace-Id": traceHeader },
+              headerParams: [traceHeader],
               body: object({ ok: string() }),
             }),
           },
@@ -317,7 +317,9 @@ describe("reusable response headers", () => {
       schema: { type: "string" },
     })
 
-    expect(rapi.paths?.["/x"]?.get?.responses?.["200"]?.headers?.["X-Trace-Id"]).toEqual({
+    expect(
+      rapi.paths?.["/x"]?.get?.responses?.["200"]?.headers?.["trace-id"],
+    ).toEqual({
       $ref: "#/components/headers/trace-id",
     })
   })
@@ -376,7 +378,7 @@ describe("reusable response headers", () => {
         "/a": GET({
           res: {
             200: resp({
-              headers: { "X-Trace-Id": traceHeader },
+              headerParams: [traceHeader],
               body: object({ a: string() }),
             }),
           },
@@ -384,7 +386,7 @@ describe("reusable response headers", () => {
         "/b": GET({
           res: {
             200: resp({
-              headers: { "X-Trace-Id": traceHeader },
+              headerParams: [traceHeader],
               body: object({ b: string() }),
             }),
           },
@@ -395,10 +397,14 @@ describe("reusable response headers", () => {
     expect(await validate(rapi)).toEqual(rapi)
 
     expect(Object.keys(rapi.components?.headers ?? {})).toEqual(["trace-id"])
-    expect(rapi.paths?.["/a"]?.get?.responses?.["200"]?.headers?.["X-Trace-Id"]).toEqual({
+    expect(
+      rapi.paths?.["/a"]?.get?.responses?.["200"]?.headers?.["trace-id"],
+    ).toEqual({
       $ref: "#/components/headers/trace-id",
     })
-    expect(rapi.paths?.["/b"]?.get?.responses?.["200"]?.headers?.["X-Trace-Id"]).toEqual({
+    expect(
+      rapi.paths?.["/b"]?.get?.responses?.["200"]?.headers?.["trace-id"],
+    ).toEqual({
       $ref: "#/components/headers/trace-id",
     })
   })
@@ -418,7 +424,11 @@ describe("reusable response headers", () => {
           "/c": GET({
             res: {
               200: resp({
-                headers: { A: h1, B: h2 },
+                headerParams: [h1],
+                body: object({ ok: string() }),
+              }),
+              201: resp({
+                headerParams: [h2],
                 body: object({ ok: string() }),
               }),
             },
@@ -428,4 +438,3 @@ describe("reusable response headers", () => {
     ).toThrow(/components\.headers: name "x" is already used/)
   })
 })
-

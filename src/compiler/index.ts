@@ -8,17 +8,18 @@ import type {
   Op,
   OpBase,
   OpReq,
-  OpRes,
+  OpResponses,
   ReqAugmentation,
   Resp,
   RespAugmentation,
-  RespParams,
+  OpResp,
   RouteMethodOp,
 } from "../dsl/operation.ts"
 import type { HeaderRaw, ReusableHeader } from "../dsl/response-headers.ts"
 import type { RawSchema, Schema } from "../dsl/schema.ts"
 import type { HttpPath, Mime, ScopeOpts, ScopeRes } from "../dsl/scope.ts"
 import { isScope } from "../dsl/scope.ts"
+import { deepEqualJson } from "./json-equal.ts"
 import { dslPathToOpenApiPath, joinHttpPaths } from "./path.ts"
 import {
   compileOperationParameters,
@@ -27,7 +28,6 @@ import {
   securityLayerFromScopeReq,
   stripSecurityFields,
 } from "./request.ts"
-import { deepEqualJson } from "./json-equal.ts"
 import {
   compileSchema,
   createSchemaCompileState,
@@ -78,7 +78,10 @@ function foldAugmentations(
 
     const headers = { ...acc.headers, ...aug.headers }
     const cookies = { ...acc.cookies, ...aug.cookies }
-    const headerParams = [...(acc.headerParams ?? []), ...(aug.headerParams ?? [])]
+    const headerParams = [
+      ...(acc.headerParams ?? []),
+      ...(aug.headerParams ?? []),
+    ]
     const mergedMime = aug.mime ?? acc.mime
 
     acc = {
@@ -94,7 +97,7 @@ function foldAugmentations(
 
 function parseScopeRes(res: ScopeRes | undefined): {
   defaults: Partial<Record<MatchStatus, RespAugmentation>>
-  add: OpRes
+  add: OpResponses
   wildcard: RespAugmentation
 } {
   if (res === undefined) {
@@ -102,7 +105,7 @@ function parseScopeRes(res: ScopeRes | undefined): {
   }
 
   let defaults: Partial<Record<MatchStatus, RespAugmentation>> = {}
-  let add: OpRes = {}
+  let add: OpResponses = {}
   let wildcard: RespAugmentation = {}
 
   if ("defaults" in res && res.defaults !== undefined) {
@@ -324,7 +327,7 @@ interface CompileScopeContext {
   securityLayers: Pick<ReqAugmentation, "security" | "security?">[]
   resWildcardLayers: RespAugmentation[]
   resDefaultsLayers: Partial<Record<MatchStatus, RespAugmentation>>[]
-  resAdd: OpRes
+  resAdd: OpResponses
   mergedTags: ScopeOpts["tags"]
 }
 
@@ -389,7 +392,7 @@ function mergeRespAugmentations(
   }
 }
 
-function normalizeRespEntry(entry: Resp | Schema): RespParams {
+function normalizeRespEntry(entry: Resp | Schema): OpResp {
   if (isDslSchema(entry)) {
     return { body: entry }
   }
@@ -421,12 +424,12 @@ function responseHeaderInstanceKey(componentName: string): string {
 
 function expandHeaderParamsToMap(
   headerParams: readonly ReusableHeader[] | undefined,
-): Record<string, Schema | ReusableHeader> | undefined {
+): Record<string, ReusableHeader> | undefined {
   if (headerParams === undefined || headerParams.length === 0) {
     return undefined
   }
 
-  const out: Record<string, Schema | ReusableHeader> = {}
+  const out: Record<string, ReusableHeader> = {}
 
   for (const h of headerParams) {
     const { name } = decodeNameable(h as Nameable<HeaderRaw>)
@@ -444,7 +447,7 @@ function expandHeaderParamsToMap(
 }
 
 function mergeHeadersAndHeaderParams(
-  headers: Record<string, Schema | ReusableHeader> | undefined,
+  headers: Record<string, Schema> | undefined,
   headerParams: readonly ReusableHeader[] | undefined,
 ): Record<string, Schema | ReusableHeader> | undefined {
   const fromParams = expandHeaderParamsToMap(headerParams)
@@ -665,7 +668,7 @@ function compileRequestBody(
   }
 }
 
-function responseStatuses(op: RouteMethodOp, add: OpRes): number[] {
+function responseStatuses(op: RouteMethodOp, add: OpResponses): number[] {
   const keys = new Set<number>()
 
   if (op.res !== undefined) {
@@ -684,7 +687,7 @@ function responseStatuses(op: RouteMethodOp, add: OpRes): number[] {
 function concreteResponse(
   code: number,
   op: RouteMethodOp,
-  add: OpRes,
+  add: OpResponses,
 ): Resp | Schema {
   const fromOp = op.res?.[code]
 

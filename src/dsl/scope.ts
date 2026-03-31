@@ -5,7 +5,7 @@ import type {
   MatchStatus,
   Op,
   OpBase,
-  OpRes,
+  OpResponses,
   ReqAugmentation,
   RespAugmentation,
 } from "./operation.ts"
@@ -17,11 +17,11 @@ type ScopeResAugmentation = NonNullable<
   AtLeastOne<{
     mime?: Mime
     defaults?: Record<MatchStatus, RespAugmentation>
-    add?: OpRes
+    add?: OpResponses
   }>
 >
 
-type ScopeResShape = ScopeResAugmentation | OpRes
+type ScopeResShape = ScopeResAugmentation | OpResponses
 
 /**
  * This validates a concrete scope-level response object. The default keeps the
@@ -43,14 +43,14 @@ export type ScopeOrOp<TTags extends DeclaredTags = DeclaredTags> =
 
 export type HttpPath = `/${string}`
 
-/** for root level; only {@link HttpPath} keys */
+/** For root level; only {@link HttpPath} keys */
 export type PathRoutes<TTags extends DeclaredTags = DeclaredTags> = Record<
   HttpPath,
   ScopeOrOp<TTags>
 >
 
-type ScopeRoutes<TTags extends DeclaredTags = DeclaredTags> = MethodRoutes<TTags> &
-  Partial<PathRoutes<TTags>>
+type ScopeRoutes<TTags extends DeclaredTags = DeclaredTags> =
+  MethodRoutes<TTags> & Partial<PathRoutes<TTags>>
 
 type ScopeInput<TTags extends DeclaredTags = DeclaredTags> = {
   forAll?: ScopeOpts<TTags>
@@ -63,10 +63,10 @@ export interface ScopeOpts<TTags extends DeclaredTags = DeclaredTags> {
 }
 
 /**
- * this is a temp placeholder return type while the compiler is still TODO
+ * This is a temp placeholder return type while the compiler is still TODO
  *
- * it's basically a merged context stack, since this is a tree.
- * The only place where this single pass compiler MIGHT have an "AST"
+ * It's basically a merged context stack, since this is a tree. The only place
+ * where this single pass compiler MIGHT have an "AST"
  *
  * @compiler
  */
@@ -97,15 +97,15 @@ type ValidScopeArg<T extends ScopeInput> =
     : T
 
 /**
- * Use this when declaring multiple routes under the same subpath.
- * For single methods, use DSL from {@link file://../methods.ts}
+ * Use this when declaring multiple routes under the same subpath. For single
+ * methods, use DSL from {@link file://../methods.ts}
  *
  * Scope merge behavior:
  *
  * `forAll` is inherited by every nested route and scope.
  *
- * - `req` is additive: parent defaults provide shared mime, params, security,
- *   and request fields, while children extend or narrow them locally.
+ * - `req` is additive: parent defaults provide shared mime, params, security, and
+ *   request fields, while children extend or narrow them locally.
  * - `tags` are inherited from the nearest containing scope.
  * - `res.defaults` augments matching response ranges, for example to add shared
  *   mime or headers to every `2xx` or `4xx` response.

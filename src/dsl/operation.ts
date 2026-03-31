@@ -46,9 +46,9 @@ export interface ReqAugmentation extends OpReq {
   readonly mime?: Mime
 }
 
-export interface RespAugmentation {
-  readonly mime?: Mime
-  readonly headers?: Record<NameWithOptionality, Schema | ReusableHeader>
+/** Shared response-shape fields for {@link OpResp} and {@link RespAugmentation}. */
+interface RespBase {
+  readonly headers?: Record<NameWithOptionality, Schema>
 
   /**
    * Reusable response headers follow the same array-first composition pattern
@@ -63,42 +63,42 @@ export interface RespAugmentation {
    * @dsl
    */
   readonly headerParams?: readonly ReusableHeader[]
+
+  /**
+   * Response cookies (`Set-Cookie`). HTTP allows several `Set-Cookie` header
+   * fields on one response; OpenAPI 3.0/3.1 cannot express that because
+   * `response.headers` is a map keyed by header name. Modeling cookies here
+   * avoids that limitation. Multiple same-name `Set-Cookie` definitions are
+   * expected to become representable in **OpenAPI 3.2**; see the linked issue.
+   *
+   * @dsl
+   *
+   * @see https://github.com/OAI/OpenAPI-Specification/issues/1237
+   */
   readonly cookies?: Record<NameWithOptionality, Schema>
+
+  readonly body?: Schema | Record<Mime, Schema>
+}
+
+export interface RespAugmentation extends RespBase {
+  readonly mime?: Mime
 }
 
 export type MatchStatus = number | `${number}..${number}`
 
-export interface RespParams {
-  body?: Schema | Record<Mime, Schema>
-
+export interface OpResp extends RespBase {
   /**
    * Even though `oas31.ResponseObject.description` is required, we don't
    * require it. The compiler will add the status number there
    *
    * @compiler
    */
-  description?: string
-
-  headers?: Record<NameWithOptionality, Schema | ReusableHeader>
-  /**
-   * Reusable response headers follow the same array-first composition pattern
-   * as {@link GetOpReq.params}. We intentionally do not introduce a dedicated
-   * `resHeaders()` helper because a wrapper API would propagate through
-   * adjacent param/header typings and complicate otherwise simple record
-   * literals.
-   *
-   * Keep one-off response headers inline in {@link headers}; declare shared
-   * reusable headers here.
-   *
-   * @dsl
-   */
-  headerParams?: readonly ReusableHeader[]
-  cookies?: Record<NameWithOptionality, Schema>
+  readonly description?: string
 }
 
-export type Resp = Nameable<RespParams>
+export type Resp = Nameable<OpResp>
 
-export type OpRes = Record<number, Resp | Schema>
+export type OpResponses = Record<number, Resp | Schema>
 
 /**
  * Shared fields for {@link GetOp} and {@link Op}.
@@ -109,7 +109,7 @@ export type OpRes = Record<number, Resp | Schema>
  */
 export interface OpBase<TTags extends DeclaredTags = DeclaredTags> {
   id?: string
-  res?: OpRes
+  res?: OpResponses
   deprecated?: boolean
   description?: string
   summary?: string
@@ -152,4 +152,4 @@ export type RouteMethodOp<TTags extends DeclaredTags = DeclaredTags> =
   | (GetOp<TTags> & { method: "GET" })
 
 /** This exists mostly to distinguish {@link Schema} from {@link Resp} */
-export const resp = (param: RespParams): RespParams => param
+export const resp = (param: OpResp): OpResp => param
