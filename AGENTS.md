@@ -3,13 +3,9 @@
 ## Current state of things
 
 - 100% TypeScript codebase
-- DSL is ready
-- have not started implementing the compiler
-
-## TypeScript
-
-- ALWAYS run `bun check` to verify your changes
 - never add `oxlint-disable-next-line` unless explicitly asked
+- never edit [package.json](package.json) unless explicitly asked
+- never say you're done until `bun check` passes
 
 ## Imports from packages
 
