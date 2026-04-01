@@ -52,11 +52,6 @@ describe("compiler response defaults and HEAD", () => {
       },
       ["400"]: {
         description: "400",
-        content: {
-          ["application/json"]: {
-            schema: {},
-          },
-        },
       },
     } satisfies oas31.ResponsesObject)
   })
@@ -100,6 +95,46 @@ describe("compiler response defaults and HEAD", () => {
       },
       ["404"]: {
         description: "404",
+      },
+    } satisfies oas31.ResponsesObject)
+  })
+
+  test("bare unknown omits content, explicit body keeps it", async () => {
+    const rapi = responsibleAPI({
+      partialDoc: {
+        openapi: "3.1.0",
+        info: { title: "Unknown response body", version: "1" },
+      },
+      forAll: {
+        res: { mime: "application/json" },
+      },
+      routes: {
+        "/bare": GET({
+          res: {
+            200: unknown(),
+          },
+        }),
+        "/explicit": GET({
+          res: {
+            200: resp({ body: unknown() }),
+          },
+        }),
+      },
+    })
+
+    expect(await validate(rapi)).toEqual(rapi)
+
+    const paths = rapi.paths ?? {}
+
+    expect(paths["/bare"]?.get?.responses).toEqual({
+      ["200"]: {
+        description: "200",
+      },
+    } satisfies oas31.ResponsesObject)
+
+    expect(paths["/explicit"]?.get?.responses).toEqual({
+      ["200"]: {
+        description: "200",
         content: {
           ["application/json"]: {
             schema: {},

@@ -778,7 +778,10 @@ function buildMergedResponseObject(
   code: number,
   aug: RespAugmentation,
   concrete: OpResp,
-  opts?: { stripBodies?: boolean | "explicit-head" },
+  opts?: {
+    stripBodies?: boolean | "explicit-head"
+    omitEmptyInlineContent?: boolean
+  },
 ): oas31.ResponseObject {
   const mime = aug.mime ?? undefined
 
@@ -815,17 +818,14 @@ function buildMergedResponseObject(
       return compileContent(schemaState, concrete.body, mime)
     }
 
+    if (!opts?.omitEmptyInlineContent) {
+      return compileContent(schemaState, concrete.body, mime)
+    }
+
     const compiledProbe = compileSchema(schemaState, concrete.body)
 
     if (isEmptyInlineSchema(compiledProbe)) {
-      if (mime !== "application/json") {
-        return undefined
-      }
-
-      /* 201 + empty JSON matches exceptions golden; other 2xx omit (listenbox 200: unknown). */
-      if (code >= 200 && code < 300 && code !== 201) {
-        return undefined
-      }
+      return undefined
     }
 
     return compileContent(schemaState, concrete.body, mime)
@@ -894,7 +894,10 @@ function compileResponses(
       code,
       aug,
       concrete,
-      opts,
+      {
+        ...opts,
+        omitEmptyInlineContent: isDslSchema(raw),
+      },
     )
   }
 
