@@ -28,45 +28,16 @@ export type RefWithoutRef = Omit<oas31.ReferenceObject, "$ref">
  */
 export type NamedThunk<T> = [Scalar<T>] extends [never]
   ? never
-  : { (): Scalar<T>; name: string } & RefWithoutRef
+  : { (): Scalar<T> } & RefWithoutRef
 
 export type Nameable<T> = NamedThunk<T> | Scalar<T>
 
-function getRefSibling(
-  target: object,
-  key: "summary" | "description",
-): string | undefined {
+function getRefSibling<T>(target: T, key: keyof T): string | undefined {
   const d = Object.getOwnPropertyDescriptor(target, key)
-  if (d === undefined) {
-    return undefined
-  }
+  if (d === undefined) return
+
   const v = d.value
   return typeof v === "string" ? v : undefined
-}
-
-function mergeRefPartial(
-  inner: object,
-  fields: Partial<RefWithoutRef>,
-): RefWithoutRef {
-  const summary = Object.prototype.hasOwnProperty.call(fields, "summary")
-    ? fields.summary
-    : getRefSibling(inner, "summary")
-
-  const description = Object.prototype.hasOwnProperty.call(
-    fields,
-    "description",
-  )
-    ? fields.description
-    : getRefSibling(inner, "description")
-
-  const out: RefWithoutRef = {}
-  if (summary !== undefined) {
-    out.summary = summary
-  }
-  if (description !== undefined) {
-    out.description = description
-  }
-  return out
 }
 
 /**
@@ -77,50 +48,41 @@ function mergeRefPartial(
  * to attach them.
  */
 export const named = <T>(name: string, value: Scalar<T>): NamedThunk<T> => {
-  function thunk(): Scalar<T> {
-    return value
-  }
+  const thunk: NamedThunk<T> = () => value
   Object.defineProperty(thunk, "name", {
     value: name,
     writable: false,
     enumerable: false,
     configurable: true,
   })
-  // oxlint-disable-next-line typescript-eslint/no-unsafe-type-assertion
-  return thunk as NamedThunk<T>
+  return thunk
 }
 
 /**
- * Wraps a {@link NamedThunk} with merged OpenAPI reference siblings. The
- * returned thunk forwards `()` to the inner thunk and copies
- * {@link Function.name}. For each sibling, an own property on {@link fields}
- * wins; otherwise the value is inherited from the inner thunk.
+ * Wraps a {@link NamedThunk} with OpenAPI reference siblings. The returned thunk
+ * forwards `()` to the inner thunk and copies {@link Function.name}. Reuse
+ * previous sibling values explicitly via object spread when needed.
  */
 export const ref = <T>(
   thunk: NamedThunk<T>,
   fields: Partial<RefWithoutRef>,
 ): NamedThunk<T> => {
-  const merged = mergeRefPartial(thunk, fields)
-  function wrapper(): Scalar<T> {
-    return thunk()
-  }
+  const wrapper = (() => thunk()) as NamedThunk<T>
   Object.defineProperty(wrapper, "name", {
     value: thunk.name,
     writable: false,
     enumerable: false,
     configurable: true,
   })
-  // oxlint-disable-next-line typescript-eslint/no-unsafe-type-assertion
-  const outThunk = wrapper as NamedThunk<T>
 
-  if (merged.summary !== undefined) {
-    outThunk.summary = merged.summary
+  if (fields.summary !== undefined) {
+    wrapper.summary = fields.summary
   }
-  if (merged.description !== undefined) {
-    outThunk.description = merged.description
+  if (fields.description !== undefined) {
+    wrapper.description = fields.description
   }
 
-  return outThunk
+  return wrapper
 }
 
 const isNamed = <T>(n: Nameable<T>): n is NamedThunk<T> =>

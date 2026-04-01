@@ -54,6 +54,7 @@ describe("nameable", () => {
     const inner = named("Param", inp)
     const wrapped = ref(inner, { summary: "S" })
 
+    expect(wrapped).not.toBe(inner)
     expect(wrapped.name).toBe("Param")
     expect(wrapped()).toEqual(inp)
     expect(decodeNameable<typeof inp>(wrapped)).toEqual({
@@ -72,11 +73,25 @@ describe("nameable", () => {
     })
   })
 
-  test("ref merges siblings across chained wrappers", () => {
+  test("ref does not merge siblings across chained wrappers implicitly", () => {
     const inp = { in: "query" as const, name: "q" }
     const inner = named("Param", inp)
     const withDesc = ref(inner, { description: "D" })
-    const withBoth = ref(withDesc, { summary: "S" })
+    const withSummary = ref(withDesc, { summary: "S" })
+
+    expect(decodeNameable<typeof inp>(withSummary)).toEqual({
+      name: "Param",
+      value: inp,
+      summary: "S",
+    })
+  })
+
+  test("ref reuses siblings via object spread", () => {
+    const inp = { in: "query" as const, name: "q" }
+    const inner = named("Param", inp)
+    const withDesc = ref(inner, { description: "D" })
+    const reused = { description: withDesc.description }
+    const withBoth = ref(withDesc, { ...reused, summary: "S" })
 
     expect(decodeNameable<typeof inp>(withBoth)).toEqual({
       name: "Param",
@@ -86,10 +101,11 @@ describe("nameable", () => {
     })
   })
 
-  test("ref own field wins over inner sibling", () => {
+  test("ref own field wins when sibling is reused via spread", () => {
     const inp = { in: "query" as const, name: "q" }
     const inner = ref(named("Param", inp), { summary: "inner" })
-    const outer = ref(inner, { summary: "outer" })
+    const reused = { summary: inner.summary }
+    const outer = ref(inner, { ...reused, summary: "outer" })
 
     expect(decodeNameable<typeof inp>(outer)).toEqual({
       name: "Param",
