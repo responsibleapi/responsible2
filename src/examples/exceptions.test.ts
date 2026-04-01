@@ -5,8 +5,8 @@ import { validate } from "../help/validate.ts"
 import theJSON from "./exceptions.json"
 import { exceptionsAPI } from "./exceptions.ts"
 
-describe("exceptions example", () => {
-  test("exceptions.json validates as OpenAPI", async () => {
+describe("exceptions", () => {
+  test("fixture", async () => {
     expect(normalize(await validate(exceptionsAPI))).toEqual(
       normalize(theJSON as oas31.OpenAPIObject),
     )

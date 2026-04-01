@@ -31,20 +31,10 @@
         },
         "responses": {
           "201": {
-            "description": "201",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+            "description": "201"
           },
           "400": {
-            "description": "400",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+            "description": "400"
           }
         }
       },
@@ -75,12 +65,7 @@
             }
           },
           "400": {
-            "description": "400",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+            "description": "400"
           }
         }
       }
@@ -113,12 +98,7 @@
             }
           },
           "400": {
-            "description": "400",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+            "description": "400"
           }
         }
       }
