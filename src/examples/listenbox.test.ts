@@ -7,6 +7,6 @@ describe("listenbox", () => {
     /** Compiler isn't implemented, this import throws */
     const { default: api } = await import("./listenbox.ts")
 
-    expect(await validate(api)).toEqual<typeof json>(json)
+    expect(await validate(api)).toEqual(json)
   })
 })
