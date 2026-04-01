@@ -77,12 +77,17 @@ function mergeRefPartial(
  * to attach them.
  */
 export const named = <T>(name: string, value: Scalar<T>): NamedThunk<T> => {
+  function thunk(): Scalar<T> {
+    return value
+  }
+  Object.defineProperty(thunk, "name", {
+    value: name,
+    writable: false,
+    enumerable: false,
+    configurable: true,
+  })
   // oxlint-disable-next-line typescript-eslint/no-unsafe-type-assertion
-  const thunk = (() => value) as NamedThunk<T>
-
-  thunk.name = name
-
-  return thunk
+  return thunk as NamedThunk<T>
 }
 
 /**
@@ -96,19 +101,26 @@ export const ref = <T>(
   fields: Partial<RefWithoutRef>,
 ): NamedThunk<T> => {
   const merged = mergeRefPartial(thunk, fields)
+  function wrapper(): Scalar<T> {
+    return thunk()
+  }
+  Object.defineProperty(wrapper, "name", {
+    value: thunk.name,
+    writable: false,
+    enumerable: false,
+    configurable: true,
+  })
   // oxlint-disable-next-line typescript-eslint/no-unsafe-type-assertion
-  const wrapper = (() => thunk()) as NamedThunk<T>
-
-  wrapper.name = thunk.name
+  const outThunk = wrapper as NamedThunk<T>
 
   if (merged.summary !== undefined) {
-    wrapper.summary = merged.summary
+    outThunk.summary = merged.summary
   }
   if (merged.description !== undefined) {
-    wrapper.description = merged.description
+    outThunk.description = merged.description
   }
 
-  return wrapper
+  return outThunk
 }
 
 const isNamed = <T>(n: Nameable<T>): n is NamedThunk<T> =>
