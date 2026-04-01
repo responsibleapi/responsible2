@@ -1,6 +1,6 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET, POST } from "../dsl/methods.ts"
-import { named } from "../dsl/nameable.ts"
+import { named, ref } from "../dsl/nameable.ts"
 import { resp } from "../dsl/operation.ts"
 import { queryParam, type QueryParamRaw } from "../dsl/params.ts"
 import {
@@ -114,7 +114,10 @@ const AccessPolicy = () =>
 const Activity = () =>
   object(
     {
-      "contentDetails?": ActivityContentDetails,
+      "contentDetails?": ref(ActivityContentDetails, {
+        description:
+          "The contentDetails object contains information about the content associated with the activity. For example, if the snippet.type value is videoRated, then the contentDetails object's content identifies the rated video.",
+      }),
       "etag?": string({ description: "Etag of this resource" }),
       "id?": string({
         description:
@@ -125,7 +128,10 @@ const Activity = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#activity".',
       }),
-      "snippet?": ActivitySnippet,
+      "snippet?": ref(ActivitySnippet, {
+        description:
+          "The snippet object contains basic details about the activity, including the activity's type and group ID.",
+      }),
     },
     {
       description:
@@ -136,17 +142,50 @@ const Activity = () =>
 const ActivityContentDetails = () =>
   object(
     {
-      "bulletin?": ActivityContentDetailsBulletin,
-      "channelItem?": ActivityContentDetailsChannelItem,
-      "comment?": ActivityContentDetailsComment,
-      "favorite?": ActivityContentDetailsFavorite,
-      "like?": ActivityContentDetailsLike,
-      "playlistItem?": ActivityContentDetailsPlaylistItem,
-      "promotedItem?": ActivityContentDetailsPromotedItem,
-      "recommendation?": ActivityContentDetailsRecommendation,
-      "social?": ActivityContentDetailsSocial,
-      "subscription?": ActivityContentDetailsSubscription,
-      "upload?": ActivityContentDetailsUpload,
+      "bulletin?": ref(ActivityContentDetailsBulletin, {
+        description:
+          "The bulletin object contains details about a channel bulletin post. This object is only present if the snippet.type is bulletin.",
+      }),
+      "channelItem?": ref(ActivityContentDetailsChannelItem, {
+        description:
+          "The channelItem object contains details about a resource which was added to a channel. This property is only present if the snippet.type is channelItem.",
+      }),
+      "comment?": ref(ActivityContentDetailsComment, {
+        description:
+          "The comment object contains information about a resource that received a comment. This property is only present if the snippet.type is comment.",
+      }),
+      "favorite?": ref(ActivityContentDetailsFavorite, {
+        description:
+          "The favorite object contains information about a video that was marked as a favorite video. This property is only present if the snippet.type is favorite.",
+      }),
+      "like?": ref(ActivityContentDetailsLike, {
+        description:
+          "The like object contains information about a resource that received a positive (like) rating. This property is only present if the snippet.type is like.",
+      }),
+      "playlistItem?": ref(ActivityContentDetailsPlaylistItem, {
+        description:
+          "The playlistItem object contains information about a new playlist item. This property is only present if the snippet.type is playlistItem.",
+      }),
+      "promotedItem?": ref(ActivityContentDetailsPromotedItem, {
+        description:
+          "The promotedItem object contains details about a resource which is being promoted. This property is only present if the snippet.type is promotedItem.",
+      }),
+      "recommendation?": ref(ActivityContentDetailsRecommendation, {
+        description:
+          "The recommendation object contains information about a recommended resource. This property is only present if the snippet.type is recommendation.",
+      }),
+      "social?": ref(ActivityContentDetailsSocial, {
+        description:
+          "The social object contains details about a social network post. This property is only present if the snippet.type is social.",
+      }),
+      "subscription?": ref(ActivityContentDetailsSubscription, {
+        description:
+          "The subscription object contains information about a channel that a user subscribed to. This property is only present if the snippet.type is subscription.",
+      }),
+      "upload?": ref(ActivityContentDetailsUpload, {
+        description:
+          "The upload object contains information about the uploaded video. This property is only present if the snippet.type is upload.",
+      }),
     },
     {
       description:
@@ -157,7 +196,10 @@ const ActivityContentDetails = () =>
 const ActivityContentDetailsBulletin = () =>
   object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the resource associated with a bulletin post. @mutable youtube.activities.insert",
+      }),
     },
     {
       description: "Details about a channel bulletin post.",
@@ -167,7 +209,10 @@ const ActivityContentDetailsBulletin = () =>
 const ActivityContentDetailsChannelItem = () =>
   object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the resource that was added to the channel.",
+      }),
     },
     {
       description: "Details about a resource which was added to a channel.",
@@ -176,7 +221,10 @@ const ActivityContentDetailsChannelItem = () =>
 const ActivityContentDetailsComment = () =>
   object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the resource associated with the comment.",
+      }),
     },
     {
       description: "Information about a resource that received a comment.",
@@ -186,7 +234,10 @@ const ActivityContentDetailsComment = () =>
 const ActivityContentDetailsFavorite = () =>
   object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the resource that was marked as a favorite.",
+      }),
     },
     {
       description:
@@ -197,7 +248,10 @@ const ActivityContentDetailsFavorite = () =>
 const ActivityContentDetailsLike = () =>
   object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the rated resource.",
+      }),
     },
     {
       description:
@@ -214,7 +268,10 @@ const ActivityContentDetailsPlaylistItem = () =>
       "playlistItemId?": string({
         description: "ID of the item within the playlist.",
       }),
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information about the resource that was added to the playlist.",
+      }),
     },
     {
       description: "Information about a new playlist item.",
@@ -280,8 +337,14 @@ const ActivityContentDetailsRecommendation = () =>
           "videoWatched",
         ],
       }),
-      "resourceId?": ResourceId,
-      "seedResourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the recommended resource.",
+      }),
+      "seedResourceId?": ref(ResourceId, {
+        description:
+          "The seedResourceId object contains information about the resource that caused the recommendation.",
+      }),
     },
     {
       description: "Information that identifies the recommended resource.",
@@ -299,7 +362,10 @@ const ActivityContentDetailsSocial = () =>
       "referenceUrl?": string({
         description: "The URL of the social network post.",
       }),
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object encapsulates information that identifies the resource associated with a social network post.",
+      }),
       "type?": string({
         description: "The name of the social network.",
         enum: ["unspecified", "googlePlus", "facebook", "twitter"],
@@ -312,7 +378,10 @@ const ActivityContentDetailsSocial = () =>
 const ActivityContentDetailsSubscription = () =>
   object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the resource that the user subscribed to.",
+      }),
     },
     {
       description: "Information about a channel that a user subscribed to.",
@@ -350,7 +419,9 @@ const ActivityListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -384,7 +455,10 @@ const ActivitySnippet = () =>
         description: "The date and time that the video was uploaded.",
         format: "date-time",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the resource that is primarily associated with the activity. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description:
           "The title of the resource primarily associated with the activity.",
@@ -428,7 +502,10 @@ const Caption = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#caption".',
       }),
-      "snippet?": CaptionSnippet,
+      "snippet?": ref(CaptionSnippet, {
+        description:
+          "The snippet object contains basic details about the caption.",
+      }),
     },
     {
       description:
@@ -534,7 +611,10 @@ const CdnSettings = () =>
         description: "The frame rate of the inbound video data.",
         enum: ["30fps", "60fps", "variable"],
       }),
-      "ingestionInfo?": IngestionInfo,
+      "ingestionInfo?": ref(IngestionInfo, {
+        description:
+          "The ingestionInfo object contains information that YouTube provides that you need to transmit your RTMP or HTTP stream to YouTube.",
+      }),
       "ingestionType?": string({
         description:
           " The method or protocol used to transmit the video stream.",
@@ -561,11 +641,26 @@ const CdnSettings = () =>
 const Channel = () =>
   object(
     {
-      "auditDetails?": ChannelAuditDetails,
-      "brandingSettings?": ChannelBrandingSettings,
-      "contentDetails?": ChannelContentDetails,
-      "contentOwnerDetails?": ChannelContentOwnerDetails,
-      "conversionPings?": ChannelConversionPings,
+      "auditDetails?": ref(ChannelAuditDetails, {
+        description:
+          "The auditionDetails object encapsulates channel data that is relevant for YouTube Partners during the audition process.",
+      }),
+      "brandingSettings?": ref(ChannelBrandingSettings, {
+        description:
+          "The brandingSettings object encapsulates information about the branding of the channel.",
+      }),
+      "contentDetails?": ref(ChannelContentDetails, {
+        description:
+          "The contentDetails object encapsulates information about the channel's content.",
+      }),
+      "contentOwnerDetails?": ref(ChannelContentOwnerDetails, {
+        description:
+          "The contentOwnerDetails object encapsulates channel data that is relevant for YouTube Partners linked with the channel.",
+      }),
+      "conversionPings?": ref(ChannelConversionPings, {
+        description:
+          "The conversionPings object encapsulates information about conversion pings that need to be respected by the channel.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -581,10 +676,22 @@ const Channel = () =>
       "localizations?": dict(string(), ChannelLocalization, {
         description: "Localizations for different languages",
       }),
-      "snippet?": ChannelSnippet,
-      "statistics?": ChannelStatistics,
-      "status?": ChannelStatus,
-      "topicDetails?": ChannelTopicDetails,
+      "snippet?": ref(ChannelSnippet, {
+        description:
+          "The snippet object contains basic details about the channel, such as its title, description, and thumbnail images.",
+      }),
+      "statistics?": ref(ChannelStatistics, {
+        description:
+          "The statistics object encapsulates statistics for the channel.",
+      }),
+      "status?": ref(ChannelStatus, {
+        description:
+          "The status object encapsulates information about the privacy status of the channel.",
+      }),
+      "topicDetails?": ref(ChannelTopicDetails, {
+        description:
+          "The topicDetails object encapsulates information about Freebase topics associated with the channel.",
+      }),
     },
     {
       description:
@@ -631,12 +738,18 @@ const ChannelBannerResource = () =>
 const ChannelBrandingSettings = () =>
   object(
     {
-      "channel?": ChannelSettings,
+      "channel?": ref(ChannelSettings, {
+        description: "Branding properties for the channel view.",
+      }),
       "hints?": array(PropertyValue, {
         description: "Additional experimental branding properties.",
       }),
-      "image?": ImageSettings,
-      "watch?": WatchSettings,
+      "image?": ref(ImageSettings, {
+        description: "Branding properties for branding images.",
+      }),
+      "watch?": ref(WatchSettings, {
+        description: "Branding properties for the watch page.",
+      }),
     },
     {
       description: "Branding properties of a YouTube channel.",
@@ -739,7 +852,9 @@ const ChannelListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -780,7 +895,10 @@ const ChannelProfileDetails = () =>
   })
 const ChannelSection = () =>
   object({
-    "contentDetails?": ChannelSectionContentDetails,
+    "contentDetails?": ref(ChannelSectionContentDetails, {
+      description:
+        "The contentDetails object contains details about the channel section content, such as a list of playlists or channels featured in the section.",
+    }),
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -796,8 +914,14 @@ const ChannelSection = () =>
     "localizations?": dict(string(), ChannelSectionLocalization, {
       description: "Localizations for different languages",
     }),
-    "snippet?": ChannelSectionSnippet,
-    "targeting?": ChannelSectionTargeting,
+    "snippet?": ref(ChannelSectionSnippet, {
+      description:
+        "The snippet object contains basic details about the channel section, such as its type, style and title.",
+    }),
+    "targeting?": ref(ChannelSectionTargeting, {
+      description:
+        "The targeting object contains basic targeting settings about the channel section.",
+    }),
   })
 const ChannelSectionContentDetails = () =>
   object(
@@ -858,7 +982,9 @@ const ChannelSectionSnippet = () =>
         description:
           "The language of the channel section's default title and description.",
       }),
-      "localized?": ChannelSectionLocalization,
+      "localized?": ref(ChannelSectionLocalization, {
+        description: "Localized title, read-only.",
+      }),
       "position?": uint32({
         description: "The position of the channel section in the channel.",
       }),
@@ -990,12 +1116,17 @@ const ChannelSnippet = () =>
       "description?": string({
         description: "The description of the channel.",
       }),
-      "localized?": ChannelLocalization,
+      "localized?": ref(ChannelLocalization, {
+        description: "Localized title and description, read-only.",
+      }),
       "publishedAt?": string({
         description: "The date and time that the channel was created.",
         format: "date-time",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the channel. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail. When displaying thumbnails in your application, make sure that your code uses the image URLs exactly as they are returned in API responses. For example, your application should not use the http domain instead of the https domain in a URL returned in an API response. Beginning in July 2018, channel thumbnail URLs will only be available in the https domain, which is how the URLs appear in API responses. After that time, you might see broken images in your application if it tries to load YouTube images from the http domain. Thumbnail images might be empty for newly created channels and might take up to one day to populate.",
+      }),
       "title?": string({
         description: "The channel's title.",
       }),
@@ -1107,7 +1238,10 @@ const Comment = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#comment".',
       }),
-      "snippet?": CommentSnippet,
+      "snippet?": ref(CommentSnippet, {
+        description:
+          "The snippet object contains basic details about the comment.",
+      }),
     },
     {
       description: "A *comment* represents a single YouTube comment.",
@@ -1134,7 +1268,9 @@ const CommentListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "tokenPagination?": TokenPagination,
     "visitorId?": string({
       description: "The visitorId identifies the visitor.",
@@ -1228,8 +1364,14 @@ const CommentThread = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#commentThread".',
       }),
-      "replies?": CommentThreadReplies,
-      "snippet?": CommentThreadSnippet,
+      "replies?": ref(CommentThreadReplies, {
+        description:
+          "The replies object contains a limited number of replies (if any) to the top level comment found in the snippet.",
+      }),
+      "snippet?": ref(CommentThreadSnippet, {
+        description:
+          "The snippet object contains basic details about the comment thread and also the top level comment.",
+      }),
     },
     {
       description:
@@ -1257,7 +1399,9 @@ const CommentThreadListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "tokenPagination?": TokenPagination,
     "visitorId?": string({
       description: "The visitorId identifies the visitor.",
@@ -1291,7 +1435,9 @@ const CommentThreadSnippet = () =>
         description:
           "Whether the thread (and therefore all its comments) is visible to all YouTube users.",
       }),
-      "topLevelComment?": Comment,
+      "topLevelComment?": ref(Comment, {
+        description: "The top level comment of this thread.",
+      }),
       "totalReplyCount?": uint32({
         description:
           "The total number of replies (not including the top level comment).",
@@ -2378,7 +2524,10 @@ const I18nLanguage = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#i18nLanguage".',
       }),
-      "snippet?": I18nLanguageSnippet,
+      "snippet?": ref(I18nLanguageSnippet, {
+        description:
+          "The snippet object contains basic details about the i18n language, such as language code and human-readable name.",
+      }),
     },
     {
       description:
@@ -2441,7 +2590,10 @@ const I18nRegion = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#i18nRegion".',
       }),
-      "snippet?": I18nRegionSnippet,
+      "snippet?": ref(I18nRegionSnippet, {
+        description:
+          "The snippet object contains basic details about the i18n region, such as region code and human-readable name.",
+      }),
     },
     {
       description:
@@ -2490,7 +2642,10 @@ const I18nRegionSnippet = () =>
 const ImageSettings = () =>
   object(
     {
-      "backgroundImageUrl?": LocalizedProperty,
+      "backgroundImageUrl?": ref(LocalizedProperty, {
+        description:
+          "The URL for the background image shown on the video watch page. The image should be 1200px by 615px, with a maximum file size of 128k.",
+      }),
       "bannerExternalUrl?": string({
         description:
           "This is generated when a ChannelBanner.Insert request has succeeded for the given channel.",
@@ -2539,10 +2694,20 @@ const ImageSettings = () =>
       "bannerTvMediumImageUrl?": string({
         description: "Banner image. TV size medium resolution (1280x720).",
       }),
-      "largeBrandedBannerImageImapScript?": LocalizedProperty,
-      "largeBrandedBannerImageUrl?": LocalizedProperty,
-      "smallBrandedBannerImageImapScript?": LocalizedProperty,
-      "smallBrandedBannerImageUrl?": LocalizedProperty,
+      "largeBrandedBannerImageImapScript?": ref(LocalizedProperty, {
+        description: "The image map script for the large banner image.",
+      }),
+      "largeBrandedBannerImageUrl?": ref(LocalizedProperty, {
+        description:
+          "The URL for the 854px by 70px image that appears below the video player in the expanded video view of the video watch page.",
+      }),
+      "smallBrandedBannerImageImapScript?": ref(LocalizedProperty, {
+        description: "The image map script for the small banner image.",
+      }),
+      "smallBrandedBannerImageUrl?": ref(LocalizedProperty, {
+        description:
+          "The URL for the 640px by 70px banner image that appears below the video player in the default view of the video watch page. The URL for the image that appears above the top-left corner of the video player. This is a 25-pixel-high image with a flexible width that cannot exceed 170 pixels.",
+      }),
       "trackingImageUrl?": string({
         description:
           "The URL for a 1px by 1px tracking pixel that can be used to collect statistics for views of the channel or video pages.",
@@ -2595,12 +2760,18 @@ const InvideoBranding = () =>
         description:
           "The url of the uploaded image. Only used in apiary to api communication.",
       }),
-      "position?": InvideoPosition,
+      "position?": ref(InvideoPosition, {
+        description:
+          "The spatial position within the video where the branding watermark will be displayed.",
+      }),
       "targetChannelId?": string({
         description:
           "The channel to which this branding links. If not present it defaults to the current channel.",
       }),
-      "timing?": InvideoTiming,
+      "timing?": ref(InvideoTiming, {
+        description:
+          "The temporal position within the video where watermark will be displayed.",
+      }),
     },
     {
       description: "LINT.IfChange Describes an invideo branding.",
@@ -2662,7 +2833,10 @@ const LevelDetails = () =>
 const LiveBroadcast = () =>
   object(
     {
-      "contentDetails?": LiveBroadcastContentDetails,
+      "contentDetails?": ref(LiveBroadcastContentDetails, {
+        description:
+          "The contentDetails object contains information about the event's video content, such as whether the content can be shown in an embedded video player or if it will be archived and therefore available for viewing after the event has concluded.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -2675,9 +2849,18 @@ const LiveBroadcast = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#liveBroadcast".',
       }),
-      "snippet?": LiveBroadcastSnippet,
-      "statistics?": LiveBroadcastStatistics,
-      "status?": LiveBroadcastStatus,
+      "snippet?": ref(LiveBroadcastSnippet, {
+        description:
+          "The snippet object contains basic details about the event, including its title, description, start time, and end time.",
+      }),
+      "statistics?": ref(LiveBroadcastStatistics, {
+        description:
+          "The statistics object contains info about the event's current stats. These include concurrent viewers and total chat count. Statistics can change (in either direction) during the lifetime of an event. Statistics are only returned while the event is live.",
+      }),
+      "status?": ref(LiveBroadcastStatus, {
+        description:
+          "The status object contains information about the event's status.",
+      }),
     },
     {
       description:
@@ -2742,7 +2925,10 @@ const LiveBroadcastContentDetails = () =>
           "The mesh for projecting the video if projection is mesh. The mesh value must be a UTF-8 string containing the base-64 encoding of 3D mesh data that follows the Spherical Video V2 RFC specification for an mshp box, excluding the box size and type but including the following four reserved zero bytes for the version and flags.",
         format: "byte",
       }),
-      "monitorStream?": MonitorStreamInfo,
+      "monitorStream?": ref(MonitorStreamInfo, {
+        description:
+          "The monitorStream object contains information about the monitor stream, which the broadcaster can use to review the event content before the broadcast stream is shown publicly.",
+      }),
       "projection?": string({
         description:
           "The projection format of this broadcast. This defaults to rectangular.",
@@ -2787,7 +2973,9 @@ const LiveBroadcastListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -2840,7 +3028,10 @@ const LiveBroadcastSnippet = () =>
           "The date and time that the broadcast is scheduled to start.",
         format: "date-time",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the broadcast. For each nested object in this object, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description:
           "The broadcast's title. Note that the broadcast represents exactly one YouTube video. You can set this field by modifying the broadcast resource or by setting the title field of the corresponding video resource.",
@@ -2929,7 +3120,10 @@ const LiveChatBan = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string `"youtube#liveChatBan"`.',
       }),
-      "snippet?": LiveChatBanSnippet,
+      "snippet?": ref(LiveChatBanSnippet, {
+        description:
+          "The `snippet` object contains basic details about the ban.",
+      }),
     },
     {
       description:
@@ -3012,7 +3206,10 @@ const LiveChatMembershipGiftingDetails = () =>
 const LiveChatMessage = () =>
   object(
     {
-      "authorDetails?": LiveChatMessageAuthorDetails,
+      "authorDetails?": ref(LiveChatMessageAuthorDetails, {
+        description:
+          "The authorDetails object contains basic details about the user that posted this message.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -3025,7 +3222,10 @@ const LiveChatMessage = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatMessage".',
       }),
-      "snippet?": LiveChatMessageSnippet,
+      "snippet?": ref(LiveChatMessageSnippet, {
+        description:
+          "The snippet object contains basic details about the message.",
+      }),
     },
     {
       description:
@@ -3084,7 +3284,9 @@ const LiveChatMessageListResponse = () =>
       description: "The date and time when the underlying stream went offline.",
       format: "date-time",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "pollingIntervalMillis?": uint32({
       description:
         "The amount of time the client should wait before polling again.",
@@ -3109,26 +3311,53 @@ const LiveChatMessageSnippet = () =>
         description:
           "Contains a string that can be displayed to the user. If this field is not present the message is silent, at the moment only messages of type TOMBSTONE and CHAT_ENDED_EVENT are silent.",
       }),
-      "fanFundingEventDetails?": LiveChatFanFundingEventDetails,
-      "giftMembershipReceivedDetails?": LiveChatGiftMembershipReceivedDetails,
+      "fanFundingEventDetails?": ref(LiveChatFanFundingEventDetails, {
+        description:
+          "Details about the funding event, this is only set if the type is 'fanFundingEvent'.",
+      }),
+      "giftMembershipReceivedDetails?": ref(
+        LiveChatGiftMembershipReceivedDetails,
+        {
+          description:
+            "Details about the Gift Membership Received event, this is only set if the type is 'giftMembershipReceivedEvent'.",
+        },
+      ),
       "hasDisplayContent?": boolean({
         description:
           "Whether the message has display content that should be displayed to users.",
       }),
       "liveChatId?": string(),
-      "memberMilestoneChatDetails?": LiveChatMemberMilestoneChatDetails,
-      "membershipGiftingDetails?": LiveChatMembershipGiftingDetails,
+      "memberMilestoneChatDetails?": ref(LiveChatMemberMilestoneChatDetails, {
+        description:
+          "Details about the Member Milestone Chat event, this is only set if the type is 'memberMilestoneChatEvent'.",
+      }),
+      "membershipGiftingDetails?": ref(LiveChatMembershipGiftingDetails, {
+        description:
+          "Details about the Membership Gifting event, this is only set if the type is 'membershipGiftingEvent'.",
+      }),
       "messageDeletedDetails?": LiveChatMessageDeletedDetails,
       "messageRetractedDetails?": LiveChatMessageRetractedDetails,
-      "newSponsorDetails?": LiveChatNewSponsorDetails,
+      "newSponsorDetails?": ref(LiveChatNewSponsorDetails, {
+        description:
+          'Details about the New Member Announcement event, this is only set if the type is \'newSponsorEvent\'. Please note that "member" is the new term for "sponsor".',
+      }),
       "publishedAt?": string({
         description:
           "The date and time when the message was orignally published.",
         format: "date-time",
       }),
-      "superChatDetails?": LiveChatSuperChatDetails,
-      "superStickerDetails?": LiveChatSuperStickerDetails,
-      "textMessageDetails?": LiveChatTextMessageDetails,
+      "superChatDetails?": ref(LiveChatSuperChatDetails, {
+        description:
+          "Details about the Super Chat event, this is only set if the type is 'superChatEvent'.",
+      }),
+      "superStickerDetails?": ref(LiveChatSuperStickerDetails, {
+        description:
+          "Details about the Super Sticker event, this is only set if the type is 'superStickerEvent'.",
+      }),
+      "textMessageDetails?": ref(LiveChatTextMessageDetails, {
+        description:
+          "Details about the text message, this is only set if the type is 'textMessageEvent'.",
+      }),
       "type?": string({
         description:
           "The type of message, this will always be present, it determines the contents of the message as well as which fields will be present.",
@@ -3172,7 +3401,10 @@ const LiveChatModerator = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatModerator".',
       }),
-      "snippet?": LiveChatModeratorSnippet,
+      "snippet?": ref(LiveChatModeratorSnippet, {
+        description:
+          "The snippet object contains basic details about the moderator.",
+      }),
     },
     {
       description:
@@ -3200,7 +3432,9 @@ const LiveChatModeratorListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -3210,13 +3444,17 @@ const LiveChatModeratorListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
+
 const LiveChatModeratorSnippet = () =>
   object({
     "liveChatId?": string({
       description: "The ID of the live chat this moderator can act on.",
     }),
-    "moderatorDetails?": ChannelProfileDetails,
+    "moderatorDetails?": ref(ChannelProfileDetails, {
+      description: "Details about the moderator.",
+    }),
   })
+
 const LiveChatNewSponsorDetails = () =>
   object({
     "isUpgrade?": boolean({
@@ -3264,7 +3502,9 @@ const LiveChatSuperStickerDetails = () =>
     "currency?": string({
       description: "The currency in which the purchase was made.",
     }),
-    "superStickerMetadata?": SuperStickerMetadata,
+    "superStickerMetadata?": ref(SuperStickerMetadata, {
+      description: "Information about the Super Sticker.",
+    }),
     "tier?": uint32({
       description:
         "The tier in which the amount belongs. Lower amounts belong to lower tiers. The lowest tier is 1.",
@@ -3287,13 +3527,21 @@ const LiveChatUserBannedMessageDetails = () =>
       description: "The type of ban.",
       enum: ["permanent", "temporary"],
     }),
-    "bannedUserDetails?": ChannelProfileDetails,
+    "bannedUserDetails?": ref(ChannelProfileDetails, {
+      description: "The details of the user that was banned.",
+    }),
   })
 const LiveStream = () =>
   object(
     {
-      "cdn?": CdnSettings,
-      "contentDetails?": LiveStreamContentDetails,
+      "cdn?": ref(CdnSettings, {
+        description:
+          "The cdn object defines the live stream's content delivery network (CDN) settings. These settings provide details about the manner in which you stream your content to YouTube.",
+      }),
+      "contentDetails?": ref(LiveStreamContentDetails, {
+        description:
+          "The content_details object contains information about the stream, including the closed captions ingestion URL.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -3306,8 +3554,14 @@ const LiveStream = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#liveStream".',
       }),
-      "snippet?": LiveStreamSnippet,
-      "status?": LiveStreamStatus,
+      "snippet?": ref(LiveStreamSnippet, {
+        description:
+          "The snippet object contains basic details about the stream, including its channel, title, and description.",
+      }),
+      "status?": ref(LiveStreamStatus, {
+        description:
+          "The status object contains information about live stream's status.",
+      }),
     },
     {
       description: "A live stream describes a live ingestion point.",
@@ -3450,7 +3704,9 @@ const LiveStreamSnippet = () =>
 const LiveStreamStatus = () =>
   object(
     {
-      "healthStatus?": LiveStreamHealthStatus,
+      "healthStatus?": ref(LiveStreamHealthStatus, {
+        description: "The health status of the stream.",
+      }),
       "streamStatus?": string({
         enum: ["created", "ready", "active", "inactive", "error"],
       }),
@@ -3461,7 +3717,9 @@ const LiveStreamStatus = () =>
   )
 const LocalizedProperty = () =>
   object({
-    "defaultLanguage?": LanguageTag,
+    "defaultLanguage?": ref(LanguageTag, {
+      description: "The language of the default property.",
+    }),
     "localized?": array(LocalizedString),
   })
 const LocalizedString = () =>
@@ -3480,7 +3738,10 @@ const Member = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#member".',
       }),
-      "snippet?": MemberSnippet,
+      "snippet?": ref(MemberSnippet, {
+        description:
+          "The snippet object contains basic details about the member.",
+      }),
     },
     {
       description:
@@ -3519,8 +3780,12 @@ const MemberSnippet = () =>
     "creatorChannelId?": string({
       description: "The id of the channel that's offering memberships.",
     }),
-    "memberDetails?": ChannelProfileDetails,
-    "membershipsDetails?": MembershipsDetails,
+    "memberDetails?": ref(ChannelProfileDetails, {
+      description: "Details about the member.",
+    }),
+    "membershipsDetails?": ref(MembershipsDetails, {
+      description: "Details about the user's membership.",
+    }),
   })
 const MembershipsDetails = () =>
   object({
@@ -3536,7 +3801,10 @@ const MembershipsDetails = () =>
       description:
         "Display name for the highest level that the user has access to at the moment.",
     }),
-    "membershipsDuration?": MembershipsDuration,
+    "membershipsDuration?": ref(MembershipsDuration, {
+      description:
+        "Data about memberships duration without taking into consideration pricing levels.",
+    }),
     "membershipsDurationAtLevels?": array(MembershipsDurationAtLevel, {
       description:
         "Data about memberships duration on particular pricing levels.",
@@ -3582,7 +3850,10 @@ const MembershipsLevel = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#membershipsLevelListResponse".',
       }),
-      "snippet?": MembershipsLevelSnippet,
+      "snippet?": ref(MembershipsLevelSnippet, {
+        description:
+          "The snippet object contains basic details about the level.",
+      }),
     },
     {
       description:
@@ -3615,7 +3886,9 @@ const MembershipsLevelSnippet = () =>
     "creatorChannelId?": string({
       description: "The id of the channel that's offering channel memberships.",
     }),
-    "levelDetails?": LevelDetails,
+    "levelDetails?": ref(LevelDetails, {
+      description: "Details about the pricing level.",
+    }),
   })
 const MonitorStreamInfo = () =>
   object(
@@ -3655,7 +3928,10 @@ const PageInfo = () =>
 const Playlist = () =>
   object(
     {
-      "contentDetails?": PlaylistContentDetails,
+      "contentDetails?": ref(PlaylistContentDetails, {
+        description:
+          "The contentDetails object contains information like video count.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -3671,9 +3947,18 @@ const Playlist = () =>
       "localizations?": dict(string(), PlaylistLocalization, {
         description: "Localizations for different languages",
       }),
-      "player?": PlaylistPlayer,
-      "snippet?": PlaylistSnippet,
-      "status?": PlaylistStatus,
+      "player?": ref(PlaylistPlayer, {
+        description:
+          "The player object contains information that you would use to play the playlist in an embedded player.",
+      }),
+      "snippet?": ref(PlaylistSnippet, {
+        description:
+          "The snippet object contains basic details about the playlist, such as its title and description.",
+      }),
+      "status?": ref(PlaylistStatus, {
+        description:
+          "The status object contains status information for the playlist.",
+      }),
     },
     {
       description:
@@ -3686,10 +3971,14 @@ const PlaylistContentDetails = () =>
       description: "The number of videos in the playlist.",
     }),
   })
+
 const PlaylistItem = () =>
   object(
     {
-      "contentDetails?": PlaylistItemContentDetails,
+      "contentDetails?": ref(PlaylistItemContentDetails, {
+        description:
+          "The contentDetails object is included in the resource if the included item is a YouTube video. The object contains additional information about the video.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -3702,14 +3991,21 @@ const PlaylistItem = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#playlistItem".',
       }),
-      "snippet?": PlaylistItemSnippet,
-      "status?": PlaylistItemStatus,
+      "snippet?": ref(PlaylistItemSnippet, {
+        description:
+          "The snippet object contains basic details about the playlist item, such as its title and position in the playlist.",
+      }),
+      "status?": ref(PlaylistItemStatus, {
+        description:
+          "The status object contains information about the playlist item's privacy status.",
+      }),
     },
     {
       description:
         "A *playlistItem* resource identifies another resource, such as a video, that is included in a playlist. In addition, the playlistItem resource contains details about the included resource that pertain specifically to how that resource is used in that playlist. YouTube uses playlists to identify special collections of videos for a channel, such as: - uploaded videos - favorite videos - positively rated (liked) videos - watch history - watch later To be more specific, these lists are associated with a channel, which is a collection of a person, group, or company's videos, playlists, and other YouTube information. You can retrieve the playlist IDs for each of these lists from the channel resource for a given channel. You can then use the playlistItems.list method to retrieve any of those lists. You can also add or remove items from those lists by calling the playlistItems.insert and playlistItems.delete methods. For example, if a user gives a positive rating to a video, you would insert that video into the liked videos playlist for that user's channel.",
     },
   )
+
 const PlaylistItemContentDetails = () =>
   object({
     "endAt?": string({
@@ -3751,7 +4047,9 @@ const PlaylistItemListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -3788,8 +4086,14 @@ const PlaylistItemSnippet = () =>
           "The date and time that the item was added to the playlist.",
         format: "date-time",
       }),
-      "resourceId?": ResourceId,
-      "thumbnails?": ThumbnailDetails,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The id object contains information that can be used to uniquely identify the resource that is included in the playlist as the playlist item.",
+      }),
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the playlist item. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description: "The item's title.",
       }),
@@ -3838,7 +4142,9 @@ const PlaylistListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -3887,7 +4193,9 @@ const PlaylistSnippet = () =>
       "description?": string({
         description: "The playlist's description.",
       }),
-      "localized?": PlaylistLocalization,
+      "localized?": ref(PlaylistLocalization, {
+        description: "Localized title and description, read-only.",
+      }),
       "publishedAt?": string({
         description: "The date and time that the playlist was created.",
         format: "date-time",
@@ -3899,7 +4207,10 @@ const PlaylistSnippet = () =>
         description:
           "Note: if the playlist has a custom thumbnail, this field will not be populated. The video id selected by the user that will be used as the thumbnail of this playlist. This field defaults to the first publicly viewable video in the playlist, if: 1. The user has never selected a video to be the thumbnail of the playlist. 2. The user selects a video to be the thumbnail, and then removes that video from the playlist. 3. The user selects a non-owned video to be the thumbnail, but that video becomes private, or gets deleted.",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the playlist. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description: "The playlist's title.",
       }),
@@ -3979,7 +4290,9 @@ const SearchListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -3996,13 +4309,19 @@ const SearchResult = () =>
       "etag?": string({
         description: "Etag of this resource.",
       }),
-      "id?": ResourceId,
+      "id?": ref(ResourceId, {
+        description:
+          "The id object contains information that can be used to uniquely identify the resource that matches the search request.",
+      }),
       "kind?": string({
         default: "youtube#searchResult",
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#searchResult".',
       }),
-      "snippet?": SearchResultSnippet,
+      "snippet?": ref(SearchResultSnippet, {
+        description:
+          "The snippet object contains basic details about a search result, such as its title or description. For example, if the search result is a video, then the title will be the video's title and the description will be the video's description.",
+      }),
     },
     {
       description:
@@ -4033,7 +4352,10 @@ const SearchResultSnippet = () =>
           "The creation date and time of the resource that the search result identifies.",
         format: "date-time",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the search result. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description: "The title of the search result.",
       }),
@@ -4046,7 +4368,10 @@ const SearchResultSnippet = () =>
 const Subscription = () =>
   object(
     {
-      "contentDetails?": SubscriptionContentDetails,
+      "contentDetails?": ref(SubscriptionContentDetails, {
+        description:
+          "The contentDetails object contains basic statistics about the subscription.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -4059,8 +4384,14 @@ const Subscription = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#subscription".',
       }),
-      "snippet?": SubscriptionSnippet,
-      "subscriberSnippet?": SubscriptionSubscriberSnippet,
+      "snippet?": ref(SubscriptionSnippet, {
+        description:
+          "The snippet object contains basic details about the subscription, including its title and the channel that the user subscribed to.",
+      }),
+      "subscriberSnippet?": ref(SubscriptionSubscriberSnippet, {
+        description:
+          "The subscriberSnippet object contains basic details about the subscriber.",
+      }),
     },
     {
       description:
@@ -4137,8 +4468,14 @@ const SubscriptionSnippet = () =>
         description: "The date and time that the subscription was created.",
         format: "date-time",
       }),
-      "resourceId?": ResourceId,
-      "thumbnails?": ThumbnailDetails,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The id object contains information about the channel that the user subscribed to.",
+      }),
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the video. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description: "The subscription's title.",
       }),
@@ -4157,7 +4494,9 @@ const SubscriptionSubscriberSnippet = () =>
       "description?": string({
         description: "The description of the subscriber.",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description: "Thumbnails for this subscriber.",
+      }),
       "title?": string({
         description: "The title of the subscriber.",
       }),
@@ -4182,7 +4521,10 @@ const SuperChatEvent = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string `"youtube#superChatEvent"`.',
       }),
-      "snippet?": SuperChatEventSnippet,
+      "snippet?": ref(SuperChatEventSnippet, {
+        description:
+          "The `snippet` object contains basic details about the Super Chat event.",
+      }),
     },
     {
       description:
@@ -4248,8 +4590,13 @@ const SuperChatEventSnippet = () =>
       description:
         "The tier for the paid message, which is based on the amount of money spent to purchase the message.",
     }),
-    "superStickerMetadata?": SuperStickerMetadata,
-    "supporterDetails?": ChannelProfileDetails,
+    "superStickerMetadata?": ref(SuperStickerMetadata, {
+      description:
+        "If this event is a Super Sticker event, this field will contain metadata about the Super Sticker.",
+    }),
+    "supporterDetails?": ref(ChannelProfileDetails, {
+      description: "Details about the supporter.",
+    }),
   })
 const SuperStickerMetadata = () =>
   object({
@@ -4291,8 +4638,14 @@ const ThirdPartyLink = () =>
         description:
           "The linking_token identifies a YouTube account and channel with which the third party account is linked.",
       }),
-      "snippet?": ThirdPartyLinkSnippet,
-      "status?": ThirdPartyLinkStatus,
+      "snippet?": ref(ThirdPartyLinkSnippet, {
+        description:
+          "The snippet object contains basic details about the third- party account link.",
+      }),
+      "status?": ref(ThirdPartyLinkStatus, {
+        description:
+          "The status object contains information about the status of the link.",
+      }),
     },
     {
       description:
@@ -4314,7 +4667,10 @@ const ThirdPartyLinkListResponse = () =>
 const ThirdPartyLinkSnippet = () =>
   object(
     {
-      "channelToStoreLink?": ChannelToStoreLinkDetails,
+      "channelToStoreLink?": ref(ChannelToStoreLinkDetails, {
+        description:
+          "Information specific to a link between a channel and a store on a merchandising platform.",
+      }),
       "type?": string({
         description:
           "Type of the link named after the entities that are being linked.",
@@ -4358,10 +4714,18 @@ const Thumbnail = () =>
 const ThumbnailDetails = () =>
   object(
     {
-      "high?": Thumbnail,
-      "maxres?": Thumbnail,
-      "medium?": Thumbnail,
-      "standard?": Thumbnail,
+      "high?": ref(Thumbnail, {
+        description: "The high quality image for this resource.",
+      }),
+      "maxres?": ref(Thumbnail, {
+        description: "The maximum resolution quality image for this resource.",
+      }),
+      "medium?": ref(Thumbnail, {
+        description: "The medium quality image for this resource.",
+      }),
+      "standard?": ref(Thumbnail, {
+        description: "The standard quality image for this resource.",
+      }),
     },
     {
       description:
@@ -4400,10 +4764,19 @@ const TokenPagination = () =>
 const Video = () =>
   object(
     {
-      "ageGating?": VideoAgeGating,
-      "contentDetails?": VideoContentDetails,
+      "ageGating?": ref(VideoAgeGating, {
+        description:
+          "Age restriction details related to a video. This data can only be retrieved by the video owner.",
+      }),
+      "contentDetails?": ref(VideoContentDetails, {
+        description:
+          "The contentDetails object contains information about the video content, including the length of the video and its aspect ratio.",
+      }),
       "etag?": string({ description: "Etag of this resource." }),
-      "fileDetails?": VideoFileDetails,
+      "fileDetails?": ref(VideoFileDetails, {
+        description:
+          "The fileDetails object encapsulates information about the video file that was uploaded to YouTube, including the file's resolution, duration, audio and video codecs, stream bitrates, and more. This data can only be retrieved by the video owner.",
+      }),
       "id?": string({
         description: "The ID that YouTube uses to uniquely identify the video.",
       }),
@@ -4412,21 +4785,54 @@ const Video = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#video".',
       }),
-      "liveStreamingDetails?": VideoLiveStreamingDetails,
+      "liveStreamingDetails?": ref(VideoLiveStreamingDetails, {
+        description:
+          "The liveStreamingDetails object contains metadata about a live video broadcast. The object will only be present in a video resource if the video is an upcoming, live, or completed live broadcast.",
+      }),
       "localizations?": dict(string(), VideoLocalization, {
         description:
           "The localizations object contains localized versions of the basic details about the video, such as its title and description.",
       }),
-      "monetizationDetails?": VideoMonetizationDetails,
-      "player?": VideoPlayer,
-      "processingDetails?": VideoProcessingDetails,
-      "projectDetails?": VideoProjectDetails,
-      "recordingDetails?": VideoRecordingDetails,
-      "snippet?": VideoSnippet,
-      "statistics?": VideoStatistics,
-      "status?": VideoStatus,
-      "suggestions?": VideoSuggestions,
-      "topicDetails?": VideoTopicDetails,
+      "monetizationDetails?": ref(VideoMonetizationDetails, {
+        description:
+          "The monetizationDetails object encapsulates information about the monetization status of the video.",
+      }),
+      "player?": ref(VideoPlayer, {
+        description:
+          "The player object contains information that you would use to play the video in an embedded player.",
+      }),
+      "processingDetails?": ref(VideoProcessingDetails, {
+        description:
+          "The processingDetails object encapsulates information about YouTube's progress in processing the uploaded video file. The properties in the object identify the current processing status and an estimate of the time remaining until YouTube finishes processing the video. This part also indicates whether different types of data or content, such as file details or thumbnail images, are available for the video. The processingProgress object is designed to be polled so that the video uploaded can track the progress that YouTube has made in processing the uploaded video file. This data can only be retrieved by the video owner.",
+      }),
+      "projectDetails?": ref(VideoProjectDetails, {
+        description:
+          "The projectDetails object contains information about the project specific video metadata. b/157517979: This part was never populated after it was added. However, it sees non-zero traffic because there is generated client code in the wild that refers to it [1]. We keep this field and do NOT remove it because otherwise V3 would return an error when this part gets requested [2]. [1] https://developers.google.com/resources/api-libraries/documentation/youtube/v3/csharp/latest/classGoogle_1_1Apis_1_1YouTube_1_1v3_1_1Data_1_1VideoProjectDetails.html [2] http://google3/video/youtube/src/python/servers/data_api/common.py?l=1565-1569&rcl=344141677",
+      }),
+      "recordingDetails?": ref(VideoRecordingDetails, {
+        description:
+          "The recordingDetails object encapsulates information about the location, date and address where the video was recorded.",
+      }),
+      "snippet?": ref(VideoSnippet, {
+        description:
+          "The snippet object contains basic details about the video, such as its title, description, and category.",
+      }),
+      "statistics?": ref(VideoStatistics, {
+        description:
+          "The statistics object contains statistics about the video.",
+      }),
+      "status?": ref(VideoStatus, {
+        description:
+          "The status object contains information about the video's uploading, processing, and privacy statuses.",
+      }),
+      "suggestions?": ref(VideoSuggestions, {
+        description:
+          "The suggestions object encapsulates suggestions that identify opportunities to improve the video quality or the metadata for the uploaded video. This data can only be retrieved by the video owner.",
+      }),
+      "topicDetails?": ref(VideoTopicDetails, {
+        description:
+          "The topicDetails object encapsulates information about Freebase topics associated with the video.",
+      }),
     },
     {
       description: "A *video* resource represents a YouTube video.",
@@ -4468,7 +4874,10 @@ const VideoAbuseReportReason = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string `"youtube#videoAbuseReportReason"`.',
       }),
-      "snippet?": VideoAbuseReportReasonSnippet,
+      "snippet?": ref(VideoAbuseReportReasonSnippet, {
+        description:
+          "The `snippet` object contains basic details about the abuse report reason.",
+      }),
     },
     {
       description:
@@ -4554,7 +4963,10 @@ const VideoCategory = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#videoCategory".',
       }),
-      "snippet?": VideoCategorySnippet,
+      "snippet?": ref(VideoCategorySnippet, {
+        description:
+          "The snippet object contains basic details about the video category, including its title.",
+      }),
     },
     {
       description:
@@ -4583,7 +4995,9 @@ const VideoCategoryListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -4618,8 +5032,14 @@ const VideoContentDetails = () =>
           "The value of captions indicates whether the video has captions or not.",
         enum: ["true", "false"],
       }),
-      "contentRating?": ContentRating,
-      "countryRestriction?": AccessPolicy,
+      "contentRating?": ref(ContentRating, {
+        description:
+          "Specifies the ratings that the video received under various rating schemes.",
+      }),
+      "countryRestriction?": ref(AccessPolicy, {
+        description:
+          "The countryRestriction object contains information about the countries where a video is (or is not) viewable.",
+      }),
       "definition?": string({
         description:
           "The value of definition indicates whether the video is available in high definition or only in standard definition.",
@@ -4645,7 +5065,10 @@ const VideoContentDetails = () =>
         description: "Specifies the projection format of the video.",
         enum: ["rectangular", "360"],
       }),
-      "regionRestriction?": VideoContentDetailsRegionRestriction,
+      "regionRestriction?": ref(VideoContentDetailsRegionRestriction, {
+        description:
+          "The regionRestriction object contains information about the countries where a video is (or is not) viewable. The object will contain either the contentDetails.regionRestriction.allowed property or the contentDetails.regionRestriction.blocked property.",
+      }),
     },
     {
       description: "Details about the content of a YouTube Video.",
@@ -4822,7 +5245,9 @@ const VideoListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -4886,7 +5311,10 @@ const VideoLocalization = () =>
 const VideoMonetizationDetails = () =>
   object(
     {
-      "access?": AccessPolicy,
+      "access?": ref(AccessPolicy, {
+        description:
+          "The value of access indicates whether the video can be monetized or not.",
+      }),
     },
     {
       description: "Details about monetization of a YouTube Video.",
@@ -4931,7 +5359,10 @@ const VideoProcessingDetails = () =>
         description:
           "This value indicates whether the video processing engine has generated suggestions that might improve YouTube's ability to process the the video, warnings that explain video processing problems, or errors that cause video processing problems. You can retrieve these suggestions by requesting the suggestions part in your videos.list() request.",
       }),
-      "processingProgress?": VideoProcessingDetailsProcessingProgress,
+      "processingProgress?": ref(VideoProcessingDetailsProcessingProgress, {
+        description:
+          "The processingProgress object contains information about the progress YouTube has made in processing the video. The values are really only relevant if the video's processing status is processing.",
+      }),
       "processingStatus?": string({
         description:
           "The video's processing status. This value indicates whether YouTube was able to process the video or if the video is still being processed.",
@@ -5001,7 +5432,9 @@ const VideoRating = () =>
 const VideoRecordingDetails = () =>
   object(
     {
-      "location?": GeoPoint,
+      "location?": ref(GeoPoint, {
+        description: "The geolocation information associated with the video.",
+      }),
       "locationDescription?": string({
         description:
           "The text description of the location where the video was recorded.",
@@ -5045,7 +5478,10 @@ const VideoSnippet = () =>
           'Indicates if the video is an upcoming/active live broadcast. Or it\'s "none" if the video is not an upcoming/active live broadcast.',
         enum: ["none", "upcoming", "live", "completed"],
       }),
-      "localized?": VideoLocalization,
+      "localized?": ref(VideoLocalization, {
+        description:
+          "Localized snippet selected with the hl parameter. If no such localization exists, this field is populated with the default snippet. (Read-only)",
+      }),
       "publishedAt?": string({
         description: "The date and time when the video was uploaded.",
         format: "date-time",
@@ -5054,7 +5490,10 @@ const VideoSnippet = () =>
         description:
           "A list of keyword tags associated with the video. Tags may contain spaces.",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the video. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description:
           "The video's title. @mutable youtube.videos.insert youtube.videos.update",
