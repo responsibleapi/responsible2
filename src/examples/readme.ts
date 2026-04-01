@@ -299,7 +299,7 @@ function mkErr(code: string, responseDescription: string) {
 }
 
 /* Object.fromEntries widens keys to string; ERROR_DEFS is the exhaustive source of truth. */
-// oxlint-disable-next-line typescript-eslint/no-unsafe-type-assertion
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 const err = Object.fromEntries(
   ERROR_DEFS.map(([code, desc]) => [code, mkErr(code, desc)]),
 ) as Record<ErrorCode, ReturnType<typeof mkErr>>

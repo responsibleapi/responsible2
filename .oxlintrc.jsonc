@@ -26,14 +26,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "src/**/*.ts",
-        "src/**/*.mts",
-        "src/**/*.cts",
-        "scripts/**/*.ts",
-        "scripts/**/*.mts",
-        "scripts/**/*.cts"
-      ],
+      "files": ["src/**/*.ts"],
       "rules": {
         "@typescript-eslint/consistent-type-imports": [
           "error",
@@ -64,6 +57,16 @@
         ],
         "eqeqeq": ["error", "always"],
         "no-console": "error"
+      }
+    },
+    {
+      "files": ["src/**/*.test.ts"],
+      "rules": {
+        /**
+         * `no-unsafe-type-assertion` has no Oxlint options (cannot allow only `as unknown as`).
+         * Tests compare JSON module values to OpenAPI shapes with explicit assertions.
+         */
+        "@typescript-eslint/no-unsafe-type-assertion": "off"
       }
     }
   ]

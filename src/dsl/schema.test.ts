@@ -34,7 +34,6 @@ const docWithSchema = (schema: RawSchema): Partial<oas31.OpenAPIObject> => ({
   paths: {},
   components: {
     schemas: {
-      /* eslint-disable-next-line typescript-eslint/no-unsafe-type-assertion */
       UnderTest: schema as oas31.SchemaObject,
     },
   },
