@@ -1,15 +1,15 @@
 import type { oas31 } from "openapi3-ts"
 import { describe, expect, test } from "vitest"
-import { validate } from "../help/validate.ts"
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET, POST } from "../dsl/methods.ts"
 import { named } from "../dsl/nameable.ts"
 import type { Op } from "../dsl/operation.ts"
-import type { PathRoutes } from "../dsl/scope.ts"
 import { queryParam } from "../dsl/params.ts"
-import { int32, object, string } from "../dsl/schema.ts"
-import { headerSecurity, httpSecurity } from "../dsl/security.ts"
+import { array, int32, object, string } from "../dsl/schema.ts"
+import type { PathRoutes } from "../dsl/scope.ts"
 import { scope } from "../dsl/scope.ts"
+import { headerSecurity, httpSecurity } from "../dsl/security.ts"
+import { validate } from "../help/validate.ts"
 
 function operationRequestMime(
   op: oas31.OperationObject | undefined,
@@ -71,6 +71,64 @@ describe("compiler request", () => {
         in: "header",
         required: true,
         schema: { type: "string" },
+      },
+    ])
+  })
+
+  test("lifts map-style parameter descriptions and emits query array defaults", async () => {
+    const api = responsibleAPI({
+      partialDoc: {
+        openapi: "3.1.0",
+        info: { title: "Req API", version: "1" },
+      },
+      forAll: { req: { mime: "application/json" } },
+      routes: {
+        "/search": GET({
+          req: {
+            query: {
+              page: int32({ description: "Page number" }),
+              "tags?": array(string(), {
+                description: "Tags to include",
+              }),
+            },
+            headers: {
+              "X-Retry-Count?": int32({ description: "Retry count" }),
+            },
+          },
+          res: { 200: object({}) },
+        }),
+      },
+    })
+
+    const doc = await validate(api)
+
+    expect(doc).toEqual(api)
+    expect(doc.paths!["/search"]?.get?.parameters).toEqual([
+      {
+        name: "page",
+        in: "query",
+        required: true,
+        description: "Page number",
+        schema: { type: "integer", format: "int32" },
+      },
+      {
+        name: "tags",
+        in: "query",
+        required: false,
+        description: "Tags to include",
+        style: "form",
+        explode: true,
+        schema: {
+          type: "array",
+          items: { type: "string" },
+        },
+      },
+      {
+        name: "X-Retry-Count",
+        in: "header",
+        required: false,
+        description: "Retry count",
+        schema: { type: "integer", format: "int32" },
       },
     ])
   })
@@ -221,10 +279,7 @@ describe("compiler request", () => {
   })
 
   test("rejects duplicate query param from params array and query map", () => {
-    const Q = named(
-      "qDup",
-      queryParam({ name: "q", schema: string() }),
-    )
+    const Q = named("qDup", queryParam({ name: "q", schema: string() }))
 
     expect(() =>
       responsibleAPI({
@@ -296,10 +351,7 @@ describe("compiler request", () => {
 
   test("appends security requirements per scope and operation", async () => {
     const Bearer = named("bearerAuth", httpSecurity({ scheme: "bearer" }))
-    const ApiKey = named(
-      "apiKeyAuth",
-      headerSecurity({ name: "X-Api-Key" }),
-    )
+    const ApiKey = named("apiKeyAuth", headerSecurity({ name: "X-Api-Key" }))
     const Digest = named("digestAuth", httpSecurity({ scheme: "digest" }))
 
     const api = responsibleAPI({

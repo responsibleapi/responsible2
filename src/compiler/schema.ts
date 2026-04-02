@@ -158,6 +158,7 @@ function emitDict(state: SchemaCompileState, s: Dict): oas31.SchemaObject {
 export function compileSchema(
   state: SchemaCompileState,
   schema: Schema,
+  opts?: { preserveIntNumDescription?: boolean },
 ): EmittedSchema {
   const { name, value, summary, description } = decodeNameable(schema)
   const refSiblings = {
@@ -166,7 +167,7 @@ export function compileSchema(
   }
 
   if (name === undefined || name === "") {
-    return compileRawSchema(state, value)
+    return compileRawSchema(state, value, opts)
   }
 
   if (state.components.schemas[name] !== undefined) {
@@ -180,7 +181,7 @@ export function compileSchema(
 
     try {
       candidate = compileRawSchema(state, value, {
-        preserveIntNumDescription: true,
+        preserveIntNumDescription: opts?.preserveIntNumDescription ?? true,
       })
     } finally {
       for (const k of Object.keys(state.components.schemas)) {
@@ -225,7 +226,7 @@ export function compileSchema(
 
   try {
     const compiled = compileRawSchema(state, value, {
-      preserveIntNumDescription: true,
+      preserveIntNumDescription: opts?.preserveIntNumDescription ?? true,
     })
 
     state.components.schemas[name] = compiled

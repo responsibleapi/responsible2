@@ -10,21 +10,50 @@ import { deepEqualJson } from "./json-equal.ts"
 import { openApiPathTemplateNames } from "./path.ts"
 import { compileSchema, type SchemaCompileState } from "./schema.ts"
 
-type StringSchemaWithDescription = oas31.SchemaObject & {
-  type: "string"
+type ParameterSchema = oas31.SchemaObject | oas31.ReferenceObject
+
+type ParameterSchemaWithDescription = ParameterSchema & {
   description: string
 }
 
-function isStringSchemaWithDescription(
-  compiled: oas31.SchemaObject | oas31.ReferenceObject,
-): compiled is StringSchemaWithDescription {
+function isParameterSchemaWithDescription(
+  compiled: ParameterSchema,
+): compiled is ParameterSchemaWithDescription {
   return (
     typeof compiled === "object" &&
     compiled !== null &&
-    !("$ref" in compiled) &&
-    compiled.type === "string" &&
     typeof compiled.description === "string"
   )
+}
+
+function isSchemaObject(
+  compiled: ParameterSchema,
+): compiled is oas31.SchemaObject {
+  return (
+    typeof compiled === "object" && compiled !== null && !("$ref" in compiled)
+  )
+}
+
+function isStringSchemaObject(
+  compiled: ParameterSchema,
+): compiled is oas31.SchemaObject & { type: "string" } {
+  return isSchemaObject(compiled) && compiled.type === "string"
+}
+
+function stripParameterDescription(compiled: ParameterSchema): {
+  description?: string
+  schema: ParameterSchema
+} {
+  if (!isParameterSchemaWithDescription(compiled)) {
+    return { schema: compiled }
+  }
+
+  const { description, ...schema } = compiled
+
+  return {
+    description,
+    schema,
+  }
 }
 
 export function stripSecurityFields(
@@ -299,30 +328,25 @@ function compileMapParameter(
   location: "query" | "header",
 ): oas31.ParameterObject {
   const name = isOptional(rawName) ? rawName.slice(0, -1) : rawName
-  const compiled = compileSchema(state, sch)
-
-  if (isStringSchemaWithDescription(compiled)) {
-    const { description, example, format } = compiled
-    const schema: oas31.SchemaObject = {
-      type: "string",
-      ...(format !== undefined ? { format } : {}),
-    }
-
-    return {
-      name,
-      in: location,
-      required: !isOptional(rawName),
-      description,
-      ...(example !== undefined ? { example } : {}),
-      schema,
-    }
-  }
+  const compiled = compileSchema(state, sch, {
+    preserveIntNumDescription: true,
+  })
+  const { description, schema } = stripParameterDescription(compiled)
+  const { value } = decodeNameable(sch)
+  const isArrayQueryParam =
+    location === "query" &&
+    typeof value === "object" &&
+    value !== null &&
+    "type" in value &&
+    value.type === "array"
 
   return {
     name,
     in: location,
     required: !isOptional(rawName),
-    schema: compiled,
+    ...(description !== undefined ? { description } : {}),
+    ...(isArrayQueryParam ? { style: "form", explode: true } : {}),
+    schema,
   }
 }
 
@@ -443,20 +467,16 @@ export function compileOperationParameters(
       out.push(compileParamComponent(state, namedPath))
     } else {
       const compiled = compileSchema(state, pathSchemas[name]!)
-      if (isStringSchemaWithDescription(compiled)) {
-        const { description, example, format } = compiled
-        const schema: oas31.SchemaObject = {
-          type: "string",
-          ...(format !== undefined ? { format } : {}),
-        }
+      if (isStringSchemaObject(compiled)) {
+        const { description, example, ...schema } = compiled
 
         out.push({
           name,
           in: "path",
           required: true,
-          description,
+          ...(description !== undefined ? { description } : {}),
           ...(example !== undefined ? { example } : {}),
-          schema,
+          schema: schema as oas31.SchemaObject,
         })
       } else {
         out.push({
