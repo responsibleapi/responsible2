@@ -3,6 +3,66 @@ import type { oas31 } from "openapi3-ts"
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value)
 
+const OPERATION_KEYS = [
+  "get",
+  "put",
+  "post",
+  "delete",
+  "options",
+  "head",
+  "patch",
+  "trace",
+] as const
+
+/**
+ * The compiler now emits inherited scope params on the path item, which is the
+ * correct OpenAPI shape, but several golden example fixtures are frozen with
+ * the older operation-level layout. This helper normalizes both representations
+ * to the same operation-level form so fixture comparisons keep validating the
+ * compiler change without rewriting those golden JSON files.
+ */
+function normalizePathItemParameters<T extends oas31.OpenAPIObject>(doc: T): T {
+  if (doc.paths === undefined) {
+    return doc
+  }
+
+  const paths: oas31.PathsObject = {}
+
+  for (const [path, pathItem] of Object.entries(doc.paths)) {
+    if (!isObject(pathItem) || !Array.isArray(pathItem["parameters"])) {
+      paths[path] = pathItem
+      continue
+    }
+
+    const nextPathItem: Record<string, unknown> = { ...pathItem }
+    const pathItemParameters = pathItem["parameters"]
+
+    delete nextPathItem["parameters"]
+
+    for (const key of OPERATION_KEYS) {
+      const operation = nextPathItem[key]
+
+      if (!isObject(operation)) {
+        continue
+      }
+
+      nextPathItem[key] = {
+        ...operation,
+        parameters: Array.isArray(operation["parameters"])
+          ? [...pathItemParameters, ...operation["parameters"]]
+          : pathItemParameters,
+      }
+    }
+
+    paths[path] = nextPathItem as oas31.PathItemObject
+  }
+
+  return {
+    ...doc,
+    paths,
+  }
+}
+
 function normVal(value: unknown): unknown {
   if (!Array.isArray(value)) {
     if (isObject(value)) {
@@ -54,4 +114,4 @@ const normObj = <T extends object>(obj: T): T => {
 
 /** Sorts arrays */
 export const normalize = <T extends oas31.OpenAPIObject>(doc: T): T =>
-  normObj(doc)
+  normObj(normalizePathItemParameters(doc))

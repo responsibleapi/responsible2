@@ -4,7 +4,7 @@ import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET, POST } from "../dsl/methods.ts"
 import { named } from "../dsl/nameable.ts"
 import type { Op } from "../dsl/operation.ts"
-import { queryParam } from "../dsl/params.ts"
+import { headerParam, queryParam } from "../dsl/params.ts"
 import { array, int32, object, string } from "../dsl/schema.ts"
 import type { PathRoutes } from "../dsl/scope.ts"
 import { scope } from "../dsl/scope.ts"
@@ -169,6 +169,82 @@ describe("compiler request", () => {
     ])
   })
 
+  test("hoists inherited scope params to the path item and keeps local params on operations", async () => {
+    const Version = named(
+      "version",
+      headerParam({
+        name: "X-Version",
+        schema: string(),
+      }),
+    )
+    const Locale = named(
+      "locale",
+      queryParam({
+        name: "locale",
+        schema: string(),
+      }),
+    )
+    const Page = named(
+      "page",
+      queryParam({
+        name: "page",
+        schema: string(),
+      }),
+    )
+    const Limit = named(
+      "limit",
+      queryParam({
+        name: "limit",
+        schema: string(),
+      }),
+    )
+
+    const api = responsibleAPI({
+      partialDoc: {
+        openapi: "3.1.0",
+        info: { title: "Req API", version: "1" },
+      },
+      forAll: {
+        req: {
+          mime: "application/json",
+          params: [Version],
+        },
+      },
+      routes: {
+        "/v1": scope({
+          forAll: {
+            req: { params: [Locale] },
+          },
+          "/items": scope({
+            GET: GET({
+              req: { params: [Page] },
+              res: { 200: object({}) },
+            }),
+            POST: POST({
+              req: { params: [Limit] },
+              res: { 200: object({}) },
+            }),
+          }),
+        }),
+      },
+    })
+
+    const doc = await validate(api)
+    const pathItem = doc.paths?.["/v1/items"]
+
+    expect(doc).toEqual(api)
+    expect(pathItem?.parameters).toEqual([
+      { $ref: "#/components/parameters/version" },
+      { $ref: "#/components/parameters/locale" },
+    ])
+    expect(pathItem?.get?.parameters).toEqual([
+      { $ref: "#/components/parameters/page" },
+    ])
+    expect(pathItem?.post?.parameters).toEqual([
+      { $ref: "#/components/parameters/limit" },
+    ])
+  })
+
   test("inherits default mime for shorthand body from forAll", async () => {
     const api = responsibleAPI({
       partialDoc: {
@@ -299,6 +375,34 @@ describe("compiler request", () => {
         },
       }),
     ).toThrow(/Duplicate query parameter/)
+  })
+
+  test("rejects duplicate query param across inherited and operation layers", () => {
+    const ScopeQ = named("scopeQ", queryParam({ name: "q", schema: string() }))
+    const OpQ = named("opQ", queryParam({ name: "q", schema: string() }))
+
+    expect(() =>
+      responsibleAPI({
+        partialDoc: {
+          openapi: "3.1.0",
+          info: { title: "t", version: "1" },
+        },
+        forAll: {
+          req: {
+            mime: "application/json",
+            params: [ScopeQ],
+          },
+        },
+        routes: {
+          "/search": GET({
+            req: {
+              params: [OpQ],
+            },
+            res: { 200: object({}) },
+          }),
+        },
+      }),
+    ).toThrow(/Duplicate query parameter "q"/)
   })
 
   test("rejects conflicting reuse of components.parameters name", () => {

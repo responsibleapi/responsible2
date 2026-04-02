@@ -22,7 +22,7 @@ import { isScope } from "../dsl/scope.ts"
 import { deepEqualJson } from "./json-equal.ts"
 import { dslPathToOpenApiPath, joinHttpPaths } from "./path.ts"
 import {
-  compileOperationParameters,
+  compileParameterLayers,
   compileSecurityFromAug,
   pickSecurity,
   securityLayerFromScopeReq,
@@ -287,13 +287,16 @@ function mergeInheritedReq(
   parent: ReqAugmentation | undefined,
   op: RouteMethodOp,
 ): ReqAugmentation {
-  const raw = op.req
+  return mergeReqAugmentations(parent, normalizeReqAugmentation(op.req)) ?? {}
+}
+
+function normalizeReqAugmentation(
+  raw: Op["req"] | GetOp["req"] | undefined,
+): ReqAugmentation {
   const child = normalizeOpReq(raw) ?? {}
   const mimeFromRaw = readReqMimeRaw(raw)
-  const normalizedChild: ReqAugmentation =
-    mimeFromRaw !== undefined ? { ...child, mime: mimeFromRaw } : child
 
-  return mergeReqAugmentations(parent, normalizedChild) ?? {}
+  return mimeFromRaw !== undefined ? { ...child, mime: mimeFromRaw } : child
 }
 
 function mergedReqAndSecurityForOp(
@@ -301,17 +304,13 @@ function mergedReqAndSecurityForOp(
   ctx: CompileScopeContext,
   op: RouteMethodOp,
 ): {
+  opReq: ReqAugmentation
   mergedReq: ReqAugmentation
   securityReqs: oas31.SecurityRequirementObject[]
 } {
-  const raw = op.req
-  const child = normalizeOpReq(raw) ?? {}
-  const mimeFromRaw = readReqMimeRaw(raw)
-  const normalizedChild: ReqAugmentation =
-    mimeFromRaw !== undefined ? { ...child, mime: mimeFromRaw } : child
-
+  const opReq = normalizeReqAugmentation(op.req)
   const mergedReq = mergeInheritedReq(ctx.mergedReq, op)
-  const opSecurityLayer = pickSecurity(normalizedChild)
+  const opSecurityLayer = pickSecurity(opReq)
   const securityReqs = [
     ...ctx.securityLayers.flatMap(layer =>
       compileSecurityFromAug(schemaState, layer),
@@ -319,7 +318,7 @@ function mergedReqAndSecurityForOp(
     ...compileSecurityFromAug(schemaState, opSecurityLayer),
   ]
 
-  return { mergedReq, securityReqs }
+  return { opReq, mergedReq, securityReqs }
 }
 
 interface CompileScopeContext {
@@ -941,17 +940,28 @@ function compileDirectOp(
     stripResponseBodies?: boolean | "explicit-head"
     omitRequestBody?: boolean
   },
-): oas31.OperationObject {
-  const { mergedReq, securityReqs } = mergedReqAndSecurityForOp(
+): {
+  operation: oas31.OperationObject
+  pathItemParameters:
+    | (oas31.ParameterObject | oas31.ReferenceObject)[]
+    | undefined
+} {
+  const { opReq, mergedReq, securityReqs } = mergedReqAndSecurityForOp(
     schemaState,
     ctx,
     op,
+  )
+  const { pathItemParameters, operationParameters } = compileParameterLayers(
+    schemaState,
+    ctx.mergedReq,
+    opReq,
+    mergedReq,
+    oasPath,
   )
   const requestBody =
     opts?.omitRequestBody === true
       ? undefined
       : compileRequestBody(schemaState, mergedReq)
-  const parameters = compileOperationParameters(schemaState, mergedReq, oasPath)
   const tagNames =
     op.tags !== undefined
       ? op.tags.map(t => t.name)
@@ -960,26 +970,31 @@ function compileDirectOp(
         : undefined
 
   return {
-    ...(op.summary !== undefined ? { summary: op.summary } : {}),
-    ...(op.description !== undefined ? { description: op.description } : {}),
-    ...(op.id !== undefined ? { operationId: op.id } : {}),
-    ...(tagNames !== undefined && tagNames.length > 0
-      ? { tags: tagNames }
-      : {}),
-    ...(parameters !== undefined ? { parameters } : {}),
-    ...(requestBody !== undefined ? { requestBody } : {}),
-    ...(securityReqs.length > 0 ? { security: securityReqs } : {}),
-    responses: compileResponses(
-      schemaState,
-      op,
-      ctx,
-      oasPath,
-      opts?.stripResponseBodies === true
-        ? { stripBodies: true }
-        : opts?.stripResponseBodies === "explicit-head"
-          ? { stripBodies: "explicit-head" }
-          : {},
-    ),
+    pathItemParameters,
+    operation: {
+      ...(op.summary !== undefined ? { summary: op.summary } : {}),
+      ...(op.description !== undefined ? { description: op.description } : {}),
+      ...(op.id !== undefined ? { operationId: op.id } : {}),
+      ...(tagNames !== undefined && tagNames.length > 0
+        ? { tags: tagNames }
+        : {}),
+      ...(operationParameters !== undefined
+        ? { parameters: operationParameters }
+        : {}),
+      ...(requestBody !== undefined ? { requestBody } : {}),
+      ...(securityReqs.length > 0 ? { security: securityReqs } : {}),
+      responses: compileResponses(
+        schemaState,
+        op,
+        ctx,
+        oasPath,
+        opts?.stripResponseBodies === true
+          ? { stripBodies: true }
+          : opts?.stripResponseBodies === "explicit-head"
+            ? { stripBodies: "explicit-head" }
+            : {},
+      ),
+    },
   }
 }
 
@@ -1000,13 +1015,32 @@ function placeOperation(
     )
   }
 
-  const pathItem: oas31.PathItemObject = {
-    ...(typeof existing === "object" && existing !== null ? existing : {}),
-    [oasMethod]: compileDirectOp(schemaState, op, ctx, oasPath, {
+  const { operation, pathItemParameters } = compileDirectOp(
+    schemaState,
+    op,
+    ctx,
+    oasPath,
+    {
       stripResponseBodies:
         op.method === "HEAD" ? ("explicit-head" as const) : false,
       omitRequestBody: op.method === "HEAD",
-    }),
+    },
+  )
+
+  if (
+    pathItemParameters !== undefined &&
+    existing?.parameters !== undefined &&
+    !deepEqualJson(existing.parameters, pathItemParameters)
+  ) {
+    throw new Error(`Conflicting inherited parameters for path "${oasPath}".`)
+  }
+
+  const pathItem: oas31.PathItemObject = {
+    ...(typeof existing === "object" && existing !== null ? existing : {}),
+    ...(pathItemParameters !== undefined
+      ? { parameters: pathItemParameters }
+      : {}),
+    [oasMethod]: operation,
   }
 
   if (isGetWithHeadID(op) && !("head" in pathItem)) {
@@ -1014,7 +1048,7 @@ function placeOperation(
     pathItem.head = compileDirectOp(schemaState, headOp, ctx, oasPath, {
       stripResponseBodies: true,
       omitRequestBody: true,
-    })
+    }).operation
   }
 
   paths[oasPath] = pathItem

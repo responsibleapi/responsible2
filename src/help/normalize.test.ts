@@ -73,4 +73,76 @@ describe("normalize", () => {
       },
     })
   })
+
+  test("treats path-item parameters as equivalent to leading operation parameters", () => {
+    const doc: oas31.OpenAPIObject = {
+      openapi: "3.1.0",
+      info: {
+        title: "Example",
+        version: "1.0.0",
+      },
+      paths: {
+        "/items/{id}": {
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: { type: "string" },
+            },
+          ],
+          get: {
+            operationId: "getItem",
+            parameters: [
+              {
+                name: "expand",
+                in: "query",
+                required: false,
+                schema: { type: "string" },
+              },
+            ],
+            responses: {
+              200: {
+                description: "200",
+              },
+            },
+          },
+        },
+      },
+    }
+
+    expect(normalize(doc)).toEqual<oas31.OpenAPIObject>({
+      openapi: "3.1.0",
+      info: {
+        title: "Example",
+        version: "1.0.0",
+      },
+      paths: {
+        "/items/{id}": {
+          get: {
+            operationId: "getItem",
+            parameters: [
+              {
+                name: "expand",
+                in: "query",
+                required: false,
+                schema: { type: "string" },
+              },
+              {
+                name: "id",
+                in: "path",
+                required: true,
+                schema: { type: "string" },
+              },
+            ],
+            responses: {
+              200: {
+                description: "200",
+              },
+            },
+          },
+        },
+      },
+    })
+  })
 })

@@ -415,10 +415,10 @@ function paramSlotKey(loc: string, name: string): string {
 }
 
 function namedPathParamForTemplateName(
-  mergedReq: ReqAugmentation,
+  req: ReqAugmentation | undefined,
   pathName: string,
 ): ReusableParam | undefined {
-  for (const entry of mergedReq.params ?? []) {
+  for (const entry of req?.params ?? []) {
     const { name: thunkName, value: v } = decodeNameable(entry)
 
     if (v.in !== "path") {
@@ -441,17 +441,47 @@ function namedPathParamForTemplateName(
   return undefined
 }
 
-export function compileOperationParameters(
+function hasPathParamForTemplateName(
+  req: ReqAugmentation | undefined,
+  pathName: string,
+): boolean {
+  if (req?.pathParams?.[pathName] !== undefined) {
+    return true
+  }
+
+  for (const entry of req?.params ?? []) {
+    const { name: thunkName, value: v } = decodeNameable(entry)
+
+    if (v.in !== "path") {
+      continue
+    }
+
+    const paramName = v.name ?? thunkName
+
+    if (paramName === pathName) {
+      return true
+    }
+  }
+
+  return false
+}
+
+function compilePathParametersForLayer(
   state: SchemaCompileState,
+  req: ReqAugmentation | undefined,
   mergedReq: ReqAugmentation,
   oasPath: string,
-): (oas31.ParameterObject | oas31.ReferenceObject)[] | undefined {
+  seen: Set<string>,
+  out: (oas31.ParameterObject | oas31.ReferenceObject)[],
+): void {
   const namesInPath = openApiPathTemplateNames(oasPath)
   const pathSchemas = resolvePathParamSchemas(mergedReq, oasPath)
-  const seen = new Set<string>()
-  const out: (oas31.ParameterObject | oas31.ReferenceObject)[] = []
 
   for (const name of namesInPath) {
+    if (!hasPathParamForTemplateName(req, name)) {
+      continue
+    }
+
     const slot = paramSlotKey("path", name)
 
     if (seen.has(slot)) {
@@ -461,7 +491,7 @@ export function compileOperationParameters(
     }
 
     seen.add(slot)
-    const namedPath = namedPathParamForTemplateName(mergedReq, name)
+    const namedPath = namedPathParamForTemplateName(req, name)
 
     if (namedPath !== undefined) {
       out.push(compileParamComponent(state, namedPath))
@@ -488,8 +518,15 @@ export function compileOperationParameters(
       }
     }
   }
+}
 
-  const queryMap = mergedReq.query ?? {}
+function compileQueryParametersForLayer(
+  state: SchemaCompileState,
+  req: ReqAugmentation | undefined,
+  seen: Set<string>,
+  out: (oas31.ParameterObject | oas31.ReferenceObject)[],
+): void {
+  const queryMap = req?.query ?? {}
 
   for (const rawName of Object.keys(queryMap)) {
     const name = isOptional(rawName) ? rawName.slice(0, -1) : rawName
@@ -502,8 +539,15 @@ export function compileOperationParameters(
     seen.add(slot)
     out.push(compileMapParameter(state, rawName, queryMap[rawName]!, "query"))
   }
+}
 
-  for (const p of mergedReq.params ?? []) {
+function compileReusableParametersForLayer(
+  state: SchemaCompileState,
+  req: ReqAugmentation | undefined,
+  seen: Set<string>,
+  out: (oas31.ParameterObject | oas31.ReferenceObject)[],
+): void {
+  for (const p of req?.params ?? []) {
     const { name: thunkName, value: v } = decodeNameable(p)
 
     if (v.in === "path") {
@@ -548,8 +592,15 @@ export function compileOperationParameters(
       out.push(compileParamComponent(state, p))
     }
   }
+}
 
-  const headerMap = mergedReq.headers ?? {}
+function compileHeaderParametersForLayer(
+  state: SchemaCompileState,
+  req: ReqAugmentation | undefined,
+  seen: Set<string>,
+  out: (oas31.ParameterObject | oas31.ReferenceObject)[],
+): void {
+  const headerMap = req?.headers ?? {}
 
   for (const rawName of Object.keys(headerMap)) {
     const name = isOptional(rawName) ? rawName.slice(0, -1) : rawName
@@ -562,6 +613,57 @@ export function compileOperationParameters(
     seen.add(slot)
     out.push(compileMapParameter(state, rawName, headerMap[rawName]!, "header"))
   }
+}
+
+function compileParametersForLayer(
+  state: SchemaCompileState,
+  req: ReqAugmentation | undefined,
+  mergedReq: ReqAugmentation,
+  oasPath: string,
+  seen: Set<string>,
+): (oas31.ParameterObject | oas31.ReferenceObject)[] | undefined {
+  const out: (oas31.ParameterObject | oas31.ReferenceObject)[] = []
+
+  compilePathParametersForLayer(state, req, mergedReq, oasPath, seen, out)
+  compileQueryParametersForLayer(state, req, seen, out)
+  compileReusableParametersForLayer(state, req, seen, out)
+  compileHeaderParametersForLayer(state, req, seen, out)
 
   return out.length > 0 ? out : undefined
+}
+
+export function compileParameterLayers(
+  state: SchemaCompileState,
+  inheritedReq: ReqAugmentation | undefined,
+  operationReq: ReqAugmentation | undefined,
+  mergedReq: ReqAugmentation,
+  oasPath: string,
+): {
+  pathItemParameters:
+    | (oas31.ParameterObject | oas31.ReferenceObject)[]
+    | undefined
+  operationParameters:
+    | (oas31.ParameterObject | oas31.ReferenceObject)[]
+    | undefined
+} {
+  const seen = new Set<string>()
+  const pathItemParameters = compileParametersForLayer(
+    state,
+    inheritedReq,
+    mergedReq,
+    oasPath,
+    seen,
+  )
+  const operationParameters = compileParametersForLayer(
+    state,
+    operationReq,
+    mergedReq,
+    oasPath,
+    seen,
+  )
+
+  return {
+    pathItemParameters,
+    operationParameters,
+  }
 }
