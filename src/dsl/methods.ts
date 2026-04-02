@@ -1,19 +1,24 @@
 import type { GetOp, Op, OpWithMethod } from "./operation.ts"
 import type { DeclaredTags } from "./tags.ts"
 
+type PlainMethodOp<TOp> = TOp & {
+  method?: never
+}
+
 export type MethodRoutes<TTags extends DeclaredTags = DeclaredTags> = {
-  GET?: GetOp<TTags>
-  POST?: Op<TTags>
-  PUT?: Op<TTags>
-  DELETE?: Op<TTags>
-  HEAD?: Op<TTags>
+  GET?: PlainMethodOp<GetOp<TTags>>
+  POST?: PlainMethodOp<Op<TTags>>
+  PUT?: PlainMethodOp<Op<TTags>>
+  DELETE?: PlainMethodOp<Op<TTags>>
+  HEAD?: PlainMethodOp<Op<TTags>>
 }
 
 export type HttpMethod = keyof MethodRoutes
 
-export type GetOpWithMethod<TTags extends DeclaredTags = DeclaredTags> = GetOp<TTags> & {
-  method: "GET"
-}
+export type GetOpWithMethod<TTags extends DeclaredTags = DeclaredTags> =
+  GetOp<TTags> & {
+    method: "GET"
+  }
 
 export function GET(op: GetOp): GetOpWithMethod {
   return { ...op, method: "GET" }

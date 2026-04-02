@@ -216,14 +216,14 @@ describe("compiler request", () => {
             req: { params: [Locale] },
           },
           "/items": scope({
-            GET: GET({
+            GET: {
               req: { params: [Page] },
               res: { 200: object({}) },
-            }),
-            POST: POST({
+            },
+            POST: {
               req: { params: [Limit] },
               res: { 200: object({}) },
-            }),
+            },
           }),
         }),
       },

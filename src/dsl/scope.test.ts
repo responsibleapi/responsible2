@@ -5,6 +5,8 @@ import type {
   IsNever,
   OneExtendsTwo,
 } from "../type-assertions.ts"
+import type { GetOpWithMethod } from "./methods.ts"
+import type { OpWithMethod } from "./operation.ts"
 import type { ScopeOpts, ScopeRes } from "./scope.ts"
 import type { scope } from "./scope.ts"
 import { declareTags } from "./tags.ts"
@@ -75,6 +77,28 @@ describe("scope", () => {
   test("accepts a scope with a single path", () => {
     type PathOnlyScope = {
       "/videos": TestOp
+    }
+
+    type _Test = Assert<OneExtendsTwo<PathOnlyScope, ScopeInput<PathOnlyScope>>>
+  })
+
+  test("rejects method helper results on method keys", () => {
+    type InvalidMethodHelperScope = {
+      GET: GetOpWithMethod
+      POST: TestOp
+    }
+
+    type _Test = Assert<
+      IsEqual<
+        OneExtendsTwo<InvalidMethodHelperScope, Parameters<typeof scope>[0]>,
+        false
+      >
+    >
+  })
+
+  test("accepts method helper results on path keys", () => {
+    type PathOnlyScope = {
+      "/videos": OpWithMethod
     }
 
     type _Test = Assert<OneExtendsTwo<PathOnlyScope, ScopeInput<PathOnlyScope>>>
