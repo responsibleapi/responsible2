@@ -11,13 +11,6 @@
 
 ## Regressions to fix
 
-3. Scope-level params are landing on operations instead of
-   `PathItemObject.parameters`. Root `forAll.req.params` and inherited scope
-   params should be emitted once per path item, while operation-local params
-   stay on the operation. The current merge flattens everything into one
-   operation-level array. Affected area: `src/compiler/index.ts`, with likely
-   support changes in `src/compiler/request.ts`
-
 4. Request bodies are always marked `required: true`. `compileRequestBody()`
    currently forces `required: true`, but the golden spec omits that field.
    Since `@dsl` request types do not expose body-required control, this should
