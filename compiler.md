@@ -11,16 +11,6 @@
 
 ## Regressions to fix
 
-2. Map-style query/header params are emitted with the wrong OpenAPI shape.
-   Current behavior from `compileMapParameter()` is too narrow:
-   - it only lifts `description` out of string schemas
-   - it keeps many descriptions inside `schema` instead of on the parameter
-     object
-   - it emits `required: false` for optional params instead of omitting
-     `required`
-   - array query params miss explicit `style: "form"` and `explode: true`
-     Affected area: `src/compiler/request.ts`
-
 3. Scope-level params are landing on operations instead of
    `PathItemObject.parameters`. Root `forAll.req.params` and inherited scope
    params should be emitted once per path item, while operation-local params
