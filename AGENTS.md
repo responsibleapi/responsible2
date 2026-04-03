@@ -3,7 +3,7 @@
 ## Current state of things
 
 - 100% TypeScript codebase
-- never say you're done until `bun tsc` & `bun lint` passes
+- verify changes to `src/` with `bun tsc` & `bun lint`
 - never add `oxlint-disable-next-line` unless explicitly asked
 - never edit [package.json](package.json) unless explicitly asked
 - never edit [bunfig.toml](bunfig.toml) unless explicitly asked
