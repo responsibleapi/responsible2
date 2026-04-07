@@ -12,6 +12,7 @@ import {
   object,
   oneOf,
   string,
+  unknown,
 } from "../dsl/schema.ts"
 import { scope } from "../dsl/scope.ts"
 import { httpSecurity } from "../dsl/security.ts"
@@ -716,7 +717,7 @@ export default responsibleAPI({
         description: "Create a new category inside of this project.",
         req: {
           params: [xReadmeVersionParam],
-          body: allOf([category, object({ title: categoryTitle })]),
+          body: allOf([category, object({ title: unknown() })]),
         },
         res: {
           201: resp({

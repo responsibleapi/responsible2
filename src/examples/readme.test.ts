@@ -6,7 +6,11 @@ import theJSON from "./readme.json"
 import readmeAPI from "./readme.ts"
 
 describe("readme example", () => {
-  test("readme.json validates as OpenAPI", async () => {
+  test("readme.json is valid", async () => {
+    expect(await validate(theJSON)).toEqual(theJSON)
+  })
+
+  test("readmeAPI compiles to readme.json", async () => {
     expect(normalize(await validate(readmeAPI))).toEqual(
       normalize(theJSON as oas31.OpenAPIObject),
     )
