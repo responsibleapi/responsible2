@@ -34,7 +34,9 @@ export type Nameable<T> = NamedThunk<T> | Scalar<T>
 
 function getRefSibling<T>(target: T, key: keyof T): string | undefined {
   const d = Object.getOwnPropertyDescriptor(target, key)
-  if (d === undefined) return
+  if (d === undefined) {
+    return undefined
+  }
 
   const v = d.value
   return typeof v === "string" ? v : undefined

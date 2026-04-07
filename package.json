@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "test": "bun test",
+    "test:coverage": "bun test --coverage",
     "test:slow": "vitest run src/",
     "typecheck": "tsc"
   },
