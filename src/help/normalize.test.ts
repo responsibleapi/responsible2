@@ -144,4 +144,206 @@ describe("normalize", () => {
       },
     })
   })
+
+  test("leaves documents without paths unchanged at path-item merge step", () => {
+    const doc = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+    } as oas31.OpenAPIObject
+
+    expect(normalize(doc)).toEqual<oas31.OpenAPIObject>({
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+    })
+  })
+
+  test("skips path items that are not objects or have no parameters array", () => {
+    const doc = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/plain": {
+          get: {
+            responses: { 200: { description: "ok" } },
+          },
+        },
+        "/bad": "not-a-path-item" as unknown as oas31.PathItemObject,
+      },
+    } as oas31.OpenAPIObject
+
+    expect(normalize(doc)).toEqual<oas31.OpenAPIObject>({
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/plain": {
+          get: {
+            responses: { 200: { description: "ok" } },
+          },
+        },
+        "/bad": "not-a-path-item" as unknown as oas31.PathItemObject,
+      },
+    })
+  })
+
+  test("merges path-level parameters when the operation has no parameters array", () => {
+    const doc: oas31.OpenAPIObject = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/items": {
+          parameters: [
+            {
+              name: "shared",
+              in: "query",
+              schema: { type: "string" },
+            },
+          ],
+          get: {
+            responses: { 200: { description: "ok" } },
+          },
+        },
+      },
+    }
+
+    expect(normalize(doc)).toEqual<oas31.OpenAPIObject>({
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/items": {
+          get: {
+            parameters: [
+              {
+                name: "shared",
+                in: "query",
+                schema: { type: "string" },
+              },
+            ],
+            responses: { 200: { description: "ok" } },
+          },
+        },
+      },
+    })
+  })
+
+  test("fixes the known YouTube description typo", () => {
+    const doc: oas31.OpenAPIObject = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {},
+      "x-desc": {
+        description:
+          "ID of the Google+ Page for the channel that the request is be on behalf of",
+      },
+    }
+
+    expect(normalize(doc)).toEqual<oas31.OpenAPIObject>({
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {},
+      "x-desc": {
+        description:
+          "ID of the Google+ Page for the channel that the request is on behalf of.",
+      },
+    })
+  })
+
+  test("normalizes schema shapes used in fixture comparisons", () => {
+    const doc: oas31.OpenAPIObject = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {},
+      "x-primitive": {
+        type: "integer",
+        description: "strip me",
+      },
+      "x-empty-props": {
+        type: "object",
+        properties: {},
+      },
+      "x-body": {
+        content: {
+          "application/json": {
+            schema: { type: "string" },
+          },
+        },
+        required: true,
+      },
+      "x-optional-param": {
+        in: "query",
+        name: "q",
+        required: false,
+        schema: { type: "string" },
+      },
+      "x-required-only": {
+        required: ["b", "a"],
+      },
+    }
+
+    expect(normalize(doc)).toEqual<oas31.OpenAPIObject>({
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {},
+      "x-primitive": {
+        type: "integer",
+      },
+      "x-empty-props": {
+        type: "object",
+      },
+      "x-body": {
+        content: {
+          "application/json": {
+            schema: { type: "string" },
+          },
+        },
+      },
+      "x-optional-param": {
+        in: "query",
+        name: "q",
+        schema: { type: "string" },
+      },
+      "x-required-only": {
+        type: "object",
+        properties: {
+          a: {},
+          b: {},
+        },
+        required: ["a", "b"],
+      },
+    })
+  })
+
+  test("sorts security requirement arrays and canonicalizes scopes", () => {
+    const doc: oas31.OpenAPIObject = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {},
+      "x-security": [
+        { b: ["z", "a"], a: [] },
+        {},
+        { oauth2: ["read", "write"] },
+      ],
+    }
+
+    expect(normalize(doc)).toEqual<oas31.OpenAPIObject>({
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {},
+      "x-security": [
+        { a: [], b: ["a", "z"] },
+        { oauth2: ["read", "write"] },
+        {},
+      ],
+    })
+  })
+
+  test("throws on arrays that cannot be normalized", () => {
+    const doc: oas31.OpenAPIObject = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {},
+      "x-bad": [1, { a: [] }],
+    }
+
+    expect(() => normalize(doc)).toThrow(/Invalid value/)
+  })
 })
