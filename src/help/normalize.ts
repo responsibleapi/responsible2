@@ -66,6 +66,17 @@ function normalizePathItemParameters<T extends oas31.OpenAPIObject>(doc: T): T {
 function normVal(value: unknown): unknown {
   if (!Array.isArray(value)) {
     if (isObject(value)) {
+      const o = value as Record<string, unknown>
+      if (
+        typeof o["in"] === "string" &&
+        (o["in"] === "query" || o["in"] === "header") &&
+        o["required"] === false
+      ) {
+        const { required: _omitOptionalRequired, ...rest } = o
+
+        return normObj(rest as object)
+      }
+
       return normObj(value)
     }
     return value

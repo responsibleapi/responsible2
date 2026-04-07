@@ -63,7 +63,6 @@ describe("compiler request", () => {
       {
         name: "limit",
         in: "query",
-        required: false,
         schema: { type: "string" },
       },
       {
@@ -114,7 +113,6 @@ describe("compiler request", () => {
       {
         name: "tags",
         in: "query",
-        required: false,
         description: "Tags to include",
         style: "form",
         explode: true,
@@ -126,7 +124,6 @@ describe("compiler request", () => {
       {
         name: "X-Retry-Count",
         in: "header",
-        required: false,
         description: "Retry count",
         schema: { type: "integer", format: "int32" },
       },

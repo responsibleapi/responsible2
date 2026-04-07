@@ -125,7 +125,6 @@ describe("normalize", () => {
               {
                 name: "expand",
                 in: "query",
-                required: false,
                 schema: { type: "string" },
               },
               {

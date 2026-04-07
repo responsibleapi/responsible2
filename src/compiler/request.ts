@@ -340,10 +340,12 @@ function compileMapParameter(
     "type" in value &&
     value.type === "array"
 
+  const required = !isOptional(rawName)
+
   return {
     name,
     in: location,
-    required: !isOptional(rawName),
+    ...(required ? { required: true } : {}),
     ...(description !== undefined ? { description } : {}),
     ...(isArrayQueryParam ? { style: "form", explode: true } : {}),
     schema,
