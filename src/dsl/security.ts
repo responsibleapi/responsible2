@@ -72,9 +72,9 @@ function attachedSecuritySchemes(
     return []
   }
 
-  const schemes = (value as { [SECURITY_SCHEMES]?: readonly NamedSecurityScheme[] })[
-    SECURITY_SCHEMES
-  ]
+  const schemes = (
+    value as { [SECURITY_SCHEMES]?: readonly NamedSecurityScheme[] }
+  )[SECURITY_SCHEMES]
 
   return Array.isArray(schemes) ? schemes : []
 }
@@ -101,7 +101,9 @@ export function getAttachedSecuritySchemes(
   value: Security | SecurityOperand,
 ): readonly NamedSecurityScheme[] {
   if (Array.isArray(value)) {
-    return dedupeSecuritySchemes(value.flatMap(item => getAttachedSecuritySchemes(item)))
+    return dedupeSecuritySchemes(
+      value.flatMap(item => getAttachedSecuritySchemes(item)),
+    )
   }
 
   if (typeof value === "function") {
@@ -112,8 +114,8 @@ export function getAttachedSecuritySchemes(
 }
 
 /**
- * This unwraps {@link Nameable} so scope inference works for both inline
- * objects and named thunks.
+ * This unwraps {@link Nameable} so scope inference works for both inline objects
+ * and named thunks.
  */
 type DecodeSecurityScheme<T extends SecurityScheme> =
   T extends NamedThunk<infer Value> ? Value : T
@@ -130,8 +132,8 @@ type OAuth2FlowScopeName<TFlow> =
     : never
 
 /**
- * OAuth2 scopes can be declared across multiple flows, so this unions the
- * scope keys from every configured flow into one requirement-time scope set.
+ * OAuth2 scopes can be declared across multiple flows, so this unions the scope
+ * keys from every configured flow into one requirement-time scope set.
  */
 export type OAuth2ScopeName<T extends OAuth2SecurityScheme> =
   DecodeSecurityScheme<T> extends Readonly<{
@@ -182,9 +184,9 @@ export const oauth2Security = <
   ...param,
 })
 
-const toSecurityRequirement = (
+function toSecurityRequirement(
   security: SecurityOperand,
-): oas31.SecurityRequirementObject => {
+): oas31.SecurityRequirementObject {
   if (typeof security !== "function") {
     return security
   }
@@ -211,9 +213,9 @@ export const oauth2Requirement = <T extends NamedOAuth2SecurityScheme>(
     [scheme],
   )
 
-export const securityAND = (
+export function securityAND(
   ...items: SecurityOperands
-): oas31.SecurityRequirementObject => {
+): oas31.SecurityRequirementObject {
   const merged: oas31.SecurityRequirementObject = {}
   const schemes = dedupeSecuritySchemes(
     items.flatMap(item => getAttachedSecuritySchemes(item)),

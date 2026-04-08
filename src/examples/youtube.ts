@@ -52,8 +52,8 @@ const Oauth2 = named(
   }),
 )
 
-function Oauth2c() {
-  return oauth2Security({
+const Oauth2c = () =>
+  oauth2Security({
     description: "Oauth 2.0 authorizationCode authentication",
     flows: {
       authorizationCode: {
@@ -63,16 +63,11 @@ function Oauth2c() {
       },
     },
   })
-}
 
 type YtOauthScope = keyof typeof ytOAuthScopes
 
-function oauthScope(k: YtOauthScope) {
-  return securityAND(
-    oauth2Requirement(Oauth2, [k]),
-    oauth2Requirement(Oauth2c, [k]),
-  )
-}
+const oauthScope = (k: YtOauthScope) =>
+  securityAND(oauth2Requirement(Oauth2, [k]), oauth2Requirement(Oauth2c, [k]))
 
 /** ORs everything */
 function oauthScopes(
@@ -87,21 +82,25 @@ function oauthScopes(
   )
 }
 
-function AbuseReport() {
-  return object({
+const AbuseType = () => object({ "id?": string() })
+
+const Entity = () =>
+  object({
+    "id?": string(),
+    "typeId?": string(),
+    "url?": string(),
+  })
+
+const AbuseReport = () =>
+  object({
     "abuseTypes?": array(AbuseType),
     "description?": string(),
     "relatedEntities?": array(RelatedEntity),
     "subject?": Entity,
   })
-}
-function AbuseType() {
-  return object({
-    "id?": string(),
-  })
-}
-function AccessPolicy() {
-  return object(
+
+const AccessPolicy = () =>
+  object(
     {
       "allowed?": boolean({
         description:
@@ -116,9 +115,9 @@ function AccessPolicy() {
       description: "Rights management policy for YouTube resources.",
     },
   )
-}
-function Activity() {
-  return object(
+
+const Activity = () =>
+  object(
     {
       "contentDetails?": ref(ActivityContentDetails, {
         description:
@@ -144,7 +143,7 @@ function Activity() {
         "An *activity* resource contains information about an action that a particular channel, or user, has taken on YouTube.The actions reported in activity feeds include rating a video, sharing a video, marking a video as a favorite, commenting on a video, uploading a video, and so forth. Each activity resource identifies the type of action, the channel associated with the action, and the resource(s) associated with the action, such as the video that was rated or uploaded.",
     },
   )
-}
+
 function ActivityContentDetails() {
   return object(
     {
@@ -548,6 +547,7 @@ function CaptionListResponse() {
     }),
   })
 }
+
 function CaptionSnippet() {
   return object(
     {
@@ -652,8 +652,22 @@ function CdnSettings() {
     },
   )
 }
-function Channel() {
-  return object(
+
+const ChannelLocalization = () =>
+  object(
+    {
+      "description?": string({
+        description: "The localized strings for channel's description.",
+      }),
+      "title?": string({
+        description: "The localized strings for channel's title.",
+      }),
+    },
+    { description: "Channel localization setting" },
+  )
+
+const Channel = () =>
+  object(
     {
       "auditDetails?": ref(ChannelAuditDetails, {
         description:
@@ -712,7 +726,7 @@ function Channel() {
         "A *channel* resource contains information about a YouTube channel.",
     },
   )
-}
+
 function ChannelAuditDetails() {
   return object(
     {
@@ -885,22 +899,6 @@ function ChannelListResponse() {
       description: "The visitorId identifies the visitor.",
     }),
   })
-}
-
-function ChannelLocalization() {
-  return object(
-    {
-      "description?": string({
-        description: "The localized strings for channel's description.",
-      }),
-      "title?": string({
-        description: "The localized strings for channel's title.",
-      }),
-    },
-    {
-      description: "Channel localization setting",
-    },
-  )
 }
 
 function ChannelProfileDetails() {
@@ -2533,13 +2531,6 @@ function Cuepoint() {
     },
   )
 }
-function Entity() {
-  return object({
-    "id?": string(),
-    "typeId?": string(),
-    "url?": string(),
-  })
-}
 function GeoPoint() {
   return object(
     {
@@ -3515,6 +3506,7 @@ function LiveChatModeratorListResponse() {
     }),
   })
 }
+
 function LiveChatModeratorSnippet() {
   return object({
     "liveChatId?": string({
@@ -3525,6 +3517,7 @@ function LiveChatModeratorSnippet() {
     }),
   })
 }
+
 function LiveChatNewSponsorDetails() {
   return object({
     "isUpgrade?": boolean({
@@ -3560,6 +3553,7 @@ function LiveChatSuperChatDetails() {
     }),
   })
 }
+
 function LiveChatSuperStickerDetails() {
   return object({
     "amountDisplayString?": string({
@@ -3583,6 +3577,7 @@ function LiveChatSuperStickerDetails() {
     }),
   })
 }
+
 function LiveChatTextMessageDetails() {
   return object({
     "messageText?": string({
