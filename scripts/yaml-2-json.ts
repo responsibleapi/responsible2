@@ -1,11 +1,11 @@
-/// <reference types="bun" />
+#!/usr/bin/env bun
+import Bun from "bun"
 
 const [inputPath, outputPath] = Bun.argv.slice(2)
 
 if (!inputPath || !outputPath) {
-  throw new Error(
-    "Usage: bun scripts/yaml-2-json.ts <input.yaml> <output.json>",
-  )
+  console.error("Usage: bun scripts/yaml-2-json.ts <input.yaml> <output.json>")
+  process.exit(1)
 }
 
 const input = await Bun.file(inputPath).text()
