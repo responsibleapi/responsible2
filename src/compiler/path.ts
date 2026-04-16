@@ -1,8 +1,6 @@
 import type { HttpPath } from "../dsl/scope.ts"
 
-/**
- * Join a parent path prefix with a route segment. Both use DSL form (`:param`).
- */
+/** Join a parent path prefix with a route segment. Both use DSL form (`:param`). */
 export function joinHttpPaths(prefix: string, segment: HttpPath): string {
   if (prefix === "" || prefix === "/") {
     return segment
@@ -16,16 +14,12 @@ export function joinHttpPaths(prefix: string, segment: HttpPath): string {
 
 const PARAM_SEGMENT = /:([A-Za-z_][A-Za-z0-9_]*)/g
 
-/**
- * Convert DSL path segments (`:id`) to OpenAPI template form (`{id}`).
- */
+/** Convert DSL path segments (`:id`) to OpenAPI template form (`{id}`). */
 export function dslPathToOpenApiPath(dslPath: string): string {
   return dslPath.replace(PARAM_SEGMENT, "{$1}")
 }
 
-/**
- * Parameter names appearing in an OpenAPI path template (`{name}`).
- */
+/** Parameter names appearing in an OpenAPI path template (`{name}`). */
 export function openApiPathTemplateNames(oasPath: string): string[] {
   const names: string[] = []
   const re = /\{([^}]+)\}/g
