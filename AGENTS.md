@@ -1,8 +1,11 @@
 # AGENTS.md
 
-## Current state of things
-
 - 100% TypeScript codebase
+- Scope of the compiler: OpenAPI 3.1+. If any work touches OpenAPI 3.0.x and
+  lower, stop and tell the human
+
+## Rules
+
 - verify changes to `src/` with `bun check`
 - never add `oxlint-disable-next-line` unless explicitly asked
 - never edit [package.json](package.json) unless explicitly asked
