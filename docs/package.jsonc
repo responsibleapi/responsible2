@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@types/bun": "zed can't run bun test without this",
-    "vitest": "webstorm still doesn't support bun:test"
+    "vitest": "webstorm still doesn't support bun:test",
+    "openapi-format": "migrating OpenAPI 3.0.x to 3.1.x"
   }
 }
