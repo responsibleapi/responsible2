@@ -293,15 +293,36 @@ function compileRawSchema(
   },
 ): oas31.SchemaObject {
   if ("oneOf" in s) {
-    return { oneOf: s.oneOf.map(x => compileSchema(state, x)) }
+    const rest = schemaBaseFields(s)
+    delete rest["oneOf"]
+
+    return {
+      ...rest,
+      ...schemaExampleFields(s, opts),
+      oneOf: s.oneOf.map(x => compileSchema(state, x)),
+    }
   }
 
   if ("anyOf" in s) {
-    return { anyOf: s.anyOf.map(x => compileSchema(state, x)) }
+    const rest = schemaBaseFields(s)
+    delete rest["anyOf"]
+
+    return {
+      ...rest,
+      ...schemaExampleFields(s, opts),
+      anyOf: s.anyOf.map(x => compileSchema(state, x)),
+    }
   }
 
   if ("allOf" in s) {
-    return { allOf: s.allOf.map(x => compileSchema(state, x)) }
+    const rest = schemaBaseFields(s)
+    delete rest["allOf"]
+
+    return {
+      ...rest,
+      ...schemaExampleFields(s, opts),
+      allOf: s.allOf.map(x => compileSchema(state, x)),
+    }
   }
 
   if (!("type" in s)) {

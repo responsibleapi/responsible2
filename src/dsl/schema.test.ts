@@ -362,6 +362,51 @@ describe("schema", () => {
     await expectValidSchema(schema)
   })
 
+  test("string with vendor extensions", async () => {
+    const schema = string({
+      description: "Тип события webhook для пользователей",
+      enum: ["invite", "confirm", "update", "suspend", "activate", "delete"],
+      "x-enum-descriptions": {
+        invite: "Приглашение",
+        confirm: "Подтверждение",
+        update: "Обновление",
+        suspend: "Приостановка",
+        activate: "Активация",
+        delete: "Удаление",
+      },
+    })
+
+    expect(schema).toEqual({
+      type: "string",
+      description: "Тип события webhook для пользователей",
+      enum: ["invite", "confirm", "update", "suspend", "activate", "delete"],
+      "x-enum-descriptions": {
+        invite: "Приглашение",
+        confirm: "Подтверждение",
+        update: "Обновление",
+        suspend: "Приостановка",
+        activate: "Активация",
+        delete: "Удаление",
+      },
+    })
+
+    expect(compileTestSchema(schema)).toEqual<oas31.SchemaObject>({
+      type: "string",
+      description: "Тип события webhook для пользователей",
+      enum: ["invite", "confirm", "update", "suspend", "activate", "delete"],
+      "x-enum-descriptions": {
+        invite: "Приглашение",
+        confirm: "Подтверждение",
+        update: "Обновление",
+        suspend: "Приостановка",
+        activate: "Активация",
+        delete: "Удаление",
+      },
+    })
+
+    await expectValidSchema(schema)
+  })
+
   test("oneOf", async () => {
     const schema = oneOf([string(), int32()])
 

@@ -2,6 +2,30 @@ import { isOptional, type NameWithOptionality } from "./dsl.ts"
 import type { Nameable } from "./nameable.ts"
 import type { Mime } from "./scope.ts"
 
+export type SchemaExtensionValue =
+  | string
+  | number
+  | boolean
+  | null
+  | readonly SchemaExtensionValue[]
+  | { readonly [key: string]: SchemaExtensionValue }
+
+export interface SchemaExtensions {
+  readonly [name: `x-${string}`]: SchemaExtensionValue
+}
+
+type SchemaOpts<T> = Readonly<{
+  default?: unknown
+  description?: string
+  deprecated?: boolean
+
+  examples?: readonly T[]
+
+  /** @deprecated Use {@link examples} instead */
+  example?: T
+}> &
+  SchemaExtensions
+
 type KnownStringFormat =
   | "byte"
   | "email"
@@ -14,17 +38,6 @@ type KnownStringFormat =
   | "blob"
 
 type StringFormat = KnownStringFormat | (string & {})
-
-type SchemaOpts<T> = Readonly<{
-  default?: unknown
-  description?: string
-  deprecated?: boolean
-
-  examples?: readonly T[]
-
-  /** @deprecated Use {@link examples} instead */
-  example?: T
-}>
 
 interface StringsOpts extends SchemaOpts<string> {
   format?: StringFormat
