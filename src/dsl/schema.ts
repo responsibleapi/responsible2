@@ -49,8 +49,9 @@ interface StringsOpts extends SchemaOpts<string> {
   const?: string
 }
 
-interface Str extends StringsOpts {
+interface Str extends Omit<StringsOpts, "pattern"> {
   type: "string"
+  pattern?: string
 }
 
 interface NumberOpts extends SchemaOpts<number> {
@@ -244,10 +245,27 @@ export const httpURL = (): Str =>
 export const unixMillis = (): Int =>
   int64({ description: "UNIX epoch milliseconds" })
 
-export const string = (opts?: StringsOpts): Str => ({
-  type: "string",
-  ...opts,
-})
+const stringifyPattern = (
+  pattern: string | RegExp | undefined,
+): string | undefined => (pattern instanceof RegExp ? pattern.source : pattern)
+
+export const string = (opts?: StringsOpts): Str => {
+  const { pattern, ...rest } = opts ?? {}
+  const stringPattern = stringifyPattern(pattern)
+
+  if (stringPattern === undefined) {
+    return {
+      type: "string",
+      ...rest,
+    }
+  }
+
+  return {
+    type: "string",
+    ...rest,
+    pattern: stringPattern,
+  }
+}
 
 export const oneOf = (
   schemas: readonly Schema[],

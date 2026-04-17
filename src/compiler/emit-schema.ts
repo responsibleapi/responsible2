@@ -1,8 +1,8 @@
 import type { oas31 } from "openapi3-ts"
 import { decodeNameable } from "../dsl/nameable.ts"
 import type { Obj, RawSchema, Schema } from "../dsl/schema.ts"
-import { deepEqualJson } from "./json-equal.ts"
 import type { ComponentRegistryState } from "./components.ts"
+import { deepEqualJson } from "./json-equal.ts"
 
 type Dict = Extract<RawSchema, { type: "object"; propertyNames: unknown }>
 
@@ -154,18 +154,6 @@ const emitRawSchemaValue = (
         ...schemaBaseFields(schema),
         items: emitSchemaRefOrValue(state, schema.items),
       }
-
-    case "string": {
-      const out: oas31.SchemaObject = {
-        ...schemaBaseFields(schema),
-      }
-
-      if (schema.pattern instanceof RegExp) {
-        out.pattern = schema.pattern.source
-      }
-
-      return out
-    }
 
     default: {
       const out: oas31.SchemaObject = schemaBaseFields(schema)

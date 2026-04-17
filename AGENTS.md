@@ -3,8 +3,6 @@
 - 100% TypeScript codebase
 - Scope of the compiler: OpenAPI 3.1+. If any work touches OpenAPI 3.0.x and
   lower, stop and tell the human
-- we're in the midst of converting [examples](src/examples/) to OpenAPI 3.1.0
-  Everything's broken
 
 ## DSL design
 

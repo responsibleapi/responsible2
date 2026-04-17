@@ -346,6 +346,30 @@ describe("schema", () => {
     await expectValidSchema(schema)
   })
 
+  test("string stringifies RegExp pattern", async () => {
+    const schema = string({
+      minLength: 1,
+      pattern: /^[a-z]+$/i,
+      examples: ["alpha"],
+    })
+
+    expect(schema).toEqual({
+      type: "string",
+      minLength: 1,
+      pattern: "^[a-z]+$",
+      examples: ["alpha"],
+    })
+
+    expect(compileTestSchema(schema)).toEqual<oas31.SchemaObject>({
+      type: "string",
+      minLength: 1,
+      pattern: "^[a-z]+$",
+      examples: ["alpha"],
+    })
+
+    await expectValidSchema(schema)
+  })
+
   test("string with contentMediaType", async () => {
     const schema = string({
       description: "OpenAPI/Swagger file. We accept JSON or YAML.",
