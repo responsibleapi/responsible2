@@ -1,3 +1,4 @@
+import { deepEqual } from "../help/deep-equal.ts"
 import { isOptional, type NameWithOptionality } from "./dsl.ts"
 import type { Nameable } from "./nameable.ts"
 import type { Mime } from "./scope.ts"
@@ -105,7 +106,7 @@ interface DictOpts extends SchemaOpts<Record<PropertyKey, unknown>> {}
 
 type Dict = Readonly<{
   type: "object"
-  propertyNames: DictKeySchema
+  propertyNames?: DictKeySchema
   additionalProperties: Schema
 }> &
   DictOpts
@@ -166,29 +167,43 @@ export type Schema = Nameable<RawSchema>
 
 type DictKeySchema = Nameable<Str | Num>
 
-export const dict = (k: DictKeySchema, v: Schema, opts?: DictOpts): Dict => ({
-  ...opts,
-  type: "object",
-  propertyNames: k,
-  additionalProperties: v,
-})
+const DEFAULT_DICT_KEY_SCHEMA = { type: "string" } as const
+
+export const dict = (k: DictKeySchema, v: Schema, opts?: DictOpts): Dict => {
+  const ret: Dict = {
+    ...opts,
+    type: "object",
+    additionalProperties: v,
+  }
+  if (!deepEqual(k, DEFAULT_DICT_KEY_SCHEMA)) {
+    Object.assign(ret, { propertyNames: k })
+  }
+  return ret
+}
 
 interface ObjectOpts extends SchemaOpts<Record<string, unknown>> {}
 
 export const object = (
   props: Readonly<Record<NameWithOptionality, Schema>> = {},
   opts?: ObjectOpts,
-): Obj => ({
-  ...opts,
-  type: "object",
-  properties: Object.fromEntries(
+): Obj => {
+  const properties = Object.fromEntries(
     Object.entries(props).map(([k, v]) => [
       isOptional(k) ? k.slice(0, -1) : k,
       v,
     ]),
-  ),
-  required: Object.keys(props).filter(k => !isOptional(k)),
-})
+  )
+  const required = Object.keys(props).filter(k => !isOptional(k))
+  const ret: Obj = {
+    ...opts,
+    type: "object",
+    properties,
+  }
+  if (required.length > 0) {
+    Object.assign(ret, { required })
+  }
+  return ret
+}
 
 export const int64 = (opts?: NumberOpts): Int => ({
   ...opts,

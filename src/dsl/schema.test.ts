@@ -96,6 +96,21 @@ describe("schema", () => {
     await expectValidSchema(schema)
   })
 
+  test("dict omits default string propertyNames", async () => {
+    const schema = dict(string(), int32({ minimum: 0 }))
+
+    expect(schema).toEqual({
+      type: "object",
+      additionalProperties: {
+        type: "integer",
+        format: "int32",
+        minimum: 0,
+      },
+    })
+
+    await expectValidSchema(schema)
+  })
+
   test("object", async () => {
     const schema = object(
       {
@@ -126,7 +141,7 @@ describe("schema", () => {
     await expectValidSchema(schema)
   })
 
-  test("object with optional property names yields empty required", async () => {
+  test("object with optional property names omits required", async () => {
     const schema = object({
       "title?": string(),
       "subtitle?": string(),
@@ -142,7 +157,6 @@ describe("schema", () => {
           type: "string",
         },
       },
-      required: [],
     })
 
     await expectValidSchema(schema)
@@ -494,7 +508,6 @@ describe("schema", () => {
               type: "string",
             },
           },
-          required: [],
         },
       ],
     })

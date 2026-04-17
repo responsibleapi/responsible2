@@ -256,6 +256,10 @@ describe("normalize", () => {
         type: "integer",
         description: "strip me",
       },
+      "x-pattern": {
+        type: "string",
+        pattern: "^https?:\\/\\/\\S+$",
+      },
       "x-empty-props": {
         type: "object",
         properties: {},
@@ -277,6 +281,13 @@ describe("normalize", () => {
       "x-required-only": {
         required: ["b", "a"],
       },
+      "x-empty-required": {
+        type: "object",
+        properties: {
+          maybe: { type: "string" },
+        },
+        required: [],
+      },
     }
 
     expect(normalize(doc)).toEqual<oas31.OpenAPIObject>({
@@ -285,6 +296,10 @@ describe("normalize", () => {
       paths: {},
       "x-primitive": {
         type: "integer",
+      },
+      "x-pattern": {
+        type: "string",
+        pattern: "^https?://\\S+$",
       },
       "x-empty-props": {
         type: "object",
@@ -308,6 +323,12 @@ describe("normalize", () => {
           b: {},
         },
         required: ["a", "b"],
+      },
+      "x-empty-required": {
+        type: "object",
+        properties: {
+          maybe: { type: "string" },
+        },
       },
     })
   })

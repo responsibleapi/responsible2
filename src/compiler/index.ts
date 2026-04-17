@@ -18,12 +18,12 @@ import type {
 import type { HeaderRaw, ReusableHeader } from "../dsl/response-headers.ts"
 import type { RawSchema, Schema } from "../dsl/schema.ts"
 import type { HttpPath, Mime, ScopeOpts, ScopeRes } from "../dsl/scope.ts"
+import { deepEqual } from "../help/deep-equal.ts"
 import { isScope } from "../dsl/scope.ts"
 import {
   createComponentRegistryState,
   type ComponentRegistryState,
 } from "./components.ts"
-import { deepEqualJson } from "./json-equal.ts"
 import { emitSchemaRefOrValue } from "./emit-schema.ts"
 import { dslPathToOpenApiPath, joinHttpPaths } from "./path.ts"
 import {
@@ -521,7 +521,7 @@ function compileHeaderComponent(
   const existing = state.components.headers[resolvedName]
 
   if (existing !== undefined) {
-    if (!deepEqualJson(existing, obj)) {
+    if (!deepEqual(existing, obj)) {
       throw new Error(
         `components.headers: name "${resolvedName}" is already used by a different header`,
       )
@@ -786,7 +786,7 @@ function recordResponseComponent(
   const existing = state.components.responses[name]
 
   if (existing !== undefined) {
-    if (!deepEqualJson(existing, obj)) {
+    if (!deepEqual(existing, obj)) {
       throw new Error(
         `components.responses: name "${name}" is already used by a different response`,
       )
@@ -1057,7 +1057,7 @@ function placeOperation(
   if (
     pathItemParameters !== undefined &&
     existing?.parameters !== undefined &&
-    !deepEqualJson(existing.parameters, pathItemParameters)
+    !deepEqual(existing.parameters, pathItemParameters)
   ) {
     throw new Error(`Conflicting inherited parameters for path "${oasPath}".`)
   }

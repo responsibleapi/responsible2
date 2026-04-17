@@ -1,10 +1,10 @@
 import type { oas31 } from "openapi3-ts"
 import { decodeNameable } from "../dsl/nameable.ts"
 import type { Obj, RawSchema, Schema } from "../dsl/schema.ts"
+import { deepEqual } from "../help/deep-equal.ts"
 import type { ComponentRegistryState } from "./components.ts"
-import { deepEqualJson } from "./json-equal.ts"
 
-type Dict = Extract<RawSchema, { type: "object"; propertyNames: unknown }>
+type Dict = Extract<RawSchema, { type: "object"; additionalProperties: Schema }>
 
 export type EmittedSchema = oas31.SchemaObject | oas31.ReferenceObject
 
@@ -94,11 +94,13 @@ const emitDict = (
 ): oas31.SchemaObject => {
   const out: oas31.SchemaObject = {
     ...schemaBaseFields(schema),
-    propertyNames: emitSchemaRefOrValue(state, schema.propertyNames),
     additionalProperties: emitSchemaRefOrValue(
       state,
       schema.additionalProperties,
     ),
+    ...("propertyNames" in schema
+      ? { propertyNames: emitSchemaRefOrValue(state, schema.propertyNames) }
+      : {}),
   }
 
   return out
@@ -143,7 +145,7 @@ const emitRawSchemaValue = (
 
   switch (schema.type) {
     case "object":
-      if ("propertyNames" in schema) {
+      if ("additionalProperties" in schema) {
         return emitDict(state, schema)
       }
 
@@ -195,7 +197,7 @@ export function emitSchemaRefOrValue(
         emitRawSchemaValue(state, value),
       )
 
-      if (!deepEqualJson(existing, candidate)) {
+      if (!deepEqual(existing, candidate)) {
         throw new Error(
           `components.schemas: name "${name}" is already used by a different schema definition`,
         )

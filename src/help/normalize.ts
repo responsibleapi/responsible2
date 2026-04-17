@@ -41,11 +41,12 @@ function canonicalizeSecurityRequirementObject(
 /**
  * Sort key for arrays of security requirement objects in {@linkcode normVal}.
  *
- * Each element is first {@link canonicalizeSecurityRequirementObject | canonicalized}
- * (sorted keys, sorted scope strings). The outer array is then sorted by
- * comparing those canonical forms as JSON strings with `localeCompare`, so
- * order is lexicographic on `JSON.stringify(canonical)` and is stable for
- * fixture diffs, not an OpenAPI “business” ordering.
+ * Each element is first
+ * {@link canonicalizeSecurityRequirementObject | canonicalized} (sorted keys,
+ * sorted scope strings). The outer array is then sorted by comparing those
+ * canonical forms as JSON strings with `localeCompare`, so order is
+ * lexicographic on `JSON.stringify(canonical)` and is stable for fixture diffs,
+ * not an OpenAPI “business” ordering.
  */
 function securityRequirementSortKey(obj: Record<string, unknown>): string {
   return JSON.stringify(canonicalizeSecurityRequirementObject(obj))
@@ -60,6 +61,10 @@ function normalizeDescriptionString(s: string): string {
   }
 
   return s
+}
+
+function normalizePatternString(s: string): string {
+  return s.replaceAll("\\/", "/")
 }
 
 const OPERATION_KEYS = [
@@ -87,8 +92,8 @@ const OPERATION_KEYS = [
  *
  * **Final order:** after {@linkcode normalize} runs, any `parameters` array is
  * normalized as an array of objects and sorted by each object’s `name` (see
- * `normVal`), so the order you see in output is alphabetical by `name`, not
- * the raw merge order above.
+ * `normVal`), so the order you see in output is alphabetical by `name`, not the
+ * raw merge order above.
  */
 function normalizePathItemParameters<T extends oas31.OpenAPIObject>(doc: T): T {
   if (doc.paths === undefined) {
@@ -158,6 +163,12 @@ function normVal(value: unknown): unknown {
 
       if (isObject(o["content"]) && o["required"] === true) {
         const { required: _omitRequestBodyRequired, ...rest } = o
+
+        o = rest as Record<string, unknown>
+      }
+
+      if (Array.isArray(o["required"]) && o["required"].length === 0) {
+        const { required: _omitEmptyRequired, ...rest } = o
 
         o = rest as Record<string, unknown>
       }
@@ -263,6 +274,9 @@ const normObj = <T extends object>(obj: T): T => {
       normalizedObject[k as keyof T] = normalizeDescriptionString(
         raw,
       ) as T[keyof T]
+    } else if (k === "pattern" && typeof raw === "string") {
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+      normalizedObject[k as keyof T] = normalizePatternString(raw) as T[keyof T]
     } else {
       // oxlint-disable-next-line typescript/no-unsafe-type-assertion
       normalizedObject[k as keyof T] = normVal(raw) as T[keyof T]
