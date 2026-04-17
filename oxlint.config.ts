@@ -26,12 +26,12 @@ export default defineConfig({
       },
     },
   },
-  jsPlugins: ["./scripts/oxlint-plugin-examples-array.ts"],
+  // jsPlugins: ["./scripts/oxlint-prefer-schema-examples.ts"],
   overrides: [
     {
       files: ["src/**/*.ts", "scripts/**/*.ts"],
       rules: {
-        "local/prefer-schema-examples": "warn",
+        // "local/prefer-schema-examples": "warn",
         "typescript/consistent-type-imports": [
           "error",
           {
