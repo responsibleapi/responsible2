@@ -200,7 +200,7 @@ describe("compiler request", () => {
     ])
   })
 
-  test("keeps schema-owned examples inside parameter schemas", async () => {
+  test("lifts schema-owned examples onto map-style parameters", async () => {
     const Cursor = named(
       "cursor",
       queryParam({
@@ -252,9 +252,9 @@ describe("compiler request", () => {
         in: "path",
         required: true,
         description: "Item id",
+        example: "item-123",
         schema: {
           type: "string",
-          examples: ["item-123"],
         },
       },
       {
@@ -262,9 +262,9 @@ describe("compiler request", () => {
         in: "query",
         required: true,
         description: "Filter expression",
+        example: "status:open",
         schema: {
           type: "string",
-          example: "status:open",
         },
       },
       { $ref: "#/components/parameters/cursor" },
@@ -273,9 +273,9 @@ describe("compiler request", () => {
         in: "header",
         required: true,
         description: "Trace id",
+        example: "trace-123",
         schema: {
           type: "string",
-          examples: ["trace-123"],
         },
       },
     ])

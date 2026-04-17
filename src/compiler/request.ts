@@ -13,6 +13,7 @@ import { emitSchemaRefOrValue, type EmittedSchema } from "./emit-schema.ts"
 import { openApiPathTemplateNames } from "./path.ts"
 import {
   getSchemaUseDescription,
+  getSchemaUseExample,
   stripSchemaUsageFields,
 } from "./schema-usage.ts"
 
@@ -21,6 +22,9 @@ type ParameterSchema = EmittedSchema
 function parameterSchemaFields(
   source: Schema,
   compiled: ParameterSchema,
+  opts?: {
+    example?: boolean
+  },
 ): {
   description?: string
   schema: ParameterSchema
@@ -31,8 +35,13 @@ function parameterSchemaFields(
     ...(description !== undefined ? { description } : {}),
     schema: stripSchemaUsageFields(compiled, {
       description: true,
+      ...(opts?.example ? { example: true } : {}),
     }),
   }
+}
+
+function isSchemaRef(schema: ParameterSchema): schema is oas31.ReferenceObject {
+  return "$ref" in schema
 }
 
 export function stripSecurityFields(
@@ -247,9 +256,17 @@ function paramRawToParameterObject(
     throw new Error(`Parameter "${paramName}" has no schema.`)
   }
 
+  const emittedSchema = emitSchemaRefOrValue(state, raw.schema)
+  const schemaExample =
+    raw.example === undefined && !isSchemaRef(emittedSchema)
+      ? getSchemaUseExample(raw.schema)
+      : undefined
   const { description, schema } = parameterSchemaFields(
     raw.schema,
-    emitSchemaRefOrValue(state, raw.schema),
+    emittedSchema,
+    {
+      ...(schemaExample !== undefined ? { example: true } : {}),
+    },
   )
   const base: oas31.ParameterObject = {
     name: paramName,
@@ -260,7 +277,11 @@ function paramRawToParameterObject(
       : description !== undefined
         ? { description }
         : {}),
-    ...(raw.example !== undefined ? { example: raw.example } : {}),
+    ...(raw.example !== undefined
+      ? { example: raw.example }
+      : schemaExample !== undefined
+        ? { example: schemaExample }
+        : {}),
   }
 
   if (raw.in === "path") {
@@ -327,9 +348,14 @@ function compileMapParameter(
   location: "query" | "header",
 ): oas31.ParameterObject {
   const name = isOptional(rawName) ? rawName.slice(0, -1) : rawName
+  const emittedSchema = emitSchemaRefOrValue(state, sch)
+  const example = !isSchemaRef(emittedSchema) ? getSchemaUseExample(sch) : undefined
   const { description, schema } = parameterSchemaFields(
     sch,
-    emitSchemaRefOrValue(state, sch),
+    emittedSchema,
+    {
+      ...(example !== undefined ? { example: true } : {}),
+    },
   )
   const { value } = decodeNameable(sch)
   const isArrayQueryParam =
@@ -346,6 +372,7 @@ function compileMapParameter(
     in: location,
     ...(required ? { required: true } : {}),
     ...(description !== undefined ? { description } : {}),
+    ...(example !== undefined ? { example } : {}),
     ...(isArrayQueryParam ? { style: "form", explode: true } : {}),
     schema,
   }
@@ -498,9 +525,16 @@ function compilePathParametersForLayer(
       out.push(compileParamComponent(state, namedPath))
     } else {
       const pathSchema = pathSchemas[name]!
+      const emittedSchema = emitSchemaRefOrValue(state, pathSchema)
+      const example = !isSchemaRef(emittedSchema)
+        ? getSchemaUseExample(pathSchema)
+        : undefined
       const { description, schema } = parameterSchemaFields(
         pathSchema,
-        emitSchemaRefOrValue(state, pathSchema),
+        emittedSchema,
+        {
+          ...(example !== undefined ? { example: true } : {}),
+        },
       )
 
       out.push({
@@ -508,6 +542,7 @@ function compilePathParametersForLayer(
         in: "path",
         required: true,
         ...(description !== undefined ? { description } : {}),
+        ...(example !== undefined ? { example } : {}),
         schema,
       })
     }
