@@ -23,33 +23,6 @@ extended first.
   - There is no `extensions` field or other `x-*` escape hatch in the current
     DSL surface
 
-- `nullable` is used in Pachca schemas, and the schema DSL cannot express it.
-  - `profile/status` response has nullable `data` at
-    [pachca.yaml](./pachca.yaml#L2874)
-  - `AccessTokenInfo.name` is nullable at [pachca.yaml](./pachca.yaml#L4700)
-  - `UserStatus.away_message` is nullable at [pachca.yaml](./pachca.yaml#L7625)
-  - `nullable: true` appears 33 times in the file
-  - `SchemaOpts` in [schema.ts](../dsl/schema.ts#L17) has no `nullable`
-  - The schema union in [schema.ts](../dsl/schema.ts#L107) has no
-    null-or-nullable form
-
-## What Does Not Prove A Gap
-
-- Unions do not justify extension work here.
-  - `oneOf`, `anyOf`, and `allOf` are already supported in
-    [schema.ts](../dsl/schema.ts#L205)
-  - The note in [pachca.md](./pachca.md#L92) is stale on that point
-
-- MIME-specific request bodies do not justify extension work here.
-  - The DSL already supports `Schema | Record<Mime, Schema>` in
-    [operation.ts](../dsl/operation.ts#L42)
-  - The compiler already emits multi-content request bodies in
-    [index.ts](../compiler/index.ts#L619)
-
-- `additionalProperties: true` may still be a general DSL gap, but it does not
-  prove anything for Pachca specifically.
-  - I did not find that shape in `pachca.yaml`
-
 ## Minimal Extension Set Justified By Pachca
 
 - Add schema-level `nullable`
