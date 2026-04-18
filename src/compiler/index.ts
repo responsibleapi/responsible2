@@ -33,7 +33,6 @@ import {
   securityLayerFromScopeReq,
   stripSecurityFields,
 } from "./request.ts"
-import { getSchemaUseExample, stripSchemaUsageFields } from "./schema-usage.ts"
 
 const OAS_METHOD: Record<HttpMethod, keyof oas31.PathItemObject> = {
   GET: "get",
@@ -496,14 +495,13 @@ function headerRawToHeaderObject(
   raw: HeaderRaw,
 ): oas31.HeaderObject {
   const schema = emitSchemaRefOrValue(state, raw.schema)
-  const example = raw.example ?? getSchemaUseExample(raw.schema)
 
   return {
     ...(raw.description !== undefined ? { description: raw.description } : {}),
-    schema: stripSchemaUsageFields(schema, { example: true }),
+    schema,
     ...(raw.required !== undefined ? { required: raw.required } : {}),
     ...(raw.deprecated !== undefined ? { deprecated: raw.deprecated } : {}),
-    ...(example !== undefined ? { example } : {}),
+    ...(raw.example !== undefined ? { example: raw.example } : {}),
   }
 }
 
@@ -573,12 +571,10 @@ function compileHeaderMap(
     }
 
     const schema = emitSchemaRefOrValue(schemaState, val)
-    const example = getSchemaUseExample(val)
 
     out[name] = {
       required,
-      ...(example !== undefined ? { example } : {}),
-      schema: stripSchemaUsageFields(schema, { example: true }),
+      schema,
     }
   }
 

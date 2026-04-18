@@ -74,7 +74,7 @@ describe("compiler request", () => {
     ])
   })
 
-  test("legacy bare-schema map params still lift descriptions and emit query array defaults", async () => {
+  test("legacy bare-schema map params keep schema metadata nested", async () => {
     const api = responsibleAPI({
       partialDoc: {
         openapi: "3.1.0",
@@ -108,34 +108,42 @@ describe("compiler request", () => {
         name: "page",
         in: "query",
         required: true,
-        description: "Page number",
-        schema: { type: "integer", format: "int32" },
+        schema: {
+          type: "integer",
+          format: "int32",
+          description: "Page number",
+        },
       },
       {
         name: "cursor",
         in: "query",
-        example: "next-cursor",
-        schema: { type: "string" },
+        schema: {
+          type: "string",
+          example: "next-cursor",
+        },
       },
       {
         name: "tags",
         in: "query",
-        description: "Tags to include",
         schema: {
           type: "array",
+          description: "Tags to include",
           items: { type: "string" },
         },
       },
       {
         name: "X-Retry-Count",
         in: "header",
-        description: "Retry count",
-        schema: { type: "integer", format: "int32" },
+        schema: {
+          type: "integer",
+          format: "int32",
+          description: "Retry count",
+        },
       },
     ])
   })
 
-  test("reuses named schema across body, query, header, and path without mutating component shape", async () => {
+  test("reuses named schema across body, query, header, and path without mutating parameter shape", async () => {
     const Shared = named(
       "SharedToken",
       string({
@@ -185,27 +193,24 @@ describe("compiler request", () => {
         name: "id",
         in: "path",
         required: true,
-        description: "Shared token",
         schema: { $ref: "#/components/schemas/SharedToken" },
       },
       {
         name: "filter",
         in: "query",
         required: true,
-        description: "Shared token",
         schema: { $ref: "#/components/schemas/SharedToken" },
       },
       {
         name: "X-Trace",
         in: "header",
         required: true,
-        description: "Shared token",
         schema: { $ref: "#/components/schemas/SharedToken" },
       },
     ])
   })
 
-  test("inline map params keep schema metadata nested and reusable params do not lift schema metadata", async () => {
+  test("inline map params keep wrapper metadata outside nested schema", async () => {
     const Cursor = named(
       "cursor",
       queryParam({
@@ -325,7 +330,6 @@ describe("compiler request", () => {
       {
         name: "cursor_schema_only",
         in: "query",
-        example: "cursor-schema-only-example",
         schema: {
           type: "string",
           description: "Cursor schema description",

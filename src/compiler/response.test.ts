@@ -485,7 +485,7 @@ describe("response", () => {
     expect(rapi.components?.headers).toBeUndefined()
   })
 
-  test("reuses named schema across request body and response header without mutating component shape", async () => {
+  test("reuses named schema across request body and response header without mutating header shape", async () => {
     const Shared = named(
       "SharedHeaderValue",
       string({
@@ -538,7 +538,6 @@ describe("response", () => {
     expect(rapi.paths?.["/x"]?.post?.responses?.["200"]?.headers).toEqual({
       "X-Trace": {
         required: true,
-        example: "trace-123",
         schema: { $ref: "#/components/schemas/SharedHeaderValue" },
       },
     })

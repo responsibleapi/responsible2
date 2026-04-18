@@ -16,37 +16,11 @@ import { deepEqual } from "../help/deep-equal.ts"
 import type { ComponentRegistryState } from "./components.ts"
 import { emitSchemaRefOrValue, type EmittedSchema } from "./emit-schema.ts"
 import { openApiPathTemplateNames } from "./path.ts"
-import {
-  getSchemaUseDescription,
-  getSchemaUseExample,
-  stripSchemaUsageFields,
-} from "./schema-usage.ts"
 
 type ParameterSchema = EmittedSchema
 type InlineMapParameter = InlinePathParam | InlineQueryParam | InlineHeaderParam
 type InlineNonPathMapParameter = InlineQueryParam | InlineHeaderParam
 type InlineOrLegacyMapParameter = Schema | InlineNonPathMapParameter
-
-function parameterSchemaFields(
-  source: Schema,
-  compiled: ParameterSchema,
-  opts?: {
-    example?: boolean
-  },
-): {
-  description?: string
-  schema: ParameterSchema
-} {
-  const description = getSchemaUseDescription(source)
-
-  return {
-    ...(description !== undefined ? { description } : {}),
-    schema: stripSchemaUsageFields(compiled, {
-      description: true,
-      ...(opts?.example ? { example: true } : {}),
-    }),
-  }
-}
 
 function isSchemaRef(schema: ParameterSchema): schema is oas31.ReferenceObject {
   return "$ref" in schema
@@ -60,26 +34,12 @@ function compileLegacyMapParameterFields(
   state: ComponentRegistryState,
   schemaSource: Schema,
 ): {
-  description?: string
-  example?: unknown
   schema: ParameterSchema
 } {
   const emittedSchema = emitSchemaRefOrValue(state, schemaSource)
-  const example = !isSchemaRef(emittedSchema)
-    ? getSchemaUseExample(schemaSource)
-    : undefined
-  const { description, schema } = parameterSchemaFields(
-    schemaSource,
-    emittedSchema,
-    {
-      ...(example !== undefined ? { example: true } : {}),
-    },
-  )
 
   return {
-    ...(description !== undefined ? { description } : {}),
-    ...(example !== undefined ? { example } : {}),
-    schema,
+    schema: emittedSchema,
   }
 }
 
@@ -292,16 +252,15 @@ function paramRawToParameterObject(
   }
 
   const schema = emitSchemaRefOrValue(state, raw.schema)
-  const example = raw.example ?? getSchemaUseExample(raw.schema)
   const base: oas31.ParameterObject = {
     name: paramName,
     in: raw.in,
     schema:
-      example !== undefined && isSchemaRef(schema)
-        ? { ...schema, example }
+      raw.example !== undefined && isSchemaRef(schema)
+        ? { ...schema, example: raw.example }
         : schema,
     ...(raw.description !== undefined ? { description: raw.description } : {}),
-    ...(example !== undefined ? { example } : {}),
+    ...(raw.example !== undefined ? { example: raw.example } : {}),
   }
 
   if (raw.in === "path") {
