@@ -1,6 +1,7 @@
 import type { oas31 } from "openapi3-ts"
 import { compileResponsibleAPI } from "../compiler/index.ts"
 import type { Resp } from "./operation.ts"
+import type { Schema } from "./schema.ts"
 import type { PathRoutes, ScopeOpts } from "./scope.ts"
 
 export type OptionalKey = `${string}?`
@@ -26,17 +27,28 @@ export type PartialDoc = Partial<Omit<oas31.OpenAPIObject, "components">>
 
 export interface ResponsibleApiInput {
   partialDoc: PartialDoc
-  forAll: ScopeOpts
+  forAll?: ScopeOpts
   routes: PathRoutes
 
   /**
-   * Extra `components.responses` entries. OpenAPI allows unused response
-   * components; this matches hand-authored specs that list a full error
-   * catalog.
+   * Compiler drops unused components, but golden examples may still contain
+   * unused response components. This is compromise for keeping fixture parity.
    *
-   * DO NOT USE. Used only by `readme.ts`
+   * DO NOT USE.
+   *
+   * @dsl
    */
-  ensureResponseComponents?: readonly Resp[]
+  missingResponses?: readonly Resp[]
+
+  /**
+   * Compiler drops unused components, but golden examples may still contain
+   * unused schemas. This is compromise for keeping fixture parity.
+   *
+   * DO NOT USE.
+   *
+   * @dsl
+   */
+  missingSchemas?: readonly Schema[]
 }
 
 export function responsibleAPI(api: ResponsibleApiInput): oas31.OpenAPIObject {

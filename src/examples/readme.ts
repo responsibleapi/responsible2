@@ -513,7 +513,7 @@ const authResponses = {
 }
 
 export default responsibleAPI({
-  ensureResponseComponents: UNUSED_ERROR_RESPONSES.map(c => err[c].response),
+  missingResponses: UNUSED_ERROR_RESPONSES.map(c => err[c].response),
   partialDoc: {
     openapi: "3.1.0",
     info: {
@@ -530,7 +530,6 @@ export default responsibleAPI({
     servers: [{ url: "http://dash.readme.local:3000/api/v1" }],
     tags: Object.values(tags),
   },
-  forAll: {},
   routes: {
     "/api-registry/:uuid": GET({
       id: "getAPIRegistry",

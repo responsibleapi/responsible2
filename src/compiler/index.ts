@@ -1155,7 +1155,7 @@ export function compileResponsibleAPI(
   }
 
   const schemaState = createComponentRegistryState()
-  const rootCtx = compileScopeContextFromForAll(api.forAll)
+  const rootCtx = compileScopeContextFromForAll(api.forAll ?? {})
   const paths: oas31.PathsObject = {
     ...(api.partialDoc.paths ?? {}),
   }
@@ -1170,12 +1170,12 @@ export function compileResponsibleAPI(
 
   const dummyOpForComponents = { method: "GET" } as RouteMethodOp
 
-  for (const thunk of api.ensureResponseComponents ?? []) {
+  for (const thunk of api.missingResponses ?? []) {
     const decoded = tryDecodeNamedOpRespThunk(thunk as Resp | Schema)
 
     if (decoded === undefined) {
       throw new Error(
-        "ensureResponseComponents entries must be named(..., resp({ ... })) thunks.",
+        "missingResponses entries must be named(..., resp({ ... })) thunks.",
       )
     }
 
@@ -1188,6 +1188,10 @@ export function compileResponsibleAPI(
       undefined,
     )
     recordResponseComponent(schemaState, decoded.name, resObj)
+  }
+
+  for (const thunk of api.missingSchemas ?? []) {
+    emitSchemaRefOrValue(schemaState, thunk)
   }
 
   const { openapi, info, tags, servers, security, externalDocs, webhooks } =

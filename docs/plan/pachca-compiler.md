@@ -19,11 +19,19 @@
 - Register security schemes through root inherited request security path too, so
   `partialDoc` does not need raw auth metadata.
 
+## Current Compromise
+
+- Compiler drops unused components.
+- Pachca golden example still contains at least one unused schema component.
+- `responsibleAPI({ missingSchemas })` exists as temporary compromise for
+  fixture parity.
+
 ## Why This Matters
 
 - `pachca.ts` should be able to express top-level auth via DSL alone.
 - Exact top-level `security` parity should come from compiler behavior, not new
   example-only conventions.
+- Golden example parity should not depend on `missingSchemas`.
 
 ## Scope Boundaries
 
@@ -53,8 +61,11 @@
 
 - No raw-schema escape hatch.
 - No typed `extensions` support.
+- No permanent reliance on `missingSchemas` as compiler behavior.
 
 ## Follow-Up For Example Work
 
 - Once root auth behavior lands, `src/examples/pachca.ts` can rely on root
   `forAll.req.security` for exact document-level auth parity.
+- Once unused-schema retention behavior is decided, `src/examples/pachca.ts`
+  should stop relying on `missingSchemas`.

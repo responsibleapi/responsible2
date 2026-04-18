@@ -54,6 +54,8 @@ Single pass compiler design:
 
 - never call `rg --files`, call `rg --files --hidden -g '!.git'` instead
 - never call `node`, call `bun` instead
+- never call `ruby` for YAML work.
+  [call `bun` instead](https://bun.com/docs/runtime/yaml)
 - never call `npx` or `bunx`:
   - if a package is missing, ask to add it to `package.json`
   - if a package is present, call through `bun`
