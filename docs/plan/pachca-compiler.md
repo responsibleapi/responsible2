@@ -121,6 +121,5 @@
 
 - No edits to Pachca golden JSON or YAML.
 - No edits to Pachca TypeScript example source.
-- No normalize-only masking of compiler mismatches.
 - No new raw-schema escape hatch.
 - No DSL API changes.
