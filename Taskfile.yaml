@@ -1,6 +1,5 @@
 version: "3"
 
 tasks:
-  cursor:
-    cmds:
-      - agent --yolo
+  codex: codex
+  cursor: agent --yolo

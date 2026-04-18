@@ -130,17 +130,6 @@
 
 ## Current DSL Gaps
 
-- `nullable`
-  - `src/dsl/schema.ts` does not expose `nullable`.
-  - Pachca uses `nullable` in multiple schemas.
-- Vendor extensions on operations
-  - `x-paginated`
-  - `x-requirements`
-  - `x-external-url`
-  - Current operation DSL/compiler does not preserve arbitrary `x-*` fields.
-- Boolean `additionalProperties`
-  - current `dict(...)` models schema-valued `additionalProperties`
-  - it does not model raw `additionalProperties: true`
 - Exact top-level global security placement
   - current DSL naturally emits per-operation security via `forAll.req.security`
   - `partialDoc.security` is copied through, but security schemes are only

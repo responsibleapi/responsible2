@@ -264,6 +264,10 @@ describe("normalize", () => {
         type: "object",
         properties: {},
       },
+      "x-empty-additional-props": {
+        type: "object",
+        additionalProperties: {},
+      },
       "x-body": {
         content: {
           "application/json": {
@@ -302,6 +306,9 @@ describe("normalize", () => {
         pattern: "^https?://\\S+$",
       },
       "x-empty-props": {
+        type: "object",
+      },
+      "x-empty-additional-props": {
         type: "object",
       },
       "x-body": {

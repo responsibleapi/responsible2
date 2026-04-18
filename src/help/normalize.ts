@@ -3,6 +3,9 @@ import type { oas31 } from "openapi3-ts"
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value)
 
+const isEmpty = (value: Record<string, unknown>): boolean =>
+  Object.keys(value).length === 0
+
 function isSecurityRequirementObjectNorm(
   value: unknown,
 ): value is Record<string, unknown> {
@@ -10,7 +13,7 @@ function isSecurityRequirementObjectNorm(
     return false
   }
 
-  if (Object.keys(value).length === 0) {
+  if (isEmpty(value)) {
     return true
   }
 
@@ -154,9 +157,21 @@ function normVal(value: unknown): unknown {
       if (
         o["type"] === "object" &&
         isObject(o["properties"]) &&
-        Object.keys(o["properties"]).length === 0
+        isEmpty(o["properties"])
       ) {
         const { properties: _omitEmptyProperties, ...rest } = o
+
+        o = rest as Record<string, unknown>
+      }
+
+      if (
+        isObject(o["additionalProperties"]) &&
+        isEmpty(o["additionalProperties"])
+      ) {
+        const {
+          additionalProperties: _omitEmptyAdditionalProperties,
+          ...rest
+        } = o
 
         o = rest as Record<string, unknown>
       }
