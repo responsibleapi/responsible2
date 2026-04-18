@@ -201,9 +201,8 @@ function isHttpPath(s: string): s is HttpPath {
   return s.length > 0 && s.startsWith("/")
 }
 
-function isRecord(x: unknown): x is Record<string, unknown> {
-  return typeof x === "object" && x !== null
-}
+const isRecord = (x: unknown): x is Record<string, unknown> =>
+  typeof x === "object" && x !== null
 
 function assertRouteMethodOp(node: OpBase): asserts node is RouteMethodOp {
   if (typeof node !== "object" || node === null || !("method" in node)) {
@@ -313,6 +312,7 @@ function scopePathLevelReqFromRoutes(
   }
 
   if (isRecord(pathParams)) {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     req.pathParams = pathParams as ReqAugmentation["pathParams"]
   }
 
