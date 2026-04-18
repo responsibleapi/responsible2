@@ -131,7 +131,7 @@ export type OpResponses = Record<number, Resp | Schema>
  * tuple of those tag objects; the default keeps bare `Op` / `GetOp` and the
  * HTTP method helpers type-checkable without an explicit type argument.
  *
- * x-stuff extensions are supported here
+ * `x-stuff` extensions are supported here
  *
  * @dsl
  */

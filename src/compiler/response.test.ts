@@ -388,24 +388,20 @@ describe("response", () => {
 
     expect(rapi.paths?.["/p"]?.get?.responses?.["200"]?.headers).toEqual({
       Link: {
-        description: "Pagination link relation",
-        schema: { type: "string" },
+        $ref: "#/components/headers/link",
       },
       "x-total-count": {
-        description: "Total hits",
-        schema: { type: "string" },
+        $ref: "#/components/headers/x-total-count",
       },
     })
   })
 
   test("headerParams strips Header suffix to derive header name", async () => {
-    const locationHeader = named(
-      "LocationHeader",
+    const LocationHeader = () =>
       responseHeader({
         required: true,
         schema: string({ format: "uri" }),
-      }),
-    )
+      })
 
     const rapi = responsibleAPI({
       partialDoc: {
@@ -418,7 +414,7 @@ describe("response", () => {
           res: {
             302: resp({
               description: "redirect",
-              headerParams: [locationHeader],
+              headerParams: [LocationHeader],
             }),
           },
         }),
@@ -427,15 +423,7 @@ describe("response", () => {
 
     expect(await validateDoc(rapi)).toEqual(rapi)
     expect(rapi.paths?.["/download"]?.get?.responses?.["302"]?.headers).toEqual(
-      {
-        location: {
-          required: true,
-          schema: {
-            type: "string",
-            format: "uri",
-          },
-        },
-      },
+      { location: { $ref: "#/components/headers/LocationHeader" } },
     )
   })
 
@@ -471,18 +459,13 @@ describe("response", () => {
     expect(
       rapi.paths?.["/a"]?.get?.responses?.["200"]?.headers?.["trace-id"],
     ).toEqual({
-      description: "Correlation id",
-      required: true,
-      schema: { type: "string" },
+      $ref: "#/components/headers/trace-id",
     })
     expect(
       rapi.paths?.["/b"]?.get?.responses?.["200"]?.headers?.["trace-id"],
     ).toEqual({
-      description: "Correlation id",
-      required: true,
-      schema: { type: "string" },
+      $ref: "#/components/headers/trace-id",
     })
-    expect(rapi.components?.headers).toBeUndefined()
   })
 
   test("reuses named schema across request body and response header without mutating header shape", async () => {
