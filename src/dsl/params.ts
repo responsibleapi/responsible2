@@ -39,9 +39,12 @@ export const queryParam = (r: Omit<QueryParamRaw, "in">): QueryParamRaw => ({
   in: "query",
 })
 
-export const pathParam = (r: Omit<PathParamRaw, "in">): PathParamRaw => ({
+export const pathParam = (
+  r: Omit<PathParamRaw, "in" | "required">,
+): PathParamRaw => ({
   ...r,
   in: "path",
+  required: true,
 })
 
 export const headerParam = (r: Omit<HeaderParamRaw, "in">): HeaderParamRaw => ({

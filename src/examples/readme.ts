@@ -12,7 +12,6 @@ import {
   object,
   oneOf,
   string,
-  unknown,
 } from "../dsl/schema.ts"
 import { scope } from "../dsl/scope.ts"
 import { httpSecurity } from "../dsl/security.ts"
@@ -95,36 +94,12 @@ const apiSpecificationUpload = object({
   }),
 })
 
-const apiRegistryUUID = string({
-  description:
-    "An API Registry UUID. This can be found by navigating to your API Reference page and viewing code snippets for Node with the `api` library.",
-})
-
-const apiSpecificationID = string({
-  description:
-    "ID of the API specification. The unique ID for each API can be found by navigating to your **API Definitions** page.",
-})
-
-const categorySlug = string({
+const categorySlug = pathParam({
+  name: "slug",
   description:
     'A URL-safe representation of the category title. Slugs must be all lowercase, and replace spaces with hyphens. For example, for the the category "Getting Started", enter the slug "getting-started".',
-  examples: ["getting-started"],
-})
-
-const changelogSlug = string({
-  description:
-    'A URL-safe representation of the changelog title. Slugs must be all lowercase, and replace spaces with hyphens. For example, for the the changelog "Owlet Weekly Update", enter the slug "owlet-weekly-update".',
-})
-
-const customPageSlug = string({
-  description:
-    'A URL-safe representation of the custom page title. Slugs must be all lowercase, and replace spaces with hyphens. For example, for the the custom page "Getting Started", enter the slug "getting-started".',
-})
-
-const docSlug = string({
-  description:
-    'A URL-safe representation of the doc title. Slugs must be all lowercase, and replace spaces with hyphens. For example, for the the doc "New Features", enter the slug "new-features".',
-  examples: ["new-features"],
+  example: "getting-started",
+  schema: string(),
 })
 
 const pageQuery = named(
@@ -178,6 +153,9 @@ const versionIdParam = named(
     schema: string(),
   }),
 )
+
+const categoryTitleRequired = {}
+Object.assign(categoryTitleRequired, { required: ["title"] })
 
 const tags = declareTags({
   "API Registry": {},
@@ -537,7 +515,13 @@ export default responsibleAPI({
       description: "Get an API definition file that's been uploaded to ReadMe.",
       tags: [tags["API Registry"]],
       req: {
-        pathParams: { uuid: apiRegistryUUID },
+        pathParams: {
+          uuid: {
+            description:
+              "An API Registry UUID. This can be found by navigating to your API Reference page and viewing code snippets for Node with the `api` library.",
+            schema: string(),
+          },
+        },
       },
       res: {
         200: resp({
@@ -608,7 +592,13 @@ export default responsibleAPI({
         tags: [tags["API Specification"]],
         req: {
           security: basicAuth,
-          pathParams: { id: apiSpecificationID },
+          pathParams: {
+            id: {
+              description:
+                "ID of the API specification. The unique ID for each API can be found by navigating to your **API Definitions** page.",
+              schema: string(),
+            },
+          },
         },
         res: {
           add: authResponses,
@@ -719,7 +709,7 @@ export default responsibleAPI({
         description: "Create a new category inside of this project.",
         req: {
           params: [xReadmeVersionParam],
-          body: allOf([category, object({ title: unknown() })]),
+          body: allOf([category, categoryTitleRequired]),
         },
         res: {
           201: resp({
@@ -735,8 +725,7 @@ export default responsibleAPI({
         req: {
           mime: "application/json",
           security: basicAuth,
-          pathParams: { slug: categorySlug },
-          params: [xReadmeVersionParam],
+          params: [categorySlug, xReadmeVersionParam],
         },
       },
       GET: {
@@ -785,8 +774,7 @@ export default responsibleAPI({
       tags: [tags.Categories],
       req: {
         security: basicAuth,
-        pathParams: { slug: categorySlug },
-        params: [xReadmeVersionParam],
+        params: [categorySlug, xReadmeVersionParam],
       },
       res: {
         200: resp({
@@ -841,7 +829,13 @@ export default responsibleAPI({
         req: {
           mime: "application/json",
           security: basicAuth,
-          pathParams: { slug: changelogSlug },
+          pathParams: {
+            slug: {
+              description:
+                'A URL-safe representation of the changelog title. Slugs must be all lowercase, and replace spaces with hyphens. For example, for the the changelog "Owlet Weekly Update", enter the slug "owlet-weekly-update".',
+              schema: string(),
+            },
+          },
         },
       },
       GET: {
@@ -936,7 +930,13 @@ export default responsibleAPI({
         req: {
           mime: "application/json",
           security: basicAuth,
-          pathParams: { slug: customPageSlug },
+          pathParams: {
+            slug: {
+              description:
+                'A URL-safe representation of the custom page title. Slugs must be all lowercase, and replace spaces with hyphens. For example, for the the custom page "Getting Started", enter the slug "getting-started".',
+              schema: string(),
+            },
+          },
         },
         res: {
           add: authResponses,
@@ -986,7 +986,14 @@ export default responsibleAPI({
         req: {
           mime: "application/json",
           security: basicAuth,
-          pathParams: { slug: docSlug },
+          pathParams: {
+            slug: {
+              description:
+                'A URL-safe representation of the doc title. Slugs must be all lowercase, and replace spaces with hyphens. For example, for the the doc "New Features", enter the slug "new-features".',
+              example: "new-features",
+              schema: string(),
+            },
+          },
           params: [xReadmeVersionParam],
         },
         res: {
@@ -1058,9 +1065,10 @@ export default responsibleAPI({
         security: basicAuth,
         params: [xReadmeVersionParam],
         query: {
-          search: string({
+          search: {
             description: "Search string to look for.",
-          }),
+            schema: string(),
+          },
         },
       },
       res: {
