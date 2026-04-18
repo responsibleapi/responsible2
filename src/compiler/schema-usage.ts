@@ -1,3 +1,18 @@
+/**
+ * OpenAPI lets some schema-adjacent fields live both on schema itself and on
+ * place where schema gets used. Parameters and headers, for example, carry
+ * their own `description` / `example` fields while also embedding a `schema`.
+ *
+ * This file centralizes "schema use-site" handling: - read use-site metadata
+ * from DSL wrappers before schema compilation - move that metadata onto
+ * containing OpenAPI object when needed - strip duplicated fields from emitted
+ * schema object afterward
+ *
+ * Without this layer compiler would repeat same extraction logic across request
+ * and response paths, and would risk emitting duplicated or wrong-level
+ * `description` / `example` data.
+ */
+
 import { decodeNameable } from "../dsl/nameable.ts"
 import type { RawSchema, Schema } from "../dsl/schema.ts"
 import type { EmittedSchema } from "./emit-schema.ts"

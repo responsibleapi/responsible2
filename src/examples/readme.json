@@ -47,9 +47,7 @@
             "$ref": "#/components/responses/error_REGISTRY_NOTFOUND"
           }
         },
-        "tags": [
-          "API Registry"
-        ]
+        "tags": ["API Registry"]
       }
     },
     "/api-specification": {
@@ -98,9 +96,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "API Specification"
-        ]
+        "tags": ["API Specification"]
       },
       "post": {
         "operationId": "uploadAPISpecification",
@@ -170,9 +166,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "API Specification"
-        ]
+        "tags": ["API Specification"]
       }
     },
     "/api-specification/{id}": {
@@ -259,9 +253,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "API Specification"
-        ]
+        "tags": ["API Specification"]
       },
       "delete": {
         "operationId": "deleteAPISpecification",
@@ -300,9 +292,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "API Specification"
-        ]
+        "tags": ["API Specification"]
       }
     },
     "/apply": {
@@ -325,9 +315,7 @@
             }
           }
         },
-        "tags": [
-          "Apply to ReadMe"
-        ]
+        "tags": ["Apply to ReadMe"]
       },
       "post": {
         "operationId": "applyToReadMe",
@@ -348,9 +336,7 @@
             "description": "You did it!"
           }
         },
-        "tags": [
-          "Apply to ReadMe"
-        ]
+        "tags": ["Apply to ReadMe"]
       }
     },
     "/categories": {
@@ -387,9 +373,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Categories"
-        ]
+        "tags": ["Categories"]
       },
       "post": {
         "operationId": "createCategory",
@@ -410,9 +394,7 @@
                     "$ref": "#/components/schemas/category"
                   },
                   {
-                    "required": [
-                      "title"
-                    ]
+                    "required": ["title"]
                   }
                 ]
               }
@@ -432,9 +414,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Categories"
-        ]
+        "tags": ["Categories"]
       }
     },
     "/categories/{slug}": {
@@ -470,9 +450,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Categories"
-        ]
+        "tags": ["Categories"]
       },
       "put": {
         "operationId": "updateCategory",
@@ -519,9 +497,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Categories"
-        ]
+        "tags": ["Categories"]
       },
       "delete": {
         "operationId": "deleteCategory",
@@ -555,9 +531,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Categories"
-        ]
+        "tags": ["Categories"]
       }
     },
     "/categories/{slug}/docs": {
@@ -593,9 +567,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Categories"
-        ]
+        "tags": ["Categories"]
       }
     },
     "/changelogs": {
@@ -629,9 +601,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Changelog"
-        ]
+        "tags": ["Changelog"]
       },
       "post": {
         "operationId": "createChangelog",
@@ -660,9 +630,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Changelog"
-        ]
+        "tags": ["Changelog"]
       }
     },
     "/changelogs/{slug}": {
@@ -694,9 +662,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Changelog"
-        ]
+        "tags": ["Changelog"]
       },
       "put": {
         "operationId": "updateChangelog",
@@ -739,9 +705,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Changelog"
-        ]
+        "tags": ["Changelog"]
       },
       "delete": {
         "operationId": "deleteChangelog",
@@ -771,9 +735,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Changelog"
-        ]
+        "tags": ["Changelog"]
       }
     },
     "/custompages": {
@@ -813,9 +775,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Custom Pages"
-        ]
+        "tags": ["Custom Pages"]
       },
       "post": {
         "operationId": "createCustomPage",
@@ -850,9 +810,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Custom Pages"
-        ]
+        "tags": ["Custom Pages"]
       }
     },
     "/custompages/{slug}": {
@@ -890,9 +848,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Custom Pages"
-        ]
+        "tags": ["Custom Pages"]
       },
       "put": {
         "operationId": "updateCustomPage",
@@ -941,9 +897,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Custom Pages"
-        ]
+        "tags": ["Custom Pages"]
       },
       "delete": {
         "operationId": "deleteCustomPage",
@@ -979,9 +933,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Custom Pages"
-        ]
+        "tags": ["Custom Pages"]
       }
     },
     "/docs/{slug}": {
@@ -1023,9 +975,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Docs"
-        ]
+        "tags": ["Docs"]
       },
       "put": {
         "operationId": "updateDoc",
@@ -1078,9 +1028,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Docs"
-        ]
+        "tags": ["Docs"]
       },
       "delete": {
         "operationId": "deleteDoc",
@@ -1120,9 +1068,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Docs"
-        ]
+        "tags": ["Docs"]
       }
     },
     "/docs": {
@@ -1164,9 +1110,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Docs"
-        ]
+        "tags": ["Docs"]
       }
     },
     "/docs/search": {
@@ -1204,9 +1148,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Docs"
-        ]
+        "tags": ["Docs"]
       }
     },
     "/errors": {
@@ -1230,9 +1172,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Errors"
-        ]
+        "tags": ["Errors"]
       }
     },
     "/": {
@@ -1263,9 +1203,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Projects"
-        ]
+        "tags": ["Projects"]
       }
     },
     "/version": {
@@ -1289,9 +1227,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Version"
-        ]
+        "tags": ["Version"]
       },
       "post": {
         "operationId": "createVersion",
@@ -1346,9 +1282,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Version"
-        ]
+        "tags": ["Version"]
       }
     },
     "/version/{versionId}": {
@@ -1380,9 +1314,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Version"
-        ]
+        "tags": ["Version"]
       },
       "put": {
         "operationId": "updateVersion",
@@ -1425,9 +1357,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Version"
-        ]
+        "tags": ["Version"]
       },
       "delete": {
         "operationId": "deleteVersion",
@@ -1460,9 +1390,7 @@
             "apiKey": []
           }
         ],
-        "tags": [
-          "Version"
-        ]
+        "tags": ["Version"]
       }
     }
   },
@@ -1537,9 +1465,7 @@
           "help": {
             "description": "Information on where you can receive additional assistance from our wonderful support team.",
             "type": "string",
-            "examples": [
-              "If you need help, email support@readme.io"
-            ]
+            "examples": ["If you need help, email support@readme.io"]
           },
           "poem": {
             "description": "A short poem we wrote you about your error.",
@@ -1602,11 +1528,7 @@
             "default": false
           }
         },
-        "required": [
-          "name",
-          "email",
-          "job"
-        ]
+        "required": ["name", "email", "job"]
       },
       "category": {
         "type": "object",
@@ -1619,10 +1541,7 @@
             "description": "A category can be part of your reference or guide documentation, which is determined by this field.",
             "type": "string",
             "default": "guide",
-            "enum": [
-              "reference",
-              "guide"
-            ]
+            "enum": ["reference", "guide"]
           }
         }
       },
@@ -1636,14 +1555,7 @@
           "type": {
             "type": "string",
             "default": "",
-            "enum": [
-              "",
-              "added",
-              "fixed",
-              "improved",
-              "deprecated",
-              "removed"
-            ]
+            "enum": ["", "added", "fixed", "improved", "deprecated", "removed"]
           },
           "body": {
             "description": "Body content of the changelog.",
@@ -1655,10 +1567,7 @@
             "default": true
           }
         },
-        "required": [
-          "title",
-          "body"
-        ]
+        "required": ["title", "body"]
       },
       "condensedProjectData": {
         "type": "object",
@@ -1708,9 +1617,7 @@
             "default": true
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
       "doc": {
         "type": "object",
@@ -1722,11 +1629,7 @@
           "type": {
             "description": "Type of the page. The available types all show up under the /docs/ URL path of your docs project (also known as the \"guides\" section). Can be \"basic\" (most common), \"error\" (page desribing an API error), or \"link\" (page that redirects to an external link).",
             "type": "string",
-            "enum": [
-              "basic",
-              "error",
-              "link"
-            ]
+            "enum": ["basic", "error", "link"]
           },
           "body": {
             "description": "Body content of the page, formatted in ReadMe or GitHub flavored Markdown. Accepts long page content, for example, greater than 100k characters.",
@@ -1760,10 +1663,7 @@
             }
           }
         },
-        "required": [
-          "title",
-          "category"
-        ]
+        "required": ["title", "category"]
       },
       "version": {
         "type": "object",
@@ -1797,10 +1697,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "version",
-          "from"
-        ]
+        "required": ["version", "from"]
       },
       "jobOpening": {
         "type": "object",
@@ -1808,16 +1705,12 @@
           "slug": {
             "description": "A slugified version of the job opening title.",
             "type": "string",
-            "examples": [
-              "api-engineer"
-            ]
+            "examples": ["api-engineer"]
           },
           "title": {
             "description": "The job opening position.",
             "type": "string",
-            "examples": [
-              "API Engineer"
-            ]
+            "examples": ["API Engineer"]
           },
           "description": {
             "description": "The description for this open position. This content is formatted as HTML.",
@@ -1833,16 +1726,12 @@
           "location": {
             "description": "Where this position is located at.",
             "type": "string",
-            "examples": [
-              "Remote"
-            ]
+            "examples": ["Remote"]
           },
           "department": {
             "description": "The internal organization you'll be working in.",
             "type": "string",
-            "examples": [
-              "Engineering"
-            ]
+            "examples": ["Engineering"]
           },
           "url": {
             "description": "The place where you can apply for the position!",

@@ -9,6 +9,7 @@ import type {
   ReqAugmentation,
   RespAugmentation,
 } from "./operation.ts"
+import type { ReusableParam } from "./params.ts"
 import type { DeclaredTags, OpTags } from "./tags.ts"
 
 export type Mime = `${string}/${string}`
@@ -53,7 +54,8 @@ type ScopeRoutes<TTags extends DeclaredTags = DeclaredTags> =
   MethodRoutes<TTags> & Partial<PathRoutes<TTags>>
 
 type ScopeInput<TTags extends DeclaredTags = DeclaredTags> = {
-  forAll?: ScopeOpts<TTags>
+  readonly forAll?: ScopeOpts<TTags>
+  readonly params?: readonly ReusableParam[]
 } & ScopeRoutes<TTags>
 
 export interface ScopeOpts<TTags extends DeclaredTags = DeclaredTags> {

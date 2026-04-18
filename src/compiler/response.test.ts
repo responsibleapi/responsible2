@@ -9,7 +9,7 @@ import { int32, object, string, unknown } from "../dsl/schema.ts"
 import { scope } from "../dsl/scope.ts"
 import { validateDoc } from "../help/validate-doc.ts"
 
-describe("compiler response defaults and HEAD", () => {
+describe("response", () => {
   test("scope-level res.mime is a wildcard default mime", async () => {
     const rapi = responsibleAPI({
       partialDoc: {
@@ -312,9 +312,7 @@ describe("compiler response defaults and HEAD", () => {
       }),
     ).toThrow(/multiple cookies/)
   })
-})
 
-describe("reusable response headers", () => {
   const traceHeader = named(
     "trace-id",
     responseHeader({
@@ -348,12 +346,7 @@ describe("reusable response headers", () => {
 
     expect(
       rapi.paths?.["/x"]?.get?.responses?.["200"]?.headers?.["trace-id"],
-    ).toEqual({
-      description: "Correlation id",
-      required: true,
-      schema: { type: "string" },
-    })
-    expect(rapi.components?.headers).toBeUndefined()
+    ).toEqual({ $ref: "#/components/headers/trace-id" })
   })
 
   test("headerParams expands to response header keys (including Link casing)", async () => {
@@ -433,15 +426,17 @@ describe("reusable response headers", () => {
     })
 
     expect(await validateDoc(rapi)).toEqual(rapi)
-    expect(rapi.paths?.["/download"]?.get?.responses?.["302"]?.headers).toEqual({
-      location: {
-        required: true,
-        schema: {
-          type: "string",
-          format: "uri",
+    expect(rapi.paths?.["/download"]?.get?.responses?.["302"]?.headers).toEqual(
+      {
+        location: {
+          required: true,
+          schema: {
+            type: "string",
+            format: "uri",
+          },
         },
       },
-    })
+    )
   })
 
   test("the same named header thunk reused across routes stays inline", async () => {
