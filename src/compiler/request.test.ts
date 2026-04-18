@@ -783,6 +783,34 @@ describe("compiler request", () => {
     ] satisfies oas31.SecurityRequirementObject[])
   })
 
+  test("compiles top-level security from ResponsibleApiInput.security", async () => {
+    const Bearer = named("bearerAuth", httpSecurity({ scheme: "bearer" }))
+
+    const api = responsibleAPI({
+      partialDoc: {
+        openapi: "3.1.0",
+        info: { title: "Sec API", version: "1" },
+      },
+      security: Bearer,
+      routes: {
+        "/x": GET({
+          res: { 200: object({}) },
+        }),
+      },
+    })
+
+    const doc = await validateDoc(api)
+
+    expect(doc).toEqual(api)
+    expect(doc.security).toEqual([
+      { bearerAuth: [] },
+    ] satisfies oas31.SecurityRequirementObject[])
+    expect(doc.components?.securitySchemes?.["bearerAuth"]).toEqual({
+      type: "http",
+      scheme: "bearer",
+    })
+  })
+
   test("security? appends empty requirement after its requirements", async () => {
     const Bearer = named("bearerAuth", httpSecurity({ scheme: "bearer" }))
 

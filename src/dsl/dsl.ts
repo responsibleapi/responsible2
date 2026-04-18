@@ -3,6 +3,7 @@ import { compileResponsibleAPI } from "../compiler/index.ts"
 import type { Resp } from "./operation.ts"
 import type { Schema } from "./schema.ts"
 import type { PathRoutes, ScopeOpts } from "./scope.ts"
+import type { Security } from "./security.ts"
 
 export type OptionalKey = `${string}?`
 
@@ -23,12 +24,21 @@ export const isOptional = (k: NameWithOptionality): k is OptionalKey =>
  *
  * @dsl
  */
-export type PartialDoc = Partial<Omit<oas31.OpenAPIObject, "components">>
+export type PartialDoc = Partial<
+  Omit<oas31.OpenAPIObject, "components" | "security">
+>
 
 export interface ResponsibleApiInput {
   partialDoc: PartialDoc
   forAll?: ScopeOpts
   routes: PathRoutes
+
+  /**
+   * Doc level security
+   *
+   * @dsl
+   */
+  security?: Security
 
   /**
    * Compiler drops unused components, but golden examples may still contain

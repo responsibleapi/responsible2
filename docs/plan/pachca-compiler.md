@@ -12,12 +12,10 @@
 
 ## Primary Compiler Change
 
-- Make root `responsibleAPI({ forAll.req.security })` emit document-level
-  OpenAPI `security`.
-- Keep nested `scope({ forAll.req.security }).` behavior as per-operation
-  inheritance.
-- Register security schemes through root inherited request security path too, so
-  `partialDoc` does not need raw auth metadata.
+- Make root `responsibleAPI({ security })` emit document-level OpenAPI
+  `security`.
+- Register security schemes through root `security` too, so `partialDoc` does
+  not need raw auth metadata.
 
 ## Current Compromise
 
@@ -31,31 +29,31 @@
 - `pachca.ts` should be able to express top-level auth via DSL alone.
 - Exact top-level `security` parity should come from compiler behavior, not new
   example-only conventions.
+- Root auth should use dedicated document DSL field, not overload inherited
+  operation-level security semantics.
 - Golden example parity should not depend on `missingSchemas`.
 
 ## Scope Boundaries
 
 - Only `src/compiler/*`.
 - No edits in `src/examples/`.
-- No DSL signature changes here.
+- DSL signature already added; this plan covers compiler behavior only.
 
 ## Suggested Implementation
 
 1. Start by writing `src/compiler/security.test.ts` covering root and nested
-   inherited request security behavior.
-2. Trace current handling of inherited request security in compiler.
-3. Detect root-level inherited security separately from nested scope security.
-4. Emit document-level `security` when source is root `forAll.req.security`.
-5. Preserve existing per-operation emission for nested scopes and operation
+   security behavior.
+2. Trace current handling of root `security` in compiler.
+3. Emit document-level `security` from root `responsibleAPI({ security })`.
+4. Preserve existing per-operation emission for nested scopes and operation
    overrides.
-6. Ensure security schemes referenced through root path are registered in
+5. Ensure security schemes referenced through root `security` are registered in
    generated components.
 
 ## Validation
 
 - Use `src/compiler/security.test.ts` as primary verification target.
-- Verify nested scope auth still compiles to per-operation `security`.
-- Verify root auth compiles to top-level OpenAPI `security`.
+- Verify root `security` compiles to top-level OpenAPI `security`.
 
 ## Explicit Non-Goals
 
@@ -66,6 +64,6 @@
 ## Follow-Up For Example Work
 
 - Once root auth behavior lands, `src/examples/pachca.ts` can rely on root
-  `forAll.req.security` for exact document-level auth parity.
+  `security` for exact document-level auth parity.
 - Once unused-schema retention behavior is decided, `src/examples/pachca.ts`
   should stop relying on `missingSchemas`.

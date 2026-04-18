@@ -1,6 +1,5 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { DELETE, GET, POST, PUT } from "../dsl/methods.ts"
-import { named } from "../dsl/nameable.ts"
 import { resp } from "../dsl/operation.ts"
 import { pathParam, queryParam } from "../dsl/params.ts"
 import { responseHeader } from "../dsl/response-headers.ts"
@@ -89,8 +88,7 @@ const QueryLimitParam1 = () =>
     }),
   })
 
-const QueryCursorParam1 = named(
-  "QueryCursorParam1",
+const QueryCursorParam1 = () =>
   queryParam({
     name: "cursor",
     description: "Курсор для пагинации (из meta.paginate.next_page)",
@@ -98,8 +96,7 @@ const QueryCursorParam1 = named(
     example: "eyJpZCI6MTAsImRpciI6ImFzYyJ9",
     explode: false,
     schema: string({ examples: ["eyJpZCI6MTAsImRpciI6ImFzYyJ9"] }),
-  }),
-)
+  })
 
 const PathIdParam1 = () =>
   pathParam({
@@ -121,8 +118,7 @@ const PathUser_idParam1 = () =>
     }),
   })
 
-const QueryCursorParam2 = named(
-  "QueryCursorParam2",
+const QueryCursorParam2 = () =>
   queryParam({
     name: "cursor",
     description: "Курсор для пагинации (из `meta.paginate.next_page`)",
@@ -132,11 +128,9 @@ const QueryCursorParam2 = named(
     schema: string({
       examples: ["eyJpZCI6MTAsImRpciI6ImFzYyJ9"],
     }),
-  }),
-)
+  })
 
-const PathIdParam2 = named(
-  "PathIdParam2",
+const PathIdParam2 = () =>
   pathParam({
     name: "id",
     description: "Идентификатор тега",
@@ -144,11 +138,9 @@ const PathIdParam2 = named(
     schema: int32({
       examples: [9111],
     }),
-  }),
-)
+  })
 
-const PathIdParam3 = named(
-  "PathIdParam3",
+const PathIdParam3 = () =>
   pathParam({
     name: "id",
     description: "Идентификатор сообщения",
@@ -156,11 +148,9 @@ const PathIdParam3 = named(
     schema: int32({
       examples: [194275],
     }),
-  }),
-)
+  })
 
-const PathIdParam4 = named(
-  "PathIdParam4",
+const PathIdParam4 = () =>
   pathParam({
     name: "id",
     description: "Идентификатор сообщения",
@@ -168,8 +158,7 @@ const PathIdParam4 = named(
     schema: int32({
       examples: [7231942],
     }),
-  }),
-)
+  })
 
 const QueryOrderParam2 = () =>
   queryParam({
@@ -194,8 +183,7 @@ const QueryCreated_fromParam1 = () =>
     }),
   })
 
-const QueryCreated_toParam1 = named(
-  "QueryCreated_toParam1",
+const QueryCreated_toParam1 = () =>
   queryParam({
     name: "created_to",
     description: "Фильтр по дате создания (до)",
@@ -206,11 +194,9 @@ const QueryCreated_toParam1 = named(
       format: "date-time",
       examples: ["2025-02-01T00:00:00.000Z"],
     }),
-  }),
-)
+  })
 
-const QueryActiveParam1 = named(
-  "QueryActiveParam1",
+const QueryActiveParam1 = () =>
   queryParam({
     name: "active",
     description: "Фильтр по активности чата",
@@ -219,11 +205,9 @@ const QueryActiveParam1 = named(
     schema: boolean({
       examples: [true],
     }),
-  }),
-)
+  })
 
-const QueryLimitParam2 = named(
-  "QueryLimitParam2",
+const QueryLimitParam2 = () =>
   queryParam({
     name: "limit",
     description: "Количество возвращаемых результатов за один запрос",
@@ -234,44 +218,31 @@ const QueryLimitParam2 = named(
       default: 200,
       maximum: 200,
     }),
-  }),
-)
+  })
 
-const PathIdParam5 = named(
-  "PathIdParam5",
+const PathIdParam5 = () =>
   pathParam({
     name: "id",
     description: "Идентификатор напоминания",
     required: true,
-    schema: int32({
-      examples: [22283],
-    }),
-  }),
-)
+    schema: int32({ examples: [22283] }),
+  })
 
-const PathIdParam6 = named(
-  "PathIdParam6",
+const PathIdParam6 = () =>
   pathParam({
     name: "id",
     description: "Идентификатор пользователя",
     required: true,
-    schema: int32({
-      examples: [12],
-    }),
-  }),
-)
+    schema: int32({ examples: [12] }),
+  })
 
-const PathUser_idParam2 = named(
-  "PathUser_idParam2",
+const PathUser_idParam2 = () =>
   pathParam({
     name: "user_id",
     description: "Идентификатор пользователя",
     required: true,
-    schema: int32({
-      examples: [12],
-    }),
-  }),
-)
+    schema: int32({ examples: [12] }),
+  })
 
 const LocationHeader = () =>
   responseHeader({
@@ -3832,14 +3803,10 @@ export default responsibleAPI({
     ],
     tags: Object.values(tags),
   },
+  security: BearerAuth,
   forAll: {
-    req: {
-      mime: "application/json",
-      security: BearerAuth,
-    },
-    res: {
-      mime: "application/json",
-    },
+    req: { mime: "application/json" },
+    res: { mime: "application/json" },
   },
   missingSchemas: [ViewBlock],
   routes: {

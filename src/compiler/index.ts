@@ -1194,8 +1194,12 @@ export function compileResponsibleAPI(
     emitSchemaRefOrValue(schemaState, thunk)
   }
 
-  const { openapi, info, tags, servers, security, externalDocs, webhooks } =
+  const { openapi, info, tags, servers, externalDocs, webhooks } =
     api.partialDoc
+  const security =
+    api.security !== undefined
+      ? compileSecurityFromAug(schemaState, { security: api.security })
+      : undefined
 
   const schemaKeys = Object.keys(schemaState.components.schemas)
   const paramKeys = Object.keys(schemaState.components.parameters)
