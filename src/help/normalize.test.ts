@@ -344,7 +344,7 @@ describe("normalize", () => {
         },
       },
       "x-null-examples": {
-        type: ["string", "null"],
+        type: ["null", "string"],
         examples: [null],
       },
     })
