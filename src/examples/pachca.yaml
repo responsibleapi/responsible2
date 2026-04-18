@@ -43,7 +43,7 @@ paths:
           required: false
           schema:
             example: user_login
-            $ref: '#/components/schemas/AuditEventKey'
+            $ref: "#/components/schemas/AuditEventKey"
           example: user_login
           explode: false
         - name: actor_id
@@ -53,8 +53,8 @@ paths:
           schema:
             type: string
             examples:
-              - '98765'
-          example: '98765'
+              - "98765"
+          example: "98765"
           explode: false
         - name: actor_type
           in: query
@@ -73,8 +73,8 @@ paths:
           schema:
             type: string
             examples:
-              - '98765'
-          example: '98765'
+              - "98765"
+          example: "98765"
           explode: false
         - name: entity_type
           in: query
@@ -110,7 +110,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -121,42 +121,42 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AuditEvent'
+                      $ref: "#/components/schemas/AuditEvent"
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Security
       x-paginated: true
@@ -190,9 +190,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BotUpdateRequest'
+              $ref: "#/components/schemas/BotUpdateRequest"
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -201,45 +201,45 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/BotResponse'
+                    $ref: "#/components/schemas/BotResponse"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Bots
       x-requirements:
@@ -261,9 +261,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChatCreateRequest'
+              $ref: "#/components/schemas/ChatCreateRequest"
       responses:
-        '201':
+        "201":
           description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
@@ -272,39 +272,39 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Chat'
+                    $ref: "#/components/schemas/Chat"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Chats
       x-requirements:
@@ -323,7 +323,7 @@ paths:
           schema:
             default: id
             allOf:
-              - $ref: '#/components/schemas/ChatSortField'
+              - $ref: "#/components/schemas/ChatSortField"
           example: id
           explode: false
         - name: order
@@ -333,7 +333,7 @@ paths:
           schema:
             default: desc
             allOf:
-              - $ref: '#/components/schemas/SortOrder'
+              - $ref: "#/components/schemas/SortOrder"
           example: desc
           explode: false
         - name: availability
@@ -343,7 +343,7 @@ paths:
           schema:
             default: is_member
             allOf:
-              - $ref: '#/components/schemas/ChatAvailability'
+              - $ref: "#/components/schemas/ChatAvailability"
           example: is_member
           explode: false
         - name: last_message_at_after
@@ -403,7 +403,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -414,42 +414,42 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Chat'
+                      $ref: "#/components/schemas/Chat"
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Chats
       x-paginated: true
@@ -468,36 +468,36 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExportRequest'
+              $ref: "#/components/schemas/ExportRequest"
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '400':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
                 anyOf:
-                  - $ref: '#/components/schemas/ApiError'
-                  - $ref: '#/components/schemas/OAuthError'
-        '422':
+                  - $ref: "#/components/schemas/ApiError"
+                  - $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Common
       x-requirements:
@@ -526,7 +526,7 @@ paths:
               - 22322
           example: 22322
       responses:
-        '302':
+        "302":
           description: Redirection
           headers:
             location:
@@ -534,28 +534,28 @@ paths:
               schema:
                 type: string
                 format: uri
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
                 anyOf:
-                  - $ref: '#/components/schemas/OAuthError'
+                  - $ref: "#/components/schemas/OAuthError"
                   - anyOf:
-                      - $ref: '#/components/schemas/ApiError'
-                      - $ref: '#/components/schemas/OAuthError'
-        '404':
+                      - $ref: "#/components/schemas/ApiError"
+                      - $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Common
       x-requirements:
@@ -582,7 +582,7 @@ paths:
               - 334
           example: 334
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -591,33 +591,33 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Chat'
+                    $ref: "#/components/schemas/Chat"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Chats
       x-requirements:
@@ -646,9 +646,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChatUpdateRequest'
+              $ref: "#/components/schemas/ChatUpdateRequest"
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -657,45 +657,45 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Chat'
+                    $ref: "#/components/schemas/Chat"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Chats
       x-requirements:
@@ -721,26 +721,26 @@ paths:
               - 334
           example: 334
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Chats
       x-requirements:
@@ -770,40 +770,40 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddTagsRequest'
+              $ref: "#/components/schemas/AddTagsRequest"
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '400':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Members
       x-requirements:
@@ -839,26 +839,26 @@ paths:
               - 86
           example: 86
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Members
       x-requirements:
@@ -882,38 +882,38 @@ paths:
               - 334
           example: 334
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '400':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Members
       x-requirements:
@@ -945,7 +945,7 @@ paths:
           schema:
             default: all
             allOf:
-              - $ref: '#/components/schemas/ChatMemberRoleFilter'
+              - $ref: "#/components/schemas/ChatMemberRoleFilter"
           example: all
           explode: false
         - name: limit
@@ -973,7 +973,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -984,42 +984,42 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/User'
+                      $ref: "#/components/schemas/User"
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Members
       x-paginated: true
@@ -1047,40 +1047,40 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddMembersRequest'
+              $ref: "#/components/schemas/AddMembersRequest"
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '400':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Members
       x-requirements:
@@ -1116,26 +1116,26 @@ paths:
               - 186
           example: 186
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Members
       x-requirements:
@@ -1176,40 +1176,40 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateMemberRoleRequest'
+              $ref: "#/components/schemas/UpdateMemberRoleRequest"
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '400':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Members
       x-requirements:
@@ -1235,26 +1235,26 @@ paths:
               - 334
           example: 334
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Chats
       x-requirements:
@@ -1277,11 +1277,11 @@ paths:
           required: true
           schema:
             example: User
-            $ref: '#/components/schemas/SearchEntityType'
+            $ref: "#/components/schemas/SearchEntityType"
           example: User
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -1292,39 +1292,39 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/CustomPropertyDefinition'
+                      $ref: "#/components/schemas/CustomPropertyDefinition"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Common
       x-requirements:
@@ -1342,10 +1342,10 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/FileUploadRequest'
+              $ref: "#/components/schemas/FileUploadRequest"
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
       tags:
         - Common
       x-external-url: directUrl
@@ -1364,9 +1364,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GroupTagRequest'
+              $ref: "#/components/schemas/GroupTagRequest"
       responses:
-        '201':
+        "201":
           description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
@@ -1375,39 +1375,39 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/GroupTag'
+                    $ref: "#/components/schemas/GroupTag"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Group tags
       x-requirements:
@@ -1427,7 +1427,7 @@ paths:
             example:
               - Design
               - Product
-            $ref: '#/components/schemas/TagNamesFilter'
+            $ref: "#/components/schemas/TagNamesFilter"
           example:
             - Design
             - Product
@@ -1456,7 +1456,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -1467,42 +1467,42 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/GroupTag'
+                      $ref: "#/components/schemas/GroupTag"
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Group tags
       x-paginated: true
@@ -1529,7 +1529,7 @@ paths:
               - 9111
           example: 9111
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -1538,33 +1538,33 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/GroupTag'
+                    $ref: "#/components/schemas/GroupTag"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Group tags
       x-requirements:
@@ -1593,9 +1593,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GroupTagRequest'
+              $ref: "#/components/schemas/GroupTagRequest"
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -1604,45 +1604,45 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/GroupTag'
+                    $ref: "#/components/schemas/GroupTag"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Group tags
       x-requirements:
@@ -1667,32 +1667,32 @@ paths:
               - 9111
           example: 9111
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Group tags
       x-requirements:
@@ -1740,7 +1740,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -1751,48 +1751,48 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/User'
+                      $ref: "#/components/schemas/User"
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Group tags
       x-paginated: true
@@ -1815,9 +1815,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageCreateRequest'
+              $ref: "#/components/schemas/MessageCreateRequest"
       responses:
-        '201':
+        "201":
           description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
@@ -1826,39 +1826,39 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Message'
+                    $ref: "#/components/schemas/Message"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Messages
       x-requirements:
@@ -1890,7 +1890,7 @@ paths:
           schema:
             default: id
             allOf:
-              - $ref: '#/components/schemas/MessageSortField'
+              - $ref: "#/components/schemas/MessageSortField"
           example: id
           explode: false
         - name: order
@@ -1900,7 +1900,7 @@ paths:
           schema:
             default: desc
             allOf:
-              - $ref: '#/components/schemas/SortOrder'
+              - $ref: "#/components/schemas/SortOrder"
           example: desc
           explode: false
         - name: limit
@@ -1928,7 +1928,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -1939,48 +1939,48 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Message'
+                      $ref: "#/components/schemas/Message"
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Messages
       x-paginated: true
@@ -2007,7 +2007,7 @@ paths:
               - 194275
           example: 194275
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -2016,33 +2016,33 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Message'
+                    $ref: "#/components/schemas/Message"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Messages
       x-requirements:
@@ -2071,9 +2071,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MessageUpdateRequest'
+              $ref: "#/components/schemas/MessageUpdateRequest"
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -2082,45 +2082,45 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Message'
+                    $ref: "#/components/schemas/Message"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Messages
       x-requirements:
@@ -2147,32 +2147,32 @@ paths:
               - 194275
           example: 194275
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Messages
       x-requirements:
@@ -2200,40 +2200,40 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LinkPreviewsRequest'
+              $ref: "#/components/schemas/LinkPreviewsRequest"
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '400':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Link Previews
       x-requirements:
@@ -2259,27 +2259,27 @@ paths:
               - 194275
           example: 194275
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
       tags:
         - Messages
@@ -2305,26 +2305,26 @@ paths:
               - 194275
           example: 194275
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Messages
       x-requirements:
@@ -2360,44 +2360,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ReactionRequest'
+              $ref: "#/components/schemas/ReactionRequest"
       responses:
-        '201':
+        "201":
           description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Reaction'
-        '400':
+                $ref: "#/components/schemas/Reaction"
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Reactions
       x-requirements:
@@ -2440,42 +2440,42 @@ paths:
           schema:
             type: string
             examples:
-              - ':+1:'
-          example: ':+1:'
+              - ":+1:"
+          example: ":+1:"
           explode: false
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '400':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Reactions
       x-requirements:
@@ -2522,7 +2522,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -2533,42 +2533,42 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Reaction'
+                      $ref: "#/components/schemas/Reaction"
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Reactions
       x-paginated: true
@@ -2617,7 +2617,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -2631,46 +2631,46 @@ paths:
                       type: integer
                       format: int32
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Read members
       x-paginated: true
@@ -2697,7 +2697,7 @@ paths:
               - 154332686
           example: 154332686
       responses:
-        '201':
+        "201":
           description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
@@ -2706,27 +2706,27 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Thread'
+                    $ref: "#/components/schemas/Thread"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Threads
       x-requirements:
@@ -2740,7 +2740,7 @@ paths:
         Метод для получения информации о текущем OAuth токене, включая его скоупы, дату создания и последнего использования. Токен в ответе маскируется — видны только первые 8 и последние 4 символа.
       parameters: []
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -2749,15 +2749,15 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/AccessTokenInfo'
+                    $ref: "#/components/schemas/AccessTokenInfo"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
+                $ref: "#/components/schemas/OAuthError"
       tags:
         - Profile
   /profile:
@@ -2769,7 +2769,7 @@ paths:
         Метод для получения информации о своем профиле.
       parameters: []
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -2778,21 +2778,21 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/User'
+                    $ref: "#/components/schemas/User"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
+                $ref: "#/components/schemas/OAuthError"
       tags:
         - Profile
       x-requirements:
@@ -2819,7 +2819,7 @@ paths:
               required:
                 - image
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -2828,35 +2828,35 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/AvatarData'
+                    $ref: "#/components/schemas/AvatarData"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
                 anyOf:
-                  - $ref: '#/components/schemas/ApiError'
-                  - $ref: '#/components/schemas/OAuthError'
-        '422':
+                  - $ref: "#/components/schemas/ApiError"
+                  - $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Profile
       x-requirements:
@@ -2869,28 +2869,28 @@ paths:
         Метод для удаления аватара своего профиля.
       parameters: []
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
                 anyOf:
-                  - $ref: '#/components/schemas/ApiError'
-                  - $ref: '#/components/schemas/OAuthError'
+                  - $ref: "#/components/schemas/ApiError"
+                  - $ref: "#/components/schemas/OAuthError"
       tags:
         - Profile
       x-requirements:
@@ -2904,7 +2904,7 @@ paths:
         Метод для получения информации о своем статусе.
       parameters: []
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -2915,23 +2915,23 @@ paths:
                   data:
                     type:
                       - object
-                      - 'null'
+                      - "null"
                     allOf:
-                      - $ref: '#/components/schemas/UserStatus'
+                      - $ref: "#/components/schemas/UserStatus"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
+                $ref: "#/components/schemas/OAuthError"
       tags:
         - Profile
       x-requirements:
@@ -2948,9 +2948,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StatusUpdateRequest'
+              $ref: "#/components/schemas/StatusUpdateRequest"
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -2959,33 +2959,33 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/UserStatus'
+                    $ref: "#/components/schemas/UserStatus"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Profile
       x-requirements:
@@ -2998,20 +2998,20 @@ paths:
         Метод для удаления своего статуса.
       parameters: []
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
+                $ref: "#/components/schemas/OAuthError"
       tags:
         - Profile
       x-requirements:
@@ -3063,7 +3063,7 @@ paths:
           required: false
           schema:
             example: desc
-            $ref: '#/components/schemas/SortOrder'
+            $ref: "#/components/schemas/SortOrder"
           example: desc
           explode: false
         - name: created_from
@@ -3104,7 +3104,7 @@ paths:
           required: false
           schema:
             example: discussion
-            $ref: '#/components/schemas/ChatSubtype'
+            $ref: "#/components/schemas/ChatSubtype"
           example: discussion
           explode: false
         - name: personal
@@ -3118,7 +3118,7 @@ paths:
           example: false
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -3129,36 +3129,36 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Chat'
+                      $ref: "#/components/schemas/Chat"
                   meta:
-                    $ref: '#/components/schemas/SearchPaginationMeta'
+                    $ref: "#/components/schemas/SearchPaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
+                $ref: "#/components/schemas/OAuthError"
       tags:
         - Search
       x-paginated: true
@@ -3211,7 +3211,7 @@ paths:
           required: false
           schema:
             example: desc
-            $ref: '#/components/schemas/SortOrder'
+            $ref: "#/components/schemas/SortOrder"
           example: desc
           explode: false
         - name: created_from
@@ -3279,7 +3279,7 @@ paths:
           example: true
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -3290,36 +3290,36 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Message'
+                      $ref: "#/components/schemas/Message"
                   meta:
-                    $ref: '#/components/schemas/SearchPaginationMeta'
+                    $ref: "#/components/schemas/SearchPaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
+                $ref: "#/components/schemas/OAuthError"
       tags:
         - Search
       x-paginated: true
@@ -3372,7 +3372,7 @@ paths:
           required: false
           schema:
             example: by_score
-            $ref: '#/components/schemas/SearchSortOrder'
+            $ref: "#/components/schemas/SearchSortOrder"
           example: by_score
           explode: false
         - name: order
@@ -3381,7 +3381,7 @@ paths:
           required: false
           schema:
             example: desc
-            $ref: '#/components/schemas/SortOrder'
+            $ref: "#/components/schemas/SortOrder"
           example: desc
           explode: false
         - name: created_from
@@ -3413,7 +3413,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/UserRole'
+              $ref: "#/components/schemas/UserRole"
             examples:
               - - admin
                 - user
@@ -3422,7 +3422,7 @@ paths:
             - user
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -3433,36 +3433,36 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/User'
+                      $ref: "#/components/schemas/User"
                   meta:
-                    $ref: '#/components/schemas/SearchPaginationMeta'
+                    $ref: "#/components/schemas/SearchPaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
+                $ref: "#/components/schemas/OAuthError"
       tags:
         - Search
       x-paginated: true
@@ -3489,9 +3489,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TaskCreateRequest'
+              $ref: "#/components/schemas/TaskCreateRequest"
       responses:
-        '201':
+        "201":
           description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
@@ -3500,45 +3500,45 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Task'
+                    $ref: "#/components/schemas/Task"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Tasks
       x-requirements:
@@ -3575,7 +3575,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -3586,36 +3586,36 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Task'
+                      $ref: "#/components/schemas/Task"
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
+                $ref: "#/components/schemas/OAuthError"
       tags:
         - Tasks
       x-paginated: true
@@ -3642,7 +3642,7 @@ paths:
               - 22283
           example: 22283
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -3651,33 +3651,33 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Task'
+                    $ref: "#/components/schemas/Task"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Tasks
       x-requirements:
@@ -3706,9 +3706,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TaskUpdateRequest'
+              $ref: "#/components/schemas/TaskUpdateRequest"
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -3717,45 +3717,45 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Task'
+                    $ref: "#/components/schemas/Task"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Tasks
       x-requirements:
@@ -3780,32 +3780,32 @@ paths:
               - 22283
           example: 22283
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Tasks
       x-requirements:
@@ -3831,7 +3831,7 @@ paths:
               - 265142
           example: 265142
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -3840,33 +3840,33 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Thread'
+                    $ref: "#/components/schemas/Thread"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Threads
       x-requirements:
@@ -3882,30 +3882,30 @@ paths:
         Данный метод необходимо использовать для загрузки каждого файла.
       parameters: []
       responses:
-        '201':
+        "201":
           description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UploadParams'
-        '401':
+                $ref: "#/components/schemas/UploadParams"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
+                $ref: "#/components/schemas/OAuthError"
       tags:
         - Common
       x-requirements:
@@ -3925,9 +3925,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserCreateRequest'
+              $ref: "#/components/schemas/UserCreateRequest"
       responses:
-        '201':
+        "201":
           description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
@@ -3936,39 +3936,39 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/User'
+                    $ref: "#/components/schemas/User"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Users
       x-requirements:
@@ -3982,7 +3982,7 @@ paths:
       parameters:
         - name: query
           in: query
-          description: 'Поисковая фраза для фильтрации результатов. Поиск работает по полям: `first_name` (имя), `last_name` (фамилия), `email` (электронная почта), `phone_number` (телефон) и `nickname` (никнейм).'
+          description: "Поисковая фраза для фильтрации результатов. Поиск работает по полям: `first_name` (имя), `last_name` (фамилия), `email` (электронная почта), `phone_number` (телефон) и `nickname` (никнейм)."
           required: false
           schema:
             type: string
@@ -4015,7 +4015,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -4026,42 +4026,42 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/User'
+                      $ref: "#/components/schemas/User"
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Users
       x-paginated: true
@@ -4088,7 +4088,7 @@ paths:
               - 12
           example: 12
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -4097,33 +4097,33 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/User'
+                    $ref: "#/components/schemas/User"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Users
       x-requirements:
@@ -4152,9 +4152,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserUpdateRequest'
+              $ref: "#/components/schemas/UserUpdateRequest"
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -4163,45 +4163,45 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/User'
+                    $ref: "#/components/schemas/User"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Users
       x-requirements:
@@ -4226,32 +4226,32 @@ paths:
               - 12
           example: 12
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Users
       x-requirements:
@@ -4288,7 +4288,7 @@ paths:
               required:
                 - image
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -4297,41 +4297,41 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/AvatarData'
+                    $ref: "#/components/schemas/AvatarData"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
                 anyOf:
-                  - $ref: '#/components/schemas/ApiError'
-                  - $ref: '#/components/schemas/OAuthError'
-        '404':
+                  - $ref: "#/components/schemas/ApiError"
+                  - $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Users
       x-requirements:
@@ -4354,34 +4354,34 @@ paths:
               - 12
           example: 12
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
                 anyOf:
-                  - $ref: '#/components/schemas/ApiError'
-                  - $ref: '#/components/schemas/OAuthError'
-        '404':
+                  - $ref: "#/components/schemas/ApiError"
+                  - $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Users
       x-requirements:
@@ -4405,7 +4405,7 @@ paths:
               - 12
           example: 12
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -4416,29 +4416,29 @@ paths:
                   data:
                     type:
                       - object
-                      - 'null'
+                      - "null"
                     allOf:
-                      - $ref: '#/components/schemas/UserStatus'
+                      - $ref: "#/components/schemas/UserStatus"
                 required:
                   - data
-        '401':
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Users
       x-requirements:
@@ -4465,9 +4465,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StatusUpdateRequest'
+              $ref: "#/components/schemas/StatusUpdateRequest"
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -4476,39 +4476,39 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/UserStatus'
+                    $ref: "#/components/schemas/UserStatus"
                 required:
                   - data
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Users
       x-requirements:
@@ -4531,26 +4531,26 @@ paths:
               - 12
           example: 12
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '403':
+                $ref: "#/components/schemas/OAuthError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Users
       x-requirements:
@@ -4570,46 +4570,46 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OpenViewRequest'
+              $ref: "#/components/schemas/OpenViewRequest"
       responses:
-        '201':
+        "201":
           description: The request has succeeded and a new resource has been created as a result.
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '410':
+                $ref: "#/components/schemas/OAuthError"
+        "410":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '422':
+                $ref: "#/components/schemas/ApiError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Views
       x-requirements:
@@ -4651,7 +4651,7 @@ paths:
           example: eyJpZCI6MTAsImRpciI6ImFzYyJ9
           explode: false
       responses:
-        '200':
+        "200":
           description: The request has succeeded.
           content:
             application/json:
@@ -4662,42 +4662,42 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/WebhookEvent'
+                      $ref: "#/components/schemas/WebhookEvent"
                   meta:
-                    $ref: '#/components/schemas/PaginationMeta'
+                    $ref: "#/components/schemas/PaginationMeta"
                 required:
                   - data
                   - meta
-        '400':
+        "400":
           description: The server could not understand the request due to invalid syntax.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '401':
+                $ref: "#/components/schemas/ApiError"
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '422':
+                $ref: "#/components/schemas/OAuthError"
+        "422":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Bots
       x-paginated: true
@@ -4725,32 +4725,32 @@ paths:
               - 01KAJZ2XDSS2S3DSW9EXJZ0TBV
           example: 01KAJZ2XDSS2S3DSW9EXJZ0TBV
       responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-        '401':
+        "204":
+          description: "There is no content to send for this request, but the headers may be useful. "
+        "401":
           description: Access is unauthorized.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '402':
+                $ref: "#/components/schemas/OAuthError"
+        "402":
           description: Client error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-        '403':
+                $ref: "#/components/schemas/ApiError"
+        "403":
           description: Access is forbidden.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthError'
-        '404':
+                $ref: "#/components/schemas/OAuthError"
+        "404":
           description: The server cannot find the requested resource.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: "#/components/schemas/ApiError"
       tags:
         - Bots
       x-requirements:
@@ -4776,7 +4776,7 @@ components:
           description: Пользовательское имя токена
           type:
             - string
-            - 'null'
+            - "null"
           examples:
             - Мой API токен
         user_id:
@@ -4789,7 +4789,7 @@ components:
           description: Список скоупов токена
           type: array
           items:
-            $ref: '#/components/schemas/OAuthScope'
+            $ref: "#/components/schemas/OAuthScope"
           examples:
             - - messages:read
               - chats:read
@@ -4803,7 +4803,7 @@ components:
           description: Дата отзыва токена
           type:
             - string
-            - 'null'
+            - "null"
           format: date-time
           examples:
             - null
@@ -4811,7 +4811,7 @@ components:
           description: Время жизни токена в секундах
           type:
             - integer
-            - 'null'
+            - "null"
           format: int32
           examples:
             - null
@@ -4819,7 +4819,7 @@ components:
           description: Дата последнего использования токена
           type:
             - string
-            - 'null'
+            - "null"
           format: date-time
           examples:
             - 2025-02-24T14:20:00.000Z
@@ -4876,7 +4876,7 @@ components:
           description: Массив ошибок
           type: array
           items:
-            $ref: '#/components/schemas/ApiErrorItem'
+            $ref: "#/components/schemas/ApiErrorItem"
       required:
         - errors
       x-error: true
@@ -4893,7 +4893,7 @@ components:
           description: Значение поля, которое вызвало ошибку
           type:
             - string
-            - 'null'
+            - "null"
           examples:
             - invalid_value
         message:
@@ -4905,12 +4905,12 @@ components:
           description: Код ошибки
           example: blank
           allOf:
-            - $ref: '#/components/schemas/ValidationErrorCode'
+            - $ref: "#/components/schemas/ValidationErrorCode"
         payload:
-          description: 'Дополнительные данные об ошибке. Содержимое зависит от кода ошибки: `{id: number}` — при ошибке кастомного свойства (идентификатор свойства), `{record: {type: string, id: number}, query: string}` — при ошибке авторизации. В большинстве случаев `null`'
+          description: "Дополнительные данные об ошибке. Содержимое зависит от кода ошибки: `{id: number}` — при ошибке кастомного свойства (идентификатор свойства), `{record: {type: string, id: number}, query: string}` — при ошибке авторизации. В большинстве случаев `null`"
           type:
             - object
-            - 'null'
+            - "null"
           examples:
             - null
           additionalProperties: {}
@@ -4921,7 +4921,7 @@ components:
         - code
         - payload
     AuditDetailsChatId:
-      description: 'При: tag_removed_from_chat'
+      description: "При: tag_removed_from_chat"
       type: object
       properties:
         chat_id:
@@ -4931,7 +4931,7 @@ components:
       required:
         - chat_id
     AuditDetailsChatPermission:
-      description: 'При: chat_permission_changed'
+      description: "При: chat_permission_changed"
       type: object
       properties:
         public_access:
@@ -4940,7 +4940,7 @@ components:
       required:
         - public_access
     AuditDetailsChatRenamed:
-      description: 'При: chat_renamed'
+      description: "При: chat_renamed"
       type: object
       properties:
         old_name:
@@ -4953,7 +4953,7 @@ components:
         - old_name
         - new_name
     AuditDetailsDlp:
-      description: 'При: dlp_violation_detected'
+      description: "При: dlp_violation_detected"
       type: object
       properties:
         dlp_rule_id:
@@ -4990,10 +4990,10 @@ components:
         - action_message
         - conditions_matched
     AuditDetailsEmpty:
-      description: 'Пустые детали. При: user_login, user_logout, user_2fa_fail, user_2fa_success, user_created, user_deleted, chat_created, message_created, message_updated, message_deleted, reaction_created, reaction_deleted, thread_created, audit_events_accessed'
+      description: "Пустые детали. При: user_login, user_logout, user_2fa_fail, user_2fa_success, user_created, user_deleted, chat_created, message_created, message_updated, message_deleted, reaction_created, reaction_deleted, thread_created, audit_events_accessed"
       type: object
     AuditDetailsInitiator:
-      description: 'При: user_added_to_tag, user_removed_from_tag, user_chat_leave'
+      description: "При: user_added_to_tag, user_removed_from_tag, user_chat_leave"
       type: object
       properties:
         initiator_id:
@@ -5003,7 +5003,7 @@ components:
       required:
         - initiator_id
     AuditDetailsInviter:
-      description: 'При: user_chat_join'
+      description: "При: user_chat_join"
       type: object
       properties:
         inviter_id:
@@ -5013,7 +5013,7 @@ components:
       required:
         - inviter_id
     AuditDetailsKms:
-      description: 'При: kms_encrypt, kms_decrypt'
+      description: "При: kms_encrypt, kms_decrypt"
       type: object
       properties:
         chat_id:
@@ -5032,7 +5032,7 @@ components:
         - message_id
         - reason
     AuditDetailsRoleChanged:
-      description: 'При: user_role_changed'
+      description: "При: user_role_changed"
       type: object
       properties:
         new_company_role:
@@ -5050,7 +5050,7 @@ components:
         - previous_company_role
         - initiator_id
     AuditDetailsSearch:
-      description: 'При: search_users_api, search_chats_api, search_messages_api'
+      description: "При: search_users_api, search_chats_api, search_messages_api"
       type: object
       properties:
         search_type:
@@ -5067,7 +5067,7 @@ components:
           type: integer
           format: int32
         filters:
-          description: 'Применённые фильтры. Возможные ключи зависят от типа поиска: order, sort, created_from, created_to, company_roles (users), active, chat_subtype, personal (chats), chat_ids, user_ids (messages)'
+          description: "Применённые фильтры. Возможные ключи зависят от типа поиска: order, sort, created_from, created_to, company_roles (users), active, chat_subtype, personal (chats), chat_ids, user_ids (messages)"
           type: object
           additionalProperties: {}
       required:
@@ -5077,7 +5077,7 @@ components:
         - limit
         - filters
     AuditDetailsTagChat:
-      description: 'При: tag_added_to_chat'
+      description: "При: tag_added_to_chat"
       type: object
       properties:
         chat_id:
@@ -5091,7 +5091,7 @@ components:
         - chat_id
         - tag_name
     AuditDetailsTagName:
-      description: 'При: tag_created, tag_deleted'
+      description: "При: tag_created, tag_deleted"
       type: object
       properties:
         name:
@@ -5100,7 +5100,7 @@ components:
       required:
         - name
     AuditDetailsTokenScopes:
-      description: 'При: access_token_created, access_token_updated, access_token_destroy'
+      description: "При: access_token_created, access_token_updated, access_token_destroy"
       type: object
       properties:
         scopes:
@@ -5111,7 +5111,7 @@ components:
       required:
         - scopes
     AuditDetailsUserUpdated:
-      description: 'При: user_updated'
+      description: "При: user_updated"
       type: object
       properties:
         changed_attrs:
@@ -5140,12 +5140,12 @@ components:
           description: Ключ типа события
           example: user_login
           allOf:
-            - $ref: '#/components/schemas/AuditEventKey'
+            - $ref: "#/components/schemas/AuditEventKey"
         entity_id:
           description: Идентификатор затронутой сущности
           type: string
           examples:
-            - '98765'
+            - "98765"
         entity_type:
           description: Тип затронутой сущности
           type: string
@@ -5155,7 +5155,7 @@ components:
           description: Идентификатор пользователя, выполнившего действие
           type: string
           examples:
-            - '98765'
+            - "98765"
         actor_type:
           description: Тип актора
           type: string
@@ -5164,7 +5164,7 @@ components:
         details:
           description: Дополнительные детали события. Структура зависит от значения event_key — см. описания значений поля event_key. Для событий без деталей возвращается пустой объект
           allOf:
-            - $ref: '#/components/schemas/AuditEventDetailsUnion'
+            - $ref: "#/components/schemas/AuditEventDetailsUnion"
         ip_address:
           description: IP-адрес, с которого было выполнено действие
           type: string
@@ -5189,20 +5189,20 @@ components:
     AuditEventDetailsUnion:
       description: Дополнительные детали события аудита. Структура зависит от значения event_key
       anyOf:
-        - $ref: '#/components/schemas/AuditDetailsEmpty'
-        - $ref: '#/components/schemas/AuditDetailsUserUpdated'
-        - $ref: '#/components/schemas/AuditDetailsRoleChanged'
-        - $ref: '#/components/schemas/AuditDetailsTagName'
-        - $ref: '#/components/schemas/AuditDetailsInitiator'
-        - $ref: '#/components/schemas/AuditDetailsInviter'
-        - $ref: '#/components/schemas/AuditDetailsChatRenamed'
-        - $ref: '#/components/schemas/AuditDetailsChatPermission'
-        - $ref: '#/components/schemas/AuditDetailsTagChat'
-        - $ref: '#/components/schemas/AuditDetailsChatId'
-        - $ref: '#/components/schemas/AuditDetailsTokenScopes'
-        - $ref: '#/components/schemas/AuditDetailsKms'
-        - $ref: '#/components/schemas/AuditDetailsDlp'
-        - $ref: '#/components/schemas/AuditDetailsSearch'
+        - $ref: "#/components/schemas/AuditDetailsEmpty"
+        - $ref: "#/components/schemas/AuditDetailsUserUpdated"
+        - $ref: "#/components/schemas/AuditDetailsRoleChanged"
+        - $ref: "#/components/schemas/AuditDetailsTagName"
+        - $ref: "#/components/schemas/AuditDetailsInitiator"
+        - $ref: "#/components/schemas/AuditDetailsInviter"
+        - $ref: "#/components/schemas/AuditDetailsChatRenamed"
+        - $ref: "#/components/schemas/AuditDetailsChatPermission"
+        - $ref: "#/components/schemas/AuditDetailsTagChat"
+        - $ref: "#/components/schemas/AuditDetailsChatId"
+        - $ref: "#/components/schemas/AuditDetailsTokenScopes"
+        - $ref: "#/components/schemas/AuditDetailsKms"
+        - $ref: "#/components/schemas/AuditDetailsDlp"
+        - $ref: "#/components/schemas/AuditDetailsSearch"
     AuditEventKey:
       description: Тип аудит-события
       type: string
@@ -5603,7 +5603,7 @@ components:
           description: Тип события
           example: add
           allOf:
-            - $ref: '#/components/schemas/MemberEventType'
+            - $ref: "#/components/schemas/MemberEventType"
         chat_id:
           description: Идентификатор чата, в котором изменился состав участников
           type: integer
@@ -5614,7 +5614,7 @@ components:
           description: Идентификатор треда
           type:
             - integer
-            - 'null'
+            - "null"
           format: int32
           examples:
             - 5678
@@ -5700,7 +5700,7 @@ components:
           description: Тип события
           example: invite
           allOf:
-            - $ref: '#/components/schemas/UserEventType'
+            - $ref: "#/components/schemas/UserEventType"
         user_ids:
           description: Массив идентификаторов пользователей, с которыми произошло событие
           type: array
@@ -5747,7 +5747,7 @@ components:
           description: Тип поля
           example: string
           allOf:
-            - $ref: '#/components/schemas/CustomPropertyDataType'
+            - $ref: "#/components/schemas/CustomPropertyDataType"
         value:
           description: Значение
           type: string
@@ -5790,7 +5790,7 @@ components:
           description: Тип поля
           example: string
           allOf:
-            - $ref: '#/components/schemas/CustomPropertyDataType'
+            - $ref: "#/components/schemas/CustomPropertyDataType"
       required:
         - id
         - name
@@ -5857,7 +5857,7 @@ components:
           description: Тип файла
           example: image
           allOf:
-            - $ref: '#/components/schemas/FileType'
+            - $ref: "#/components/schemas/FileType"
         url:
           description: Прямая ссылка на скачивание файла
           type: string
@@ -5867,7 +5867,7 @@ components:
           description: Ширина изображения в пикселях
           type:
             - integer
-            - 'null'
+            - "null"
           format: int32
           examples:
             - 1920
@@ -5875,7 +5875,7 @@ components:
           description: Высота изображения в пикселях
           type:
             - integer
-            - 'null'
+            - "null"
           format: int32
           examples:
             - 1080
@@ -5967,7 +5967,7 @@ components:
           description: Идентификатор треда, в котором находится оригинальное сообщение
           type:
             - integer
-            - 'null'
+            - "null"
           format: int32
           examples:
             - null
@@ -5975,7 +5975,7 @@ components:
           description: Идентификатор сообщения, к которому был создан тред, в котором находится оригинальное сообщение
           type:
             - integer
-            - 'null'
+            - "null"
           format: int32
           examples:
             - null
@@ -5983,7 +5983,7 @@ components:
           description: Идентификатор чата сообщения, к которому был создан тред, в котором находится оригинальное сообщение
           type:
             - integer
-            - 'null'
+            - "null"
           format: int32
           examples:
             - null
@@ -6053,7 +6053,7 @@ components:
           description: Заголовок
           type: string
           examples:
-            - 'Статья: Отправка файлов'
+            - "Статья: Отправка файлов"
         description:
           description: Описание
           type: string
@@ -6095,10 +6095,10 @@ components:
       type: object
       properties:
         link_previews:
-          description: '`JSON` карта предпросмотров ссылок, где каждый ключ — `URL`, который был получен в исходящем вебхуке о новом сообщении.'
+          description: "`JSON` карта предпросмотров ссылок, где каждый ключ — `URL`, который был получен в исходящем вебхуке о новом сообщении."
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/LinkPreview'
+            $ref: "#/components/schemas/LinkPreview"
           x-record-key-example: https://website.com/articles/123
       required:
         - link_previews
@@ -6138,7 +6138,7 @@ components:
           description: Массив обнаруженных ссылок на отслеживаемые домены
           type: array
           items:
-            $ref: '#/components/schemas/WebhookLink'
+            $ref: "#/components/schemas/WebhookLink"
         user_id:
           description: Идентификатор отправителя сообщения
           type: integer
@@ -6189,7 +6189,7 @@ components:
           description: Тип сущности, к которой относится сообщение
           example: discussion
           allOf:
-            - $ref: '#/components/schemas/MessageEntityType'
+            - $ref: "#/components/schemas/MessageEntityType"
         entity_id:
           description: Идентификатор сущности, к которой относится сообщение (беседы/канала, треда или пользователя)
           type: integer
@@ -6234,21 +6234,21 @@ components:
           description: Прикрепленные файлы
           type: array
           items:
-            $ref: '#/components/schemas/File'
+            $ref: "#/components/schemas/File"
         buttons:
           description: Массив строк, каждая из которых представлена массивом кнопок
           type:
             - array
-            - 'null'
+            - "null"
           items:
             type: array
             items:
-              $ref: '#/components/schemas/Button'
+              $ref: "#/components/schemas/Button"
         thread:
           description: Тред сообщения
           type:
             - object
-            - 'null'
+            - "null"
           properties:
             id:
               description: Идентификатор треда
@@ -6269,14 +6269,14 @@ components:
           description: Информация о пересланном сообщении
           type:
             - object
-            - 'null'
+            - "null"
           allOf:
-            - $ref: '#/components/schemas/Forwarding'
+            - $ref: "#/components/schemas/Forwarding"
         parent_message_id:
           description: Идентификатор сообщения, к которому написан ответ
           type:
             - integer
-            - 'null'
+            - "null"
           format: int32
           examples:
             - null
@@ -6284,21 +6284,21 @@ components:
           description: Ссылка на аватарку отправителя сообщения
           type:
             - string
-            - 'null'
+            - "null"
           examples:
             - null
         display_name:
           description: Полное имя отправителя сообщения
           type:
             - string
-            - 'null'
+            - "null"
           examples:
             - null
         changed_at:
           description: Дата и время последнего редактирования сообщения (ISO-8601, UTC+0) в формате YYYY-MM-DDThh:mm:ss.sssZ
           type:
             - string
-            - 'null'
+            - "null"
           format: date-time
           examples:
             - 2021-08-28T16:10:00.000Z
@@ -6306,7 +6306,7 @@ components:
           description: Дата и время удаления сообщения (ISO-8601, UTC+0) в формате YYYY-MM-DDThh:mm:ss.sssZ
           type:
             - string
-            - 'null'
+            - "null"
           format: date-time
           examples:
             - null
@@ -6342,7 +6342,7 @@ components:
               example: discussion
               default: discussion
               allOf:
-                - $ref: '#/components/schemas/MessageEntityType'
+                - $ref: "#/components/schemas/MessageEntityType"
             entity_id:
               description: Идентификатор сущности
               type: integer
@@ -6350,7 +6350,7 @@ components:
               examples:
                 - 334
             content:
-              description: 'Текст сообщения. Поддерживает упоминания: `@nickname` или `<@user_id>` (будет автоматически преобразовано в `@nickname`).'
+              description: "Текст сообщения. Поддерживает упоминания: `@nickname` или `<@user_id>` (будет автоматически преобразовано в `@nickname`)."
               examples:
                 - Вчера мы продали 756 футболок (что на 10% больше, чем в прошлое воскресенье)
               type: string
@@ -6374,7 +6374,7 @@ components:
                     description: Тип файла
                     example: image
                     allOf:
-                      - $ref: '#/components/schemas/FileType'
+                      - $ref: "#/components/schemas/FileType"
                   size:
                     description: Размер файла в байтах, отображаемый пользователю
                     type: integer
@@ -6404,7 +6404,7 @@ components:
               items:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Button'
+                  $ref: "#/components/schemas/Button"
               examples:
                 - - - text: Подробнее
                       url: https://example.com/details
@@ -6471,9 +6471,9 @@ components:
           type: object
           properties:
             content:
-              description: 'Текст сообщения. Поддерживает упоминания: `@nickname` или `<@user_id>` (будет автоматически преобразовано в `@nickname`).'
+              description: "Текст сообщения. Поддерживает упоминания: `@nickname` или `<@user_id>` (будет автоматически преобразовано в `@nickname`)."
               examples:
-                - 'Вот попробуйте написать правильно это с первого раза: Будущий, Полощи, Прийти, Грейпфрут, Мозаика, Бюллетень, Дуршлаг, Винегрет.'
+                - "Вот попробуйте написать правильно это с первого раза: Будущий, Полощи, Прийти, Грейпфрут, Мозаика, Бюллетень, Дуршлаг, Винегрет."
               type: string
             files:
               description: Прикрепляемые файлы
@@ -6492,7 +6492,7 @@ components:
                     examples:
                       - logo.png
                   file_type:
-                    description: 'Тип файла: файл (file), изображение (image)'
+                    description: "Тип файла: файл (file), изображение (image)"
                     type: string
                     examples:
                       - image
@@ -6523,7 +6523,7 @@ components:
               items:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Button'
+                  $ref: "#/components/schemas/Button"
               examples:
                 - - - text: Подробнее
                       url: https://example.com/details
@@ -6561,12 +6561,12 @@ components:
           description: Тип события
           example: new
           allOf:
-            - $ref: '#/components/schemas/WebhookEventType'
+            - $ref: "#/components/schemas/WebhookEventType"
         entity_type:
           description: Тип сущности, к которой относится сообщение
           example: discussion
           allOf:
-            - $ref: '#/components/schemas/MessageEntityType'
+            - $ref: "#/components/schemas/MessageEntityType"
         entity_id:
           description: Идентификатор сущности, к которой относится сообщение
           type: integer
@@ -6605,7 +6605,7 @@ components:
           description: Идентификатор сообщения, к которому написан ответ
           type:
             - integer
-            - 'null'
+            - "null"
           format: int32
           examples:
             - 3456
@@ -6613,9 +6613,9 @@ components:
           description: Объект с параметрами треда
           type:
             - object
-            - 'null'
+            - "null"
           allOf:
-            - $ref: '#/components/schemas/WebhookMessageThread'
+            - $ref: "#/components/schemas/WebhookMessageThread"
         webhook_timestamp:
           description: Дата и время отправки вебхука (UTC+0) в формате UNIX
           type: integer
@@ -7040,7 +7040,7 @@ components:
               description: Массив блоков представления
               type: array
               items:
-                $ref: '#/components/schemas/ViewBlockUnion'
+                $ref: "#/components/schemas/ViewBlockUnion"
               maxItems: 100
           required:
             - title
@@ -7091,9 +7091,9 @@ components:
           description: Название emoji реакции
           type:
             - string
-            - 'null'
+            - "null"
           examples:
-            - ':+1::skin-tone-1:'
+            - ":+1::skin-tone-1:"
       required:
         - user_id
         - created_at
@@ -7121,7 +7121,7 @@ components:
           description: Текстовое имя эмодзи (используется для кастомных эмодзи)
           type: string
           examples:
-            - ':+1:'
+            - ":+1:"
       required:
         - code
     ReactionWebhookPayload:
@@ -7140,7 +7140,7 @@ components:
           description: Тип события
           example: new
           allOf:
-            - $ref: '#/components/schemas/ReactionEventType'
+            - $ref: "#/components/schemas/ReactionEventType"
         message_id:
           description: Идентификатор сообщения, к которому относится реакция
           type: integer
@@ -7296,7 +7296,7 @@ components:
           description: Тип
           example: reminder
           allOf:
-            - $ref: '#/components/schemas/TaskKind'
+            - $ref: "#/components/schemas/TaskKind"
         content:
           description: Описание
           examples:
@@ -7306,7 +7306,7 @@ components:
           description: Срок выполнения напоминания (ISO-8601, UTC+0) в формате YYYY-MM-DDThh:mm:ss.sssZ
           type:
             - string
-            - 'null'
+            - "null"
           format: date-time
           examples:
             - 2020-06-05T09:00:00.000Z
@@ -7326,7 +7326,7 @@ components:
           description: Идентификатор чата, к которому привязано напоминание
           type:
             - integer
-            - 'null'
+            - "null"
           format: int32
           examples:
             - 334
@@ -7334,7 +7334,7 @@ components:
           description: Статус напоминания
           example: undone
           allOf:
-            - $ref: '#/components/schemas/TaskStatus'
+            - $ref: "#/components/schemas/TaskStatus"
         created_at:
           description: Дата и время создания напоминания (ISO-8601, UTC+0) в формате YYYY-MM-DDThh:mm:ss.sssZ
           type: string
@@ -7358,7 +7358,7 @@ components:
           description: Дополнительные поля напоминания
           type: array
           items:
-            $ref: '#/components/schemas/CustomProperty'
+            $ref: "#/components/schemas/CustomProperty"
       required:
         - id
         - kind
@@ -7384,7 +7384,7 @@ components:
               description: Тип
               example: reminder
               allOf:
-                - $ref: '#/components/schemas/TaskKind'
+                - $ref: "#/components/schemas/TaskKind"
             content:
               description: Описание (по умолчанию — название типа)
               examples:
@@ -7397,7 +7397,7 @@ components:
               examples:
                 - 2020-06-05T12:00:00.000+03:00
             priority:
-              description: 'Приоритет: 1, 2 (важно) или 3 (очень важно).'
+              description: "Приоритет: 1, 2 (важно) или 3 (очень важно)."
               type: integer
               format: int32
               examples:
@@ -7483,7 +7483,7 @@ components:
               description: Тип
               example: reminder
               allOf:
-                - $ref: '#/components/schemas/TaskKind'
+                - $ref: "#/components/schemas/TaskKind"
             content:
               description: Описание
               examples:
@@ -7496,7 +7496,7 @@ components:
               examples:
                 - 2020-06-05T12:00:00.000+03:00
             priority:
-              description: 'Приоритет: 1, 2 (важно) или 3 (очень важно).'
+              description: "Приоритет: 1, 2 (важно) или 3 (очень важно)."
               type: integer
               format: int32
               examples:
@@ -7513,7 +7513,7 @@ components:
               description: Статус
               example: done
               allOf:
-                - $ref: '#/components/schemas/TaskStatus'
+                - $ref: "#/components/schemas/TaskStatus"
             all_day:
               description: Напоминание на весь день (без указания времени)
               type: boolean
@@ -7595,7 +7595,7 @@ components:
           description: Роль
           example: admin
           allOf:
-            - $ref: '#/components/schemas/ChatMemberRole'
+            - $ref: "#/components/schemas/ChatMemberRole"
       required:
         - role
     UploadParams:
@@ -7681,7 +7681,7 @@ components:
           description: Имя пользователя
           type: string
           examples:
-            - ''
+            - ""
         email:
           description: Электронная почта
           type: string
@@ -7691,7 +7691,7 @@ components:
           description: Телефон
           type: string
           examples:
-            - ''
+            - ""
         department:
           description: Департамент
           type: string
@@ -7706,7 +7706,7 @@ components:
           description: Уровень доступа
           example: admin
           allOf:
-            - $ref: '#/components/schemas/UserRole'
+            - $ref: "#/components/schemas/UserRole"
         suspended:
           description: Деактивация пользователя
           type: boolean
@@ -7716,7 +7716,7 @@ components:
           description: Статус приглашения
           example: confirmed
           allOf:
-            - $ref: '#/components/schemas/InviteStatus'
+            - $ref: "#/components/schemas/InviteStatus"
         list_tags:
           description: Массив тегов, привязанных к сотруднику
           type: array
@@ -7729,14 +7729,14 @@ components:
           description: Дополнительные поля сотрудника
           type: array
           items:
-            $ref: '#/components/schemas/CustomProperty'
+            $ref: "#/components/schemas/CustomProperty"
         user_status:
           description: Статус
           type:
             - object
-            - 'null'
+            - "null"
           allOf:
-            - $ref: '#/components/schemas/UserStatus'
+            - $ref: "#/components/schemas/UserStatus"
         bot:
           description: Является ботом
           type: boolean
@@ -7768,7 +7768,7 @@ components:
           description: Ссылка на скачивание аватарки пользователя
           type:
             - string
-            - 'null'
+            - "null"
           examples:
             - https://app.pachca.com/users/12/photo.jpg
       required:
@@ -7818,7 +7818,7 @@ components:
               description: Телефон
               type: string
               examples:
-                - '+79001234567'
+                - "+79001234567"
             nickname:
               description: Имя пользователя
               type: string
@@ -7838,7 +7838,7 @@ components:
               description: Уровень доступа
               example: user
               allOf:
-                - $ref: '#/components/schemas/UserRoleInput'
+                - $ref: "#/components/schemas/UserRoleInput"
             suspended:
               description: Деактивация пользователя
               type: boolean
@@ -7940,7 +7940,7 @@ components:
           description: Срок жизни статуса (ISO-8601, UTC+0) в формате YYYY-MM-DDThh:mm:ss.sssZ
           type:
             - string
-            - 'null'
+            - "null"
           format: date-time
           examples:
             - 2024-04-08T10:00:00.000Z
@@ -7953,7 +7953,7 @@ components:
           description: Сообщение при режиме «Нет на месте». Отображается в профиле пользователя, а также при отправке ему личного сообщения или упоминании в чате.
           type:
             - object
-            - 'null'
+            - "null"
           properties:
             text:
               description: Текст сообщения
@@ -7995,7 +7995,7 @@ components:
               description: Телефон
               type: string
               examples:
-                - '+79001234567'
+                - "+79001234567"
             nickname:
               description: Имя пользователя
               type: string
@@ -8015,7 +8015,7 @@ components:
               description: Уровень доступа
               example: user
               allOf:
-                - $ref: '#/components/schemas/UserRoleInput'
+                - $ref: "#/components/schemas/UserRoleInput"
             suspended:
               description: Деактивация пользователя
               type: boolean
@@ -8177,7 +8177,7 @@ components:
           description: Массив чекбоксов
           type: array
           items:
-            $ref: '#/components/schemas/ViewBlockCheckboxOption'
+            $ref: "#/components/schemas/ViewBlockCheckboxOption"
           maxItems: 10
         required:
           description: Обязательность
@@ -8502,7 +8502,7 @@ components:
           description: Массив радиокнопок
           type: array
           items:
-            $ref: '#/components/schemas/ViewBlockSelectableOption'
+            $ref: "#/components/schemas/ViewBlockSelectableOption"
           maxItems: 10
         required:
           description: Обязательность
@@ -8547,7 +8547,7 @@ components:
           description: Массив доступных пунктов в выпадающем списке
           type: array
           items:
-            $ref: '#/components/schemas/ViewBlockSelectableOption'
+            $ref: "#/components/schemas/ViewBlockSelectableOption"
           maxItems: 100
         required:
           description: Обязательность
@@ -8642,17 +8642,17 @@ components:
     ViewBlockUnion:
       description: Union-тип для всех возможных блоков представления
       anyOf:
-        - $ref: '#/components/schemas/ViewBlockHeader'
-        - $ref: '#/components/schemas/ViewBlockPlainText'
-        - $ref: '#/components/schemas/ViewBlockMarkdown'
-        - $ref: '#/components/schemas/ViewBlockDivider'
-        - $ref: '#/components/schemas/ViewBlockInput'
-        - $ref: '#/components/schemas/ViewBlockSelect'
-        - $ref: '#/components/schemas/ViewBlockRadio'
-        - $ref: '#/components/schemas/ViewBlockCheckbox'
-        - $ref: '#/components/schemas/ViewBlockDate'
-        - $ref: '#/components/schemas/ViewBlockTime'
-        - $ref: '#/components/schemas/ViewBlockFileInput'
+        - $ref: "#/components/schemas/ViewBlockHeader"
+        - $ref: "#/components/schemas/ViewBlockPlainText"
+        - $ref: "#/components/schemas/ViewBlockMarkdown"
+        - $ref: "#/components/schemas/ViewBlockDivider"
+        - $ref: "#/components/schemas/ViewBlockInput"
+        - $ref: "#/components/schemas/ViewBlockSelect"
+        - $ref: "#/components/schemas/ViewBlockRadio"
+        - $ref: "#/components/schemas/ViewBlockCheckbox"
+        - $ref: "#/components/schemas/ViewBlockDate"
+        - $ref: "#/components/schemas/ViewBlockTime"
+        - $ref: "#/components/schemas/ViewBlockFileInput"
     ViewSubmitWebhookPayload:
       description: Структура исходящего вебхука о заполнении формы
       type: object
@@ -8677,14 +8677,14 @@ components:
           description: Идентификатор обратного вызова, указанный при открытии представления
           type:
             - string
-            - 'null'
+            - "null"
           examples:
             - timeoff_request_form
         private_metadata:
           description: Приватные метаданные, указанные при открытии представления
           type:
             - string
-            - 'null'
+            - "null"
           examples:
             - "{'timeoff_id':4378}"
         user_id:
@@ -8728,7 +8728,7 @@ components:
         payload:
           description: Объект вебхука
           allOf:
-            - $ref: '#/components/schemas/WebhookPayloadUnion'
+            - $ref: "#/components/schemas/WebhookPayloadUnion"
         created_at:
           description: Дата и время создания события (ISO-8601, UTC+0) в формате YYYY-MM-DDThh:mm:ss.sssZ
           type: string
@@ -8790,13 +8790,13 @@ components:
     WebhookPayloadUnion:
       description: Объединение всех типов payload вебхуков
       anyOf:
-        - $ref: '#/components/schemas/MessageWebhookPayload'
-        - $ref: '#/components/schemas/ReactionWebhookPayload'
-        - $ref: '#/components/schemas/ButtonWebhookPayload'
-        - $ref: '#/components/schemas/ViewSubmitWebhookPayload'
-        - $ref: '#/components/schemas/ChatMemberWebhookPayload'
-        - $ref: '#/components/schemas/CompanyMemberWebhookPayload'
-        - $ref: '#/components/schemas/LinkSharedWebhookPayload'
+        - $ref: "#/components/schemas/MessageWebhookPayload"
+        - $ref: "#/components/schemas/ReactionWebhookPayload"
+        - $ref: "#/components/schemas/ButtonWebhookPayload"
+        - $ref: "#/components/schemas/ViewSubmitWebhookPayload"
+        - $ref: "#/components/schemas/ChatMemberWebhookPayload"
+        - $ref: "#/components/schemas/CompanyMemberWebhookPayload"
+        - $ref: "#/components/schemas/LinkSharedWebhookPayload"
   securitySchemes:
     BearerAuth:
       type: http
