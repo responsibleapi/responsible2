@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest"
-import { array, nullable, object, string } from "../dsl/schema.ts"
+import { named } from "../dsl/nameable.ts"
+import { allOf, array, nullable, object, string } from "../dsl/schema.ts"
 import { validateSchema } from "../help/validate-schema.ts"
 import { createComponentRegistryState } from "./components.ts"
 import { emitSchemaRefOrValue } from "./emit-schema.ts"
@@ -87,6 +88,75 @@ describe("emitSchemaRefOrValue", () => {
       },
       description,
       examples,
+    })
+  })
+
+  test("collapses nullable allOf into typed nullable schema", () => {
+    const Forwarding = named(
+      "Forwarding",
+      object({
+        id: string(),
+      }),
+    )
+
+    expect(
+      validateSchema(
+        emitSchemaRefOrValue(
+          createComponentRegistryState(),
+          nullable(
+            allOf([Forwarding], {
+              description: "Forwarding info",
+            }),
+          ),
+        ),
+      ),
+    ).toEqual({
+      description: "Forwarding info",
+      type: ["object", "null"],
+      allOf: [{ $ref: "#/components/schemas/Forwarding" }],
+    })
+  })
+
+  test("synthesizes null example for nullable leaf schema without examples", () => {
+    expect(
+      validateSchema(
+        emitSchemaRefOrValue(
+          createComponentRegistryState(),
+          {
+            type: ["integer", "null"],
+            format: "int32",
+          },
+        ),
+      ),
+    ).toEqual({
+      type: ["integer", "null"],
+      format: "int32",
+      examples: [null],
+    })
+  })
+
+  test("does not synthesize null example for nullable object with properties", () => {
+    expect(
+      validateSchema(
+        emitSchemaRefOrValue(
+          createComponentRegistryState(),
+          {
+            type: ["object", "null"],
+            properties: {
+              id: string(),
+            },
+            required: ["id"],
+          },
+        ),
+      ),
+    ).toEqual({
+      type: ["object", "null"],
+      properties: {
+        id: {
+          type: "string",
+        },
+      },
+      required: ["id"],
     })
   })
 })

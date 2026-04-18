@@ -121,8 +121,6 @@ describe("compiler request", () => {
         name: "tags",
         in: "query",
         description: "Tags to include",
-        style: "form",
-        explode: true,
         schema: {
           type: "array",
           items: { type: "string" },
@@ -310,15 +308,30 @@ describe("compiler request", () => {
       {
         name: "tags",
         in: "query",
-        style: "form",
-        explode: true,
         schema: {
           type: "array",
           items: { type: "string" },
         },
       },
-      { $ref: "#/components/parameters/cursor" },
-      { $ref: "#/components/parameters/cursorSchemaOnly" },
+      {
+        name: "cursor",
+        in: "query",
+        example: "cursor-param-example",
+        schema: {
+          type: "string",
+          examples: ["cursor-schema-example"],
+        },
+      },
+      {
+        name: "cursor_schema_only",
+        in: "query",
+        example: "cursor-schema-only-example",
+        schema: {
+          type: "string",
+          description: "Cursor schema description",
+          examples: ["cursor-schema-only-example"],
+        },
+      },
       {
         name: "X-Trace",
         in: "header",
@@ -332,24 +345,7 @@ describe("compiler request", () => {
         },
       },
     ])
-    expect(doc.components?.parameters?.["cursor"]).toEqual({
-      name: "cursor",
-      in: "query",
-      example: "cursor-param-example",
-      schema: {
-        type: "string",
-        examples: ["cursor-schema-example"],
-      },
-    })
-    expect(doc.components?.parameters?.["cursorSchemaOnly"]).toEqual({
-      name: "cursor_schema_only",
-      in: "query",
-      schema: {
-        type: "string",
-        description: "Cursor schema description",
-        examples: ["cursor-schema-only-example"],
-      },
-    })
+    expect(doc.components?.parameters).toBeUndefined()
   })
 
   test("schema component registration stays order-independent across body and parameter sites", async () => {
@@ -414,7 +410,7 @@ describe("compiler request", () => {
     )
   })
 
-  test("named reusable query param becomes components.parameters $ref", async () => {
+  test("named reusable query param stays inline", async () => {
     const PageToken = named(
       "pageToken",
       queryParam({
@@ -440,13 +436,54 @@ describe("compiler request", () => {
     const doc = await validateDoc(api)
 
     expect(doc).toEqual(api)
-    expect(doc.components?.parameters?.["pageToken"]).toEqual({
-      name: "page_token",
-      in: "query",
-      schema: { type: "string" },
-    })
+    expect(doc.components?.parameters).toBeUndefined()
     expect(doc.paths!["/items"]?.get?.parameters).toEqual([
-      { $ref: "#/components/parameters/pageToken" },
+      {
+        name: "page_token",
+        in: "query",
+        schema: { type: "string" },
+      },
+    ])
+  })
+
+  test("inline params with ref schemas keep param example on schema too", async () => {
+    const EventKey = named("EventKey", string())
+
+    const api = responsibleAPI({
+      partialDoc: {
+        openapi: "3.1.0",
+        info: { title: "Req API", version: "1" },
+      },
+      forAll: { req: { mime: "application/json" } },
+      routes: {
+        "/items": GET({
+          req: {
+            query: {
+              "event_key?": {
+                description: "Event key filter",
+                example: "user_login",
+                schema: EventKey,
+              },
+            },
+          },
+          res: { 200: object({}) },
+        }),
+      },
+    })
+
+    const doc = await validateDoc(api)
+
+    expect(doc.paths!["/items"]?.get?.parameters).toEqual([
+      {
+        name: "event_key",
+        in: "query",
+        description: "Event key filter",
+        example: "user_login",
+        schema: {
+          $ref: "#/components/schemas/EventKey",
+          example: "user_login",
+        },
+      },
     ])
   })
 
@@ -515,14 +552,30 @@ describe("compiler request", () => {
 
     expect(doc).toEqual(api)
     expect(pathItem?.parameters).toEqual([
-      { $ref: "#/components/parameters/version" },
-      { $ref: "#/components/parameters/locale" },
+      {
+        name: "X-Version",
+        in: "header",
+        schema: { type: "string" },
+      },
+      {
+        name: "locale",
+        in: "query",
+        schema: { type: "string" },
+      },
     ])
     expect(pathItem?.get?.parameters).toEqual([
-      { $ref: "#/components/parameters/page" },
+      {
+        name: "page",
+        in: "query",
+        schema: { type: "string" },
+      },
     ])
     expect(pathItem?.post?.parameters).toEqual([
-      { $ref: "#/components/parameters/limit" },
+      {
+        name: "limit",
+        in: "query",
+        schema: { type: "string" },
+      },
     ])
   })
 
@@ -837,5 +890,29 @@ describe("compiler request", () => {
       { bearerAuth: [] },
       {},
     ] satisfies oas31.SecurityRequirementObject[])
+  })
+
+  test("preserves operation-level vendor extensions", async () => {
+    const api = responsibleAPI({
+      partialDoc: {
+        openapi: "3.1.0",
+        info: { title: "Req API", version: "1" },
+      },
+      forAll: { req: { mime: "application/json" } },
+      routes: {
+        "/items": GET({
+          res: { 200: object({}) },
+          "x-paginated": true,
+          "x-requirements": { scope: "items:read" },
+        }),
+      },
+    })
+
+    const doc = await validateDoc(api)
+
+    expect(doc.paths?.["/items"]?.get).toMatchObject({
+      "x-paginated": true,
+      "x-requirements": { scope: "items:read" },
+    } satisfies Partial<oas31.OperationObject>)
   })
 })

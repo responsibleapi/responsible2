@@ -188,6 +188,18 @@ function normVal(value: unknown): unknown {
         o = rest as Record<string, unknown>
       }
 
+      if (Array.isArray(o["parameters"]) && o["parameters"].length === 0) {
+        const { parameters: _omitEmptyParameters, ...rest } = o
+
+        o = rest as Record<string, unknown>
+      }
+
+      if ("responses" in o && o["deprecated"] === false) {
+        const { deprecated: _omitFalseDeprecated, ...rest } = o
+
+        o = rest as Record<string, unknown>
+      }
+
       if (
         typeof o["in"] === "string" &&
         (o["in"] === "query" || o["in"] === "header") &&

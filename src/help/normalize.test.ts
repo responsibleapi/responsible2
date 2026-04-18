@@ -227,6 +227,86 @@ describe("normalize", () => {
     })
   })
 
+  test("treats explicit empty operation parameters arrays as absent", () => {
+    const withEmpty: oas31.OpenAPIObject = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/items": {
+          post: {
+            operationId: "createItem",
+            parameters: [],
+            responses: { 201: { description: "created" } },
+          },
+        },
+      },
+    }
+
+    const withoutEmpty: oas31.OpenAPIObject = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/items": {
+          post: {
+            operationId: "createItem",
+            responses: { 201: { description: "created" } },
+          },
+        },
+      },
+    }
+
+    expect(normalize(withEmpty)).toEqual(normalize(withoutEmpty))
+  })
+
+  test("treats component parameter refs as equivalent to inline parameters", () => {
+    const withRefs: oas31.OpenAPIObject = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/items": {
+          get: {
+            parameters: [{ $ref: "#/components/parameters/page" }],
+            responses: { 200: { description: "ok" } },
+          },
+        },
+      },
+      components: {
+        parameters: {
+          page: {
+            name: "page",
+            in: "query",
+            required: false,
+            style: "form",
+            explode: true,
+            schema: { type: "integer", format: "int32" },
+          },
+        },
+      },
+    }
+
+    const inline: oas31.OpenAPIObject = {
+      openapi: "3.1.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/items": {
+          get: {
+            parameters: [
+              {
+                name: "page",
+                in: "query",
+                schema: { type: "integer", format: "int32" },
+              },
+            ],
+            responses: { 200: { description: "ok" } },
+          },
+        },
+      },
+      components: {},
+    }
+
+    expect(normalize(withRefs)).toEqual(normalize(inline))
+  })
+
   test("fixes the known YouTube description typo", () => {
     const doc: oas31.OpenAPIObject = {
       openapi: "3.1.0",
@@ -282,7 +362,17 @@ describe("normalize", () => {
         in: "query",
         name: "q",
         required: false,
+        style: "form",
+        explode: true,
         schema: { type: "string" },
+      },
+      "x-deprecated-op": {
+        deprecated: false,
+        responses: {
+          200: {
+            description: "ok",
+          },
+        },
       },
       "x-required-only": {
         required: ["b", "a"],
@@ -328,6 +418,13 @@ describe("normalize", () => {
         in: "query",
         name: "q",
         schema: { type: "string" },
+      },
+      "x-deprecated-op": {
+        responses: {
+          200: {
+            description: "ok",
+          },
+        },
       },
       "x-required-only": {
         type: "object",

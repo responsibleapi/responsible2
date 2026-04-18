@@ -132,10 +132,6 @@ export function securityLayerFromScopeReq(
   return hasSecurityKeys(req) ? [pickSecurity(req)] : []
 }
 
-function parameterRef(name: string): oas31.ReferenceObject {
-  return { $ref: `#/components/parameters/${name}` }
-}
-
 const SCHEME_TYPES = new Set([
   "apiKey",
   "http",
@@ -296,12 +292,16 @@ function paramRawToParameterObject(
   }
 
   const schema = emitSchemaRefOrValue(state, raw.schema)
+  const example = raw.example ?? getSchemaUseExample(raw.schema)
   const base: oas31.ParameterObject = {
     name: paramName,
     in: raw.in,
-    schema,
+    schema:
+      example !== undefined && isSchemaRef(schema)
+        ? { ...schema, example }
+        : schema,
     ...(raw.description !== undefined ? { description: raw.description } : {}),
-    ...(raw.example !== undefined ? { example: raw.example } : {}),
+    ...(example !== undefined ? { example } : {}),
   }
 
   if (raw.in === "path") {
@@ -343,11 +343,11 @@ export function compileParamComponent(
       )
     }
 
-    return parameterRef(resolvedName)
+    return obj
   }
 
   if (state.inProgress.parameters.has(resolvedName)) {
-    return parameterRef(resolvedName)
+    return obj
   }
 
   state.inProgress.parameters.add(resolvedName)
@@ -358,7 +358,7 @@ export function compileParamComponent(
     state.inProgress.parameters.delete(resolvedName)
   }
 
-  return parameterRef(resolvedName)
+  return obj
 }
 
 function compileMapParameter(
@@ -368,7 +368,6 @@ function compileMapParameter(
   location: "query" | "header",
 ): oas31.ParameterObject {
   const name = isOptional(rawName) ? rawName.slice(0, -1) : rawName
-  let schemaSource: Schema
   let fields: {
     description?: string
     example?: unknown
@@ -378,28 +377,23 @@ function compileMapParameter(
   let explode: boolean | undefined
 
   if (typeof rawParam === "object" && rawParam !== null && "schema" in rawParam) {
-    schemaSource = rawParam.schema
+    const schema = emitSchemaRefOrValue(state, rawParam.schema)
+
     fields = {
       ...(rawParam.description !== undefined
         ? { description: rawParam.description }
         : {}),
       ...(rawParam.example !== undefined ? { example: rawParam.example } : {}),
-      schema: emitSchemaRefOrValue(state, rawParam.schema),
+      schema:
+        rawParam.example !== undefined && isSchemaRef(schema)
+          ? { ...schema, example: rawParam.example }
+          : schema,
     }
     style = rawParam.style
     explode = rawParam.explode
   } else {
-    schemaSource = rawParam
     fields = compileLegacyMapParameterFields(state, rawParam)
   }
-
-  const { value } = decodeNameable(schemaSource)
-  const isArrayQueryParam =
-    location === "query" &&
-    typeof value === "object" &&
-    value !== null &&
-    "type" in value &&
-    value.type === "array"
 
   const required = !isOptional(rawName)
 
@@ -409,16 +403,8 @@ function compileMapParameter(
     ...(required ? { required: true } : {}),
     ...(fields.description !== undefined ? { description: fields.description } : {}),
     ...(fields.example !== undefined ? { example: fields.example } : {}),
-    ...(style !== undefined
-      ? { style }
-      : isArrayQueryParam
-        ? { style: "form" }
-        : {}),
-    ...(explode !== undefined
-      ? { explode }
-      : isArrayQueryParam
-        ? { explode: true }
-        : {}),
+    ...(style !== undefined ? { style } : {}),
+    ...(explode !== undefined ? { explode } : {}),
     schema: fields.schema,
   }
 }

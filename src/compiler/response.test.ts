@@ -324,7 +324,7 @@ describe("reusable response headers", () => {
     }),
   )
 
-  test("headerParams emits components.headers and $ref on the response", async () => {
+  test("headerParams stays inline on the response", async () => {
     const rapi = responsibleAPI({
       partialDoc: {
         openapi: "3.1.0",
@@ -346,17 +346,14 @@ describe("reusable response headers", () => {
 
     expect(await validateDoc(rapi)).toEqual(rapi)
 
-    expect(rapi.components?.headers?.["trace-id"]).toEqual({
+    expect(
+      rapi.paths?.["/x"]?.get?.responses?.["200"]?.headers?.["trace-id"],
+    ).toEqual({
       description: "Correlation id",
       required: true,
       schema: { type: "string" },
     })
-
-    expect(
-      rapi.paths?.["/x"]?.get?.responses?.["200"]?.headers?.["trace-id"],
-    ).toEqual({
-      $ref: "#/components/headers/trace-id",
-    })
+    expect(rapi.components?.headers).toBeUndefined()
   })
 
   test("headerParams expands to response header keys (including Link casing)", async () => {
@@ -397,12 +394,57 @@ describe("reusable response headers", () => {
     expect(await validateDoc(rapi)).toEqual(rapi)
 
     expect(rapi.paths?.["/p"]?.get?.responses?.["200"]?.headers).toEqual({
-      Link: { $ref: "#/components/headers/link" },
-      "x-total-count": { $ref: "#/components/headers/x-total-count" },
+      Link: {
+        description: "Pagination link relation",
+        schema: { type: "string" },
+      },
+      "x-total-count": {
+        description: "Total hits",
+        schema: { type: "string" },
+      },
     })
   })
 
-  test("the same named header thunk reused across routes shares one component", async () => {
+  test("headerParams strips Header suffix to derive header name", async () => {
+    const locationHeader = named(
+      "LocationHeader",
+      responseHeader({
+        required: true,
+        schema: string({ format: "uri" }),
+      }),
+    )
+
+    const rapi = responsibleAPI({
+      partialDoc: {
+        openapi: "3.1.0",
+        info: { title: "Location header", version: "1" },
+      },
+      forAll: { res: { mime: "application/json" } },
+      routes: {
+        "/download": GET({
+          res: {
+            302: resp({
+              description: "redirect",
+              headerParams: [locationHeader],
+            }),
+          },
+        }),
+      },
+    })
+
+    expect(await validateDoc(rapi)).toEqual(rapi)
+    expect(rapi.paths?.["/download"]?.get?.responses?.["302"]?.headers).toEqual({
+      location: {
+        required: true,
+        schema: {
+          type: "string",
+          format: "uri",
+        },
+      },
+    })
+  })
+
+  test("the same named header thunk reused across routes stays inline", async () => {
     const rapi = responsibleAPI({
       partialDoc: {
         openapi: "3.1.0",
@@ -431,17 +473,21 @@ describe("reusable response headers", () => {
 
     expect(await validateDoc(rapi)).toEqual(rapi)
 
-    expect(Object.keys(rapi.components?.headers ?? {})).toEqual(["trace-id"])
     expect(
       rapi.paths?.["/a"]?.get?.responses?.["200"]?.headers?.["trace-id"],
     ).toEqual({
-      $ref: "#/components/headers/trace-id",
+      description: "Correlation id",
+      required: true,
+      schema: { type: "string" },
     })
     expect(
       rapi.paths?.["/b"]?.get?.responses?.["200"]?.headers?.["trace-id"],
     ).toEqual({
-      $ref: "#/components/headers/trace-id",
+      description: "Correlation id",
+      required: true,
+      schema: { type: "string" },
     })
+    expect(rapi.components?.headers).toBeUndefined()
   })
 
   test("reuses named schema across request body and response header without mutating component shape", async () => {

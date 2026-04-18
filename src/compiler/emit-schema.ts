@@ -118,6 +118,64 @@ const getStructuralType = (schema: RawSchema): string | undefined => {
   return schema.type.find(item => item !== "null")
 }
 
+const isNullOnlySchema = (schema: RawSchema): boolean =>
+  "type" in schema && schema.type === "null"
+
+const nullableLeafNeedsNullExample = (schema: RawSchema): boolean => {
+  if (!("type" in schema) || !Array.isArray(schema.type)) {
+    return false
+  }
+
+  if (!schema.type.includes("null")) {
+    return false
+  }
+
+  if ("example" in schema || ("examples" in schema && Array.isArray(schema.examples))) {
+    return false
+  }
+
+  return !(
+    "properties" in schema ||
+    "items" in schema ||
+    "allOf" in schema ||
+    "oneOf" in schema ||
+    "anyOf" in schema
+  )
+}
+
+const emitNullableLeafExamples = (
+  schema: RawSchema,
+  out: oas31.SchemaObject,
+): oas31.SchemaObject =>
+  nullableLeafNeedsNullExample(schema) ? { ...out, examples: [null] } : out
+
+const getNullableAllOfInnerSchema = (
+  schema: Extract<RawSchema, { anyOf: readonly Schema[] }>,
+): Extract<RawSchema, { allOf: readonly Schema[] }> | undefined => {
+  if (schema.anyOf.length !== 2) {
+    return undefined
+  }
+
+  const nonNull = schema.anyOf.find(item => {
+    const decoded = decodeNameable(item)
+
+    return !isNullOnlySchema(decoded.value)
+  })
+  const maybeNull = schema.anyOf.find(item => {
+    const decoded = decodeNameable(item)
+
+    return isNullOnlySchema(decoded.value)
+  })
+
+  if (nonNull === undefined || maybeNull === undefined) {
+    return undefined
+  }
+
+  const decoded = decodeNameable(nonNull).value
+
+  return "allOf" in decoded ? decoded : undefined
+}
+
 const emitRawSchemaValue = (
   state: ComponentRegistryState,
   schema: RawSchema,
@@ -132,6 +190,16 @@ const emitRawSchemaValue = (
   }
 
   if ("anyOf" in schema) {
+    const nullableAllOf = getNullableAllOfInnerSchema(schema)
+
+    if (nullableAllOf !== undefined) {
+      return {
+        ...schemaBaseFields(nullableAllOf),
+        type: ["object", "null"],
+        allOf: nullableAllOf.allOf.map(item => emitSchemaRefOrValue(state, item)),
+      }
+    }
+
     const out: oas31.SchemaObject = {
       ...schemaBaseFields(schema),
       anyOf: schema.anyOf.map(item => emitSchemaRefOrValue(state, item)),
@@ -154,27 +222,27 @@ const emitRawSchemaValue = (
   if (structuralType === undefined) {
     const out: oas31.SchemaObject = schemaBaseFields(schema)
 
-    return out
+    return emitNullableLeafExamples(schema, out)
   }
 
   switch (structuralType) {
     case "object":
       if ("additionalProperties" in schema) {
-        return emitDict(state, schema)
+        return emitNullableLeafExamples(schema, emitDict(state, schema))
       }
 
-      return emitObject(state, schema)
+      return emitNullableLeafExamples(schema, emitObject(state, schema))
 
     case "array":
-      return {
+      return emitNullableLeafExamples(schema, {
         ...schemaBaseFields(schema),
         items: emitSchemaRefOrValue(state, schema.items),
-      }
+      })
 
     default: {
       const out: oas31.SchemaObject = schemaBaseFields(schema)
 
-      return out
+      return emitNullableLeafExamples(schema, out)
     }
   }
 }

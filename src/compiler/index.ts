@@ -413,16 +413,20 @@ function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
 
-function headerComponentRef(name: string): oas31.ReferenceObject {
-  return { $ref: `#/components/headers/${name}` }
-}
-
 /**
  * HTTP header field names are case-insensitive; OpenAPI keys are often written
  * in conventional casing (e.g. `Link` for RFC 8288).
  */
 function responseHeaderInstanceKey(componentName: string): string {
-  return componentName === "link" ? "Link" : componentName
+  if (componentName === "link") {
+    return "Link"
+  }
+
+  if (componentName.endsWith("Header")) {
+    return componentName.slice(0, -"Header".length).toLowerCase()
+  }
+
+  return componentName
 }
 
 function expandHeaderParamsToMap(
@@ -506,7 +510,7 @@ function headerRawToHeaderObject(
 function compileHeaderComponent(
   state: ComponentRegistryState,
   header: ReusableHeader,
-): oas31.ReferenceObject {
+): oas31.HeaderObject {
   const { name: thunkName, value } = decodeNameable(header)
   const resolvedName =
     thunkName !== undefined && thunkName !== "" ? thunkName : undefined
@@ -527,11 +531,11 @@ function compileHeaderComponent(
       )
     }
 
-    return headerComponentRef(resolvedName)
+    return obj
   }
 
   if (state.inProgress.headers.has(resolvedName)) {
-    return headerComponentRef(resolvedName)
+    return obj
   }
 
   state.inProgress.headers.add(resolvedName)
@@ -542,7 +546,7 @@ function compileHeaderComponent(
     state.inProgress.headers.delete(resolvedName)
   }
 
-  return headerComponentRef(resolvedName)
+  return obj
 }
 
 function compileHeaderMap(
@@ -995,10 +999,14 @@ function compileDirectOp(
       : ctx.mergedTags !== undefined && ctx.mergedTags.length > 0
         ? ctx.mergedTags.map(t => t.name)
         : undefined
+  const vendorExtensions = Object.fromEntries(
+    Object.entries(op).filter(([key]) => key.startsWith("x-")),
+  )
 
   return {
     pathItemParameters,
     operation: {
+      ...(op.deprecated !== undefined ? { deprecated: op.deprecated } : {}),
       ...(op.summary !== undefined ? { summary: op.summary } : {}),
       ...(op.description !== undefined ? { description: op.description } : {}),
       ...(op.id !== undefined ? { operationId: op.id } : {}),
@@ -1021,6 +1029,7 @@ function compileDirectOp(
             ? { stripBodies: "explicit-head" }
             : {},
       ),
+      ...vendorExtensions,
     },
   }
 }
@@ -1202,25 +1211,15 @@ export function compileResponsibleAPI(
       : undefined
 
   const schemaKeys = Object.keys(schemaState.components.schemas)
-  const paramKeys = Object.keys(schemaState.components.parameters)
-  const headerKeys = Object.keys(schemaState.components.headers)
   const responseKeys = Object.keys(schemaState.components.responses)
   const secKeys = Object.keys(schemaState.components.securitySchemes)
   const components: oas31.ComponentsObject | undefined =
     schemaKeys.length > 0 ||
-    paramKeys.length > 0 ||
-    headerKeys.length > 0 ||
     responseKeys.length > 0 ||
     secKeys.length > 0
       ? {
           ...(secKeys.length > 0
             ? { securitySchemes: schemaState.components.securitySchemes }
-            : {}),
-          ...(headerKeys.length > 0
-            ? { headers: schemaState.components.headers }
-            : {}),
-          ...(paramKeys.length > 0
-            ? { parameters: schemaState.components.parameters }
             : {}),
           ...(responseKeys.length > 0
             ? { responses: schemaState.components.responses }
