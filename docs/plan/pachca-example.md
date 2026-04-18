@@ -133,6 +133,10 @@
 - Any new or updated test file.
 - No DSL/compiler feature work here.
 
+## Verification
+
+- Verification of this work must be done by human.
+
 ## Next Step After Example Work
 
 - Do not resolve compiler gaps in this change.
