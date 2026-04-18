@@ -1019,18 +1019,20 @@ function compileDirectOp(
     | (oas31.ParameterObject | oas31.ReferenceObject)[]
     | undefined
 } {
-  const inheritedReq = mergeReqAugmentations(ctx.mergedReq, pathLevelReq)
+  const inheritedReq = ctx.mergedReq
+  const mergedInheritedReq = mergeReqAugmentations(ctx.mergedReq, pathLevelReq)
   const { opReq, mergedReq, securityReqs } = mergedReqAndSecurityForOp(
     schemaState,
     {
       ...ctx,
-      mergedReq: inheritedReq,
+      mergedReq: mergedInheritedReq,
     },
     op,
   )
   const { pathItemParameters, operationParameters } = compileParameterLayers(
     schemaState,
     inheritedReq,
+    pathLevelReq,
     opReq,
     mergedReq,
     oasPath,
@@ -1098,7 +1100,7 @@ function placeOperation(
     )
   }
 
-  const { operation } = compileDirectOp(
+  const { operation, pathItemParameters } = compileDirectOp(
     schemaState,
     op,
     ctx,
@@ -1111,8 +1113,29 @@ function placeOperation(
     },
   )
 
+  const existingPathItemParameters =
+    existing !== undefined &&
+    typeof existing === "object" &&
+    existing !== null &&
+    "parameters" in existing
+      ? existing.parameters
+      : undefined
+
+  if (
+    existingPathItemParameters !== undefined &&
+    pathItemParameters !== undefined &&
+    !deepEqual(existingPathItemParameters, pathItemParameters)
+  ) {
+    throw new Error(`Conflicting path item parameters for path "${oasPath}".`)
+  }
+
   const pathItem: oas31.PathItemObject = {
     ...(typeof existing === "object" && existing !== null ? existing : {}),
+    ...(existingPathItemParameters !== undefined
+      ? { parameters: existingPathItemParameters }
+      : pathItemParameters !== undefined
+        ? { parameters: pathItemParameters }
+        : {}),
     [oasMethod]: operation,
   }
 

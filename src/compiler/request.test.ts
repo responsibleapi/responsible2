@@ -4,7 +4,7 @@ import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET, POST } from "../dsl/methods.ts"
 import { named } from "../dsl/nameable.ts"
 import type { Op } from "../dsl/operation.ts"
-import { headerParam, queryParam } from "../dsl/params.ts"
+import { headerParam, pathParam, queryParam } from "../dsl/params.ts"
 import { array, int32, object, string } from "../dsl/schema.ts"
 import type { PathRoutes } from "../dsl/scope.ts"
 import { scope } from "../dsl/scope.ts"
@@ -435,6 +435,55 @@ describe("request", () => {
     ])
   })
 
+  test("raw path params in params array keep wrapper metadata", async () => {
+    const api = responsibleAPI({
+      partialDoc: {
+        openapi: "3.1.0",
+        info: { title: "Req API", version: "1" },
+      },
+      forAll: { req: { mime: "application/json" } },
+      routes: {
+        "/items/:id": GET({
+          req: {
+            params: [
+              pathParam({
+                name: "id",
+                description: "Item id parameter",
+                example: "item-123",
+                style: "label",
+                explode: false,
+                schema: string({
+                  description: "Item id schema",
+                  examples: ["item-123-schema"],
+                }),
+              }),
+            ],
+          },
+          res: { 200: object({}) },
+        }),
+      },
+    })
+
+    const doc = await validateDoc(api)
+
+    expect(doc.paths?.["/items/{id}"]?.get?.parameters).toEqual([
+      {
+        name: "id",
+        in: "path",
+        required: true,
+        description: "Item id parameter",
+        example: "item-123",
+        style: "label",
+        explode: false,
+        schema: {
+          type: "string",
+          description: "Item id schema",
+          examples: ["item-123-schema"],
+        },
+      },
+    ])
+  })
+
   test("inline params with ref schemas keep param example on schema too", async () => {
     const EventKey = named("EventKey", string())
 
@@ -476,7 +525,7 @@ describe("request", () => {
     ])
   })
 
-  test("hoists inherited scope params to the path item and keeps local params on operations", async () => {
+  test("inherited forAll params stay on operations and local params append after them", async () => {
     const Version = named(
       "version",
       headerParam({
@@ -540,14 +589,15 @@ describe("request", () => {
     const pathItem = doc.paths?.["/v1/items"]
 
     expect(doc).toEqual(api)
-    expect(pathItem?.parameters).toEqual([
+    expect(pathItem?.parameters).toBeUndefined()
+    expect(pathItem?.get?.parameters).toEqual([
       { $ref: "#/components/parameters/version" },
       { $ref: "#/components/parameters/locale" },
-    ])
-    expect(pathItem?.get?.parameters).toEqual([
       { $ref: "#/components/parameters/page" },
     ])
     expect(pathItem?.post?.parameters).toEqual([
+      { $ref: "#/components/parameters/version" },
+      { $ref: "#/components/parameters/locale" },
       { $ref: "#/components/parameters/limit" },
     ])
   })

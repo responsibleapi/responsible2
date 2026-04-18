@@ -442,7 +442,7 @@ function paramSlotKey(loc: string, name: string): string {
   return `${loc}:${name}`
 }
 
-function namedPathParamForTemplateName(
+function pathParamForTemplateName(
   req: ReqAugmentation | undefined,
   pathName: string,
 ): ReusableParam | undefined {
@@ -457,10 +457,6 @@ function namedPathParamForTemplateName(
 
     if (paramName !== pathName) {
       continue
-    }
-
-    if (thunkName === undefined || thunkName === "") {
-      return undefined
     }
 
     return entry
@@ -519,7 +515,7 @@ function compilePathParametersForLayer(
     }
 
     seen.add(slot)
-    const namedPath = namedPathParamForTemplateName(req, name)
+    const namedPath = pathParamForTemplateName(req, name)
 
     if (namedPath !== undefined) {
       out.push(compileParamComponent(state, namedPath))
@@ -680,6 +676,7 @@ function compileParametersForLayer(
 export function compileParameterLayers(
   state: ComponentRegistryState,
   inheritedReq: ReqAugmentation | undefined,
+  pathLevelReq: ReqAugmentation | undefined,
   operationReq: ReqAugmentation | undefined,
   mergedReq: ReqAugmentation,
   oasPath: string,
@@ -692,6 +689,13 @@ export function compileParameterLayers(
     | undefined
 } {
   const seen = new Set<string>()
+  const pathItemParameters = compileParametersForLayer(
+    state,
+    pathLevelReq,
+    mergedReq,
+    oasPath,
+    seen,
+  )
   const inheritedParameters = compileParametersForLayer(
     state,
     inheritedReq,
@@ -708,7 +712,7 @@ export function compileParameterLayers(
   )
 
   return {
-    pathItemParameters: undefined,
+    pathItemParameters,
     operationParameters:
       inheritedParameters === undefined
         ? operationParameters
