@@ -397,11 +397,12 @@ describe("response", () => {
   })
 
   test("headerParams strips Header suffix to derive header name", async () => {
-    const LocationHeader = () =>
-      responseHeader({
+    function LocationHeader() {
+      return responseHeader({
         required: true,
         schema: string({ format: "uri" }),
       })
+    }
 
     const rapi = responsibleAPI({
       partialDoc: {
