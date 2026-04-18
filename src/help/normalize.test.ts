@@ -57,7 +57,7 @@ describe("normalize", () => {
     expect(normalized).not.toBe(doc)
     expect(normalized.info).not.toBe(doc.info)
     expect(normalized.paths).not.toBe(doc.paths)
-    expect(normalized.paths["/items"]).not.toBe(doc.paths["/items"])
+    expect(normalized.paths?.["/items"]).not.toBe(doc.paths?.["/items"])
     expect(normalized.components).not.toBe(doc.components)
     expect(normalized.components?.schemas).not.toBe(doc.components?.schemas)
 
@@ -690,7 +690,10 @@ describe("normalize", () => {
               { required: ["title", "slug"] },
             ],
           } as oas31.SchemaObject,
-          category: object({ slug: string(), title: unknown() }) as oas31.SchemaObject,
+          category: object({
+            slug: string(),
+            title: unknown(),
+          }) as oas31.SchemaObject,
         },
       },
     }
@@ -707,7 +710,10 @@ describe("normalize", () => {
               { required: ["slug", "title"] },
             ],
           } as oas31.SchemaObject,
-          category: object({ slug: string(), title: unknown() }) as oas31.SchemaObject,
+          category: object({
+            slug: string(),
+            title: unknown(),
+          }) as oas31.SchemaObject,
         },
       },
     })
@@ -718,22 +724,14 @@ describe("normalize", () => {
       openapi: "3.1.0",
       info: { title: "Example", version: "1.0.0" },
       paths: {},
-      security: [
-        { b: ["z", "a"], a: [] },
-        {},
-        { oauth2: ["read", "write"] },
-      ],
+      security: [{ b: ["z", "a"], a: [] }, {}, { oauth2: ["read", "write"] }],
     }
 
     expect(normalize(doc)).toEqual<oas31.OpenAPIObject>({
       openapi: "3.1.0",
       info: { title: "Example", version: "1.0.0" },
       paths: {},
-      security: [
-        { a: [], b: ["a", "z"] },
-        { oauth2: ["read", "write"] },
-        {},
-      ],
+      security: [{ a: [], b: ["a", "z"] }, { oauth2: ["read", "write"] }, {}],
     })
   })
 
@@ -742,14 +740,22 @@ describe("normalize", () => {
       openapi: "3.1.0",
       info: { title: "Example", version: "1.0.0" },
       paths: {},
-      "x-security": [{ b: ["z", "a"], a: [] }, {}, { oauth2: ["write", "read"] }],
+      "x-security": [
+        { b: ["z", "a"], a: [] },
+        {},
+        { oauth2: ["write", "read"] },
+      ],
     }
 
     expect(normalize(doc)).toEqual<oas31.OpenAPIObject>({
       openapi: "3.1.0",
       info: { title: "Example", version: "1.0.0" },
       paths: {},
-      "x-security": [{ b: ["a", "z"], a: [] }, {}, { oauth2: ["read", "write"] }],
+      "x-security": [
+        { b: ["a", "z"], a: [] },
+        {},
+        { oauth2: ["read", "write"] },
+      ],
     })
   })
 

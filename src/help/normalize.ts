@@ -98,8 +98,11 @@ function parameterIdentity(
     const ref = value["$ref"]
     const match = /^#\/components\/parameters\/(.+)$/.exec(ref)
 
-    if (match !== null) {
-      const parameter = components?.parameters?.[match[1]]
+    if (match?.length && match?.length > 1) {
+      const second = match[1]
+      if (!second) throw new Error("impossible")
+
+      const parameter = components?.parameters?.[second]
 
       if (
         isObject(parameter) &&
@@ -141,24 +144,6 @@ function mergePathItemParameters(
   ]
 }
 
-/**
- * The compiler now emits inherited scope params on the path item, which is the
- * correct OpenAPI shape, but several golden example fixtures are frozen with
- * the older operation-level layout. This helper normalizes both representations
- * to the same operation-level form so fixture comparisons keep validating the
- * compiler change without rewriting those golden JSON files.
- *
- * **Merge order:** for each HTTP operation on a path item that has a
- * `parameters` array, merged operation parameters are built as path-item
- * parameters first, then existing operation parameters, with operation-level
- * params overriding path-item params that share same `(name, in)` pair or same
- * `$ref`.
- *
- * **Final order:** after {@linkcode normalize} runs, any `parameters` array is
- * normalized as an array of objects and sorted by each object’s `name` (see
- * `normVal`), so the order you see in output is alphabetical by `name`, not the
- * raw merge order above.
- */
 function normalizePathItemParameters<T extends oas31.OpenAPIObject>(doc: T): T {
   if (doc.paths === undefined) {
     return doc
@@ -326,6 +311,13 @@ const normObj = <T extends object>(obj: T): T => {
   return normalizedObject
 }
 
-/** Sorts arrays */
+/**
+ * Canonicalizes an OpenAPI document for stable equality checks in tests.
+ *
+ * This removes order-only and syntax-only differences treated as
+ * validation-equivalent here, and rewrites path-item `parameters` onto each
+ * operation so older operation-level fixtures compare equal to newer compiler
+ * output.
+ */
 export const normalize = <T extends oas31.OpenAPIObject>(doc: T): T =>
   normObj(normalizePathItemParameters(doc))
