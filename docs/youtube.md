@@ -26,7 +26,6 @@ Matched by parameter name and location against `youtube.json`:
   puts same text on `schema.description`
 - `69` cases: expected has explicit `style: "form"`, compiled output omits it
 - `69` cases: expected has explicit `explode: true`, compiled output omits it
-- `31` cases: compiled output adds `requestBody.required: true`
 - `46` remaining diffs: mostly fixture text drift or ordering/noise after larger
   structural differences
 

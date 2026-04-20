@@ -229,6 +229,7 @@ function assertRouteMethodOp(node: OpBase): asserts node is RouteMethodOp {
 function isOpReqShaped(x: object): x is OpReq {
   return (
     "body" in x ||
+    "body?" in x ||
     "pathParams" in x ||
     "query" in x ||
     "headers" in x ||
@@ -258,9 +259,36 @@ function normalizeOpReq(
   }
 
   throw new Error(
-    "Invalid request: expected a request object with body/pathParams/query/headers/params/security fields, or a bare body schema.",
+    'Invalid request: expected a request object with body/"body?"/pathParams/query/headers/params/security fields, or a bare body schema.',
   )
 }
+
+function readReqBody(
+  req: Pick<ReqAugmentation, "body" | "body?"> | undefined,
+):
+  | {
+      body: Schema | Record<Mime, Schema>
+      required: boolean
+    }
+  | undefined {
+  if (req?.body !== undefined) {
+    return {
+      body: req.body,
+      required: true,
+    }
+  }
+
+  if (req?.["body?"] !== undefined) {
+    return {
+      body: req["body?"],
+      required: false,
+    }
+  }
+
+  return undefined
+}
+
+type ReqWithoutBody = Omit<ReqAugmentation, "body" | "body?">
 
 function mergeReqAugmentations(
   parent: ReqAugmentation | undefined,
@@ -273,22 +301,31 @@ function mergeReqAugmentations(
   const p = stripSecurityFields(parent) ?? {}
   const c = stripSecurityFields(child) ?? {}
   const mergedMime = c.mime ?? p.mime
-  const mergedBody = c.body !== undefined ? c.body : p.body
+  const mergedBody = readReqBody(c) ?? readReqBody(p)
+  const { body: _pBody, "body?": _pOptionalBody, ...pRest } = p
+  const { body: _cBody, "body?": _cOptionalBody, ...cRest } = c
 
-  const base: ReqAugmentation = {
-    ...p,
-    ...c,
+  const base: ReqWithoutBody = {
+    ...pRest,
+    ...cRest,
     pathParams: { ...p.pathParams, ...c.pathParams },
     query: { ...p.query, ...c.query },
     headers: { ...p.headers, ...c.headers },
     params: [...(p.params ?? []), ...(c.params ?? [])],
   }
 
-  return {
+  const out: ReqWithoutBody = {
     ...base,
     ...(mergedMime !== undefined ? { mime: mergedMime } : {}),
-    ...(mergedBody !== undefined ? { body: mergedBody } : {}),
   }
+
+  if (mergedBody === undefined) {
+    return out
+  }
+
+  return mergedBody.required
+    ? { ...out, body: mergedBody.body }
+    : { ...out, "body?": mergedBody.body }
 }
 
 function mergeInheritedReq(
@@ -795,13 +832,15 @@ function compileRequestBody(
   schemaState: ComponentRegistryState,
   merged: ReqAugmentation,
 ): oas31.RequestBodyObject | undefined {
-  if (merged.body === undefined) {
+  const body = readReqBody(merged)
+
+  if (body === undefined) {
     return undefined
   }
 
   return {
-    required: true,
-    content: compileContent(schemaState, merged.body, merged.mime),
+    ...(body.required ? { required: true } : {}),
+    content: compileContent(schemaState, body.body, merged.mime),
   }
 }
 

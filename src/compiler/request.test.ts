@@ -654,6 +654,81 @@ describe("request", () => {
     ).toBeUndefined()
   })
 
+  test('compiles `"body?"` without requestBody.required', async () => {
+    const api = responsibleAPI({
+      partialDoc: {
+        openapi: "3.1.0",
+        info: { title: "Req API", version: "1" },
+      },
+      forEachOp: { req: { mime: "application/json" } },
+      routes: {
+        "/x": POST({
+          req: {
+            "body?": object({ name: string() }),
+          } as NonNullable<Op["req"]>,
+          res: { 200: object({}) },
+        }),
+      },
+    })
+
+    const doc = await validateDoc(api)
+
+    expect(doc).toEqual(api)
+    expect(doc.paths!["/x"]?.post?.requestBody).toEqual({
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              name: { type: "string" },
+            },
+            required: ["name"],
+          },
+        },
+      },
+    } satisfies oas31.RequestBodyObject)
+  })
+
+  test('operation `"body?"` overrides inherited required body', async () => {
+    const api = responsibleAPI({
+      partialDoc: {
+        openapi: "3.1.0",
+        info: { title: "Req API", version: "1" },
+      },
+      forEachOp: {
+        req: {
+          mime: "application/json",
+          body: object({ parent: string() }),
+        },
+      },
+      routes: {
+        "/x": POST({
+          req: {
+            "body?": object({ child: string() }),
+          } as NonNullable<Op["req"]>,
+          res: { 200: object({}) },
+        }),
+      },
+    })
+
+    const doc = await validateDoc(api)
+
+    expect(doc).toEqual(api)
+    expect(doc.paths!["/x"]?.post?.requestBody).toEqual({
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              child: { type: "string" },
+            },
+            required: ["child"],
+          },
+        },
+      },
+    } satisfies oas31.RequestBodyObject)
+  })
+
   test("rejects optional path param key", () => {
     expect(() =>
       responsibleAPI({

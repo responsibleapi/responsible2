@@ -8136,7 +8136,7 @@ export default responsibleAPI({
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.upload",
           ),
-          body: {
+          "body?": {
             "application/octet-stream": unknown(),
             "video/1d-interleaved-parityfec": Video,
             "video/3gpp": Video,
@@ -8261,7 +8261,7 @@ export default responsibleAPI({
               "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a video's privacy setting is contained in the status part. As such, if your request is updating a private video, and the request's part parameter value includes the status part, the video's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the video will revert to the default privacy setting. In addition, not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response.",
             ),
           },
-          body: Video,
+          "body?": Video,
         },
         res: {
           200: resp({

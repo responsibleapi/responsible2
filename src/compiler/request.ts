@@ -48,14 +48,22 @@ export function stripSecurityFields(
   }
 
   const { mime, pathParams, query, headers, params, body } = req
+  const optionalBody = req["body?"]
 
-  const out: ReqAugmentation = {
+  const out = {
     ...(mime !== undefined ? { mime } : {}),
     ...(pathParams !== undefined ? { pathParams } : {}),
     ...(query !== undefined ? { query } : {}),
     ...(headers !== undefined ? { headers } : {}),
     ...(params !== undefined ? { params } : {}),
-    ...(body !== undefined ? { body } : {}),
+  }
+
+  if (body !== undefined) {
+    return { ...out, body }
+  }
+
+  if (optionalBody !== undefined) {
+    return { ...out, "body?": optionalBody }
   }
 
   return Object.keys(out).length === 0 ? undefined : out
