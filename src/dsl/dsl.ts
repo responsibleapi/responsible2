@@ -8,8 +8,14 @@ import type { Security } from "./security.ts"
 export type OptionalKey = `${string}?`
 
 /**
- * Holds info both about the name AND optionality of something used in schemas
- * and req params
+ * **DSL**
+ *
+ * Holds info both about name AND optionality of something used in schemas and
+ * req params.
+ *
+ * **Compiler**
+ *
+ * Emits `required` based on {@link isOptional}.
  *
  * @dsl
  */
