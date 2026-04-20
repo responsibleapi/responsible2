@@ -1,8 +1,8 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET, POST } from "../dsl/methods.ts"
-import { named } from "../dsl/nameable.ts"
+import { named, ref } from "../dsl/nameable.ts"
 import { resp } from "../dsl/operation.ts"
-import { queryParam, type QueryParamRaw } from "../dsl/params.ts"
+import { type InlineQueryParam, queryParam } from "../dsl/params.ts"
 import {
   array,
   boolean,
@@ -13,6 +13,7 @@ import {
   object,
   string,
   uint32,
+  unknown,
 } from "../dsl/schema.ts"
 import { scope } from "../dsl/scope.ts"
 import {
@@ -70,9 +71,9 @@ const oauthScope = (k: YtOauthScope) =>
   securityAND(oauth2Requirement(Oauth2, [k]), oauth2Requirement(Oauth2c, [k]))
 
 /** ORs everything */
-const oauthScopes = (
+function oauthScopes(
   ...scopes: readonly [YtOauthScope, YtOauthScope, ...YtOauthScope[]]
-) => {
+) {
   const [first, second, ...rest] = scopes
 
   return securityOR(
@@ -82,6 +83,15 @@ const oauthScopes = (
   )
 }
 
+const AbuseType = () => object({ "id?": string() })
+
+const Entity = () =>
+  object({
+    "id?": string(),
+    "typeId?": string(),
+    "url?": string(),
+  })
+
 const AbuseReport = () =>
   object({
     "abuseTypes?": array(AbuseType),
@@ -90,10 +100,6 @@ const AbuseReport = () =>
     "subject?": Entity,
   })
 
-const AbuseType = () =>
-  object({
-    "id?": string(),
-  })
 const AccessPolicy = () =>
   object(
     {
@@ -114,7 +120,10 @@ const AccessPolicy = () =>
 const Activity = () =>
   object(
     {
-      "contentDetails?": ActivityContentDetails,
+      "contentDetails?": ref(ActivityContentDetails, {
+        description:
+          "The contentDetails object contains information about the content associated with the activity. For example, if the snippet.type value is videoRated, then the contentDetails object's content identifies the rated video.",
+      }),
       "etag?": string({ description: "Etag of this resource" }),
       "id?": string({
         description:
@@ -125,7 +134,10 @@ const Activity = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#activity".',
       }),
-      "snippet?": ActivitySnippet,
+      "snippet?": ref(ActivitySnippet, {
+        description:
+          "The snippet object contains basic details about the activity, including the activity's type and group ID.",
+      }),
     },
     {
       description:
@@ -133,79 +145,129 @@ const Activity = () =>
     },
   )
 
-const ActivityContentDetails = () =>
-  object(
+function ActivityContentDetails() {
+  return object(
     {
-      "bulletin?": ActivityContentDetailsBulletin,
-      "channelItem?": ActivityContentDetailsChannelItem,
-      "comment?": ActivityContentDetailsComment,
-      "favorite?": ActivityContentDetailsFavorite,
-      "like?": ActivityContentDetailsLike,
-      "playlistItem?": ActivityContentDetailsPlaylistItem,
-      "promotedItem?": ActivityContentDetailsPromotedItem,
-      "recommendation?": ActivityContentDetailsRecommendation,
-      "social?": ActivityContentDetailsSocial,
-      "subscription?": ActivityContentDetailsSubscription,
-      "upload?": ActivityContentDetailsUpload,
+      "bulletin?": ref(ActivityContentDetailsBulletin, {
+        description:
+          "The bulletin object contains details about a channel bulletin post. This object is only present if the snippet.type is bulletin.",
+      }),
+      "channelItem?": ref(ActivityContentDetailsChannelItem, {
+        description:
+          "The channelItem object contains details about a resource which was added to a channel. This property is only present if the snippet.type is channelItem.",
+      }),
+      "comment?": ref(ActivityContentDetailsComment, {
+        description:
+          "The comment object contains information about a resource that received a comment. This property is only present if the snippet.type is comment.",
+      }),
+      "favorite?": ref(ActivityContentDetailsFavorite, {
+        description:
+          "The favorite object contains information about a video that was marked as a favorite video. This property is only present if the snippet.type is favorite.",
+      }),
+      "like?": ref(ActivityContentDetailsLike, {
+        description:
+          "The like object contains information about a resource that received a positive (like) rating. This property is only present if the snippet.type is like.",
+      }),
+      "playlistItem?": ref(ActivityContentDetailsPlaylistItem, {
+        description:
+          "The playlistItem object contains information about a new playlist item. This property is only present if the snippet.type is playlistItem.",
+      }),
+      "promotedItem?": ref(ActivityContentDetailsPromotedItem, {
+        description:
+          "The promotedItem object contains details about a resource which is being promoted. This property is only present if the snippet.type is promotedItem.",
+      }),
+      "recommendation?": ref(ActivityContentDetailsRecommendation, {
+        description:
+          "The recommendation object contains information about a recommended resource. This property is only present if the snippet.type is recommendation.",
+      }),
+      "social?": ref(ActivityContentDetailsSocial, {
+        description:
+          "The social object contains details about a social network post. This property is only present if the snippet.type is social.",
+      }),
+      "subscription?": ref(ActivityContentDetailsSubscription, {
+        description:
+          "The subscription object contains information about a channel that a user subscribed to. This property is only present if the snippet.type is subscription.",
+      }),
+      "upload?": ref(ActivityContentDetailsUpload, {
+        description:
+          "The upload object contains information about the uploaded video. This property is only present if the snippet.type is upload.",
+      }),
     },
     {
       description:
         "Details about the content of an activity: the video that was shared, the channel that was subscribed to, etc.",
     },
   )
-
-const ActivityContentDetailsBulletin = () =>
-  object(
+}
+function ActivityContentDetailsBulletin() {
+  return object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the resource associated with a bulletin post. @mutable youtube.activities.insert",
+      }),
     },
     {
       description: "Details about a channel bulletin post.",
     },
   )
-
-const ActivityContentDetailsChannelItem = () =>
-  object(
+}
+function ActivityContentDetailsChannelItem() {
+  return object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the resource that was added to the channel.",
+      }),
     },
     {
       description: "Details about a resource which was added to a channel.",
     },
   )
-const ActivityContentDetailsComment = () =>
-  object(
+}
+function ActivityContentDetailsComment() {
+  return object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the resource associated with the comment.",
+      }),
     },
     {
       description: "Information about a resource that received a comment.",
     },
   )
-
-const ActivityContentDetailsFavorite = () =>
-  object(
+}
+function ActivityContentDetailsFavorite() {
+  return object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the resource that was marked as a favorite.",
+      }),
     },
     {
       description:
         "Information about a video that was marked as a favorite video.",
     },
   )
-
-const ActivityContentDetailsLike = () =>
-  object(
+}
+function ActivityContentDetailsLike() {
+  return object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the rated resource.",
+      }),
     },
     {
       description:
         "Information about a resource that received a positive (like) rating.",
     },
   )
-const ActivityContentDetailsPlaylistItem = () =>
-  object(
+}
+function ActivityContentDetailsPlaylistItem() {
+  return object(
     {
       "playlistId?": string({
         description:
@@ -214,14 +276,18 @@ const ActivityContentDetailsPlaylistItem = () =>
       "playlistItemId?": string({
         description: "ID of the item within the playlist.",
       }),
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information about the resource that was added to the playlist.",
+      }),
     },
     {
       description: "Information about a new playlist item.",
     },
   )
-const ActivityContentDetailsPromotedItem = () =>
-  object(
+}
+function ActivityContentDetailsPromotedItem() {
+  return object(
     {
       "adTag?": string({
         description:
@@ -268,8 +334,9 @@ const ActivityContentDetailsPromotedItem = () =>
       description: "Details about a resource which is being promoted.",
     },
   )
-const ActivityContentDetailsRecommendation = () =>
-  object(
+}
+function ActivityContentDetailsRecommendation() {
+  return object(
     {
       "reason?": string({
         description: "The reason that the resource is recommended to the user.",
@@ -280,15 +347,22 @@ const ActivityContentDetailsRecommendation = () =>
           "videoWatched",
         ],
       }),
-      "resourceId?": ResourceId,
-      "seedResourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the recommended resource.",
+      }),
+      "seedResourceId?": ref(ResourceId, {
+        description:
+          "The seedResourceId object contains information about the resource that caused the recommendation.",
+      }),
     },
     {
       description: "Information that identifies the recommended resource.",
     },
   )
-const ActivityContentDetailsSocial = () =>
-  object(
+}
+function ActivityContentDetailsSocial() {
+  return object(
     {
       "author?": string({
         description: "The author of the social network post.",
@@ -299,7 +373,10 @@ const ActivityContentDetailsSocial = () =>
       "referenceUrl?": string({
         description: "The URL of the social network post.",
       }),
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object encapsulates information that identifies the resource associated with a social network post.",
+      }),
       "type?": string({
         description: "The name of the social network.",
         enum: ["unspecified", "googlePlus", "facebook", "twitter"],
@@ -309,17 +386,22 @@ const ActivityContentDetailsSocial = () =>
       description: "Details about a social network post.",
     },
   )
-const ActivityContentDetailsSubscription = () =>
-  object(
+}
+function ActivityContentDetailsSubscription() {
+  return object(
     {
-      "resourceId?": ResourceId,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The resourceId object contains information that identifies the resource that the user subscribed to.",
+      }),
     },
     {
       description: "Information about a channel that a user subscribed to.",
     },
   )
-const ActivityContentDetailsUpload = () =>
-  object(
+}
+function ActivityContentDetailsUpload() {
+  return object(
     {
       "videoId?": string({
         description:
@@ -330,9 +412,9 @@ const ActivityContentDetailsUpload = () =>
       description: "Information about the uploaded video.",
     },
   )
-
-const ActivityListResponse = () =>
-  object({
+}
+function ActivityListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -350,7 +432,9 @@ const ActivityListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -360,9 +444,9 @@ const ActivityListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-
-const ActivitySnippet = () =>
-  object(
+}
+function ActivitySnippet() {
+  return object(
     {
       "channelId?": string({
         description:
@@ -384,7 +468,10 @@ const ActivitySnippet = () =>
         description: "The date and time that the video was uploaded.",
         format: "date-time",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the resource that is primarily associated with the activity. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description:
           "The title of the resource primarily associated with the activity.",
@@ -412,9 +499,9 @@ const ActivitySnippet = () =>
         "Basic details about an activity, including title, description, thumbnails, activity type and group. Next ID: 12",
     },
   )
-
-const Caption = () =>
-  object(
+}
+function Caption() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -428,16 +515,19 @@ const Caption = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#caption".',
       }),
-      "snippet?": CaptionSnippet,
+      "snippet?": ref(CaptionSnippet, {
+        description:
+          "The snippet object contains basic details about the caption.",
+      }),
     },
     {
       description:
         "A *caption* resource represents a YouTube caption track. A caption track is associated with exactly one YouTube video.",
     },
   )
-
-const CaptionListResponse = () =>
-  object({
+}
+function CaptionListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -457,9 +547,10 @@ const CaptionListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
+}
 
-const CaptionSnippet = () =>
-  object(
+function CaptionSnippet() {
+  return object(
     {
       "audioTrackType?": string({
         description:
@@ -522,9 +613,9 @@ const CaptionSnippet = () =>
         "Basic details about a caption track, such as its language and name.",
     },
   )
-
-const CdnSettings = () =>
-  object(
+}
+function CdnSettings() {
+  return object(
     {
       "format?": string({
         description:
@@ -534,7 +625,10 @@ const CdnSettings = () =>
         description: "The frame rate of the inbound video data.",
         enum: ["30fps", "60fps", "variable"],
       }),
-      "ingestionInfo?": IngestionInfo,
+      "ingestionInfo?": ref(IngestionInfo, {
+        description:
+          "The ingestionInfo object contains information that YouTube provides that you need to transmit your RTMP or HTTP stream to YouTube.",
+      }),
       "ingestionType?": string({
         description:
           " The method or protocol used to transmit the video stream.",
@@ -558,14 +652,44 @@ const CdnSettings = () =>
       description: "Brief description of the live stream cdn settings.",
     },
   )
+}
+
+const ChannelLocalization = () =>
+  object(
+    {
+      "description?": string({
+        description: "The localized strings for channel's description.",
+      }),
+      "title?": string({
+        description: "The localized strings for channel's title.",
+      }),
+    },
+    { description: "Channel localization setting" },
+  )
+
 const Channel = () =>
   object(
     {
-      "auditDetails?": ChannelAuditDetails,
-      "brandingSettings?": ChannelBrandingSettings,
-      "contentDetails?": ChannelContentDetails,
-      "contentOwnerDetails?": ChannelContentOwnerDetails,
-      "conversionPings?": ChannelConversionPings,
+      "auditDetails?": ref(ChannelAuditDetails, {
+        description:
+          "The auditionDetails object encapsulates channel data that is relevant for YouTube Partners during the audition process.",
+      }),
+      "brandingSettings?": ref(ChannelBrandingSettings, {
+        description:
+          "The brandingSettings object encapsulates information about the branding of the channel.",
+      }),
+      "contentDetails?": ref(ChannelContentDetails, {
+        description:
+          "The contentDetails object encapsulates information about the channel's content.",
+      }),
+      "contentOwnerDetails?": ref(ChannelContentOwnerDetails, {
+        description:
+          "The contentOwnerDetails object encapsulates channel data that is relevant for YouTube Partners linked with the channel.",
+      }),
+      "conversionPings?": ref(ChannelConversionPings, {
+        description:
+          "The conversionPings object encapsulates information about conversion pings that need to be respected by the channel.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -581,18 +705,31 @@ const Channel = () =>
       "localizations?": dict(string(), ChannelLocalization, {
         description: "Localizations for different languages",
       }),
-      "snippet?": ChannelSnippet,
-      "statistics?": ChannelStatistics,
-      "status?": ChannelStatus,
-      "topicDetails?": ChannelTopicDetails,
+      "snippet?": ref(ChannelSnippet, {
+        description:
+          "The snippet object contains basic details about the channel, such as its title, description, and thumbnail images.",
+      }),
+      "statistics?": ref(ChannelStatistics, {
+        description:
+          "The statistics object encapsulates statistics for the channel.",
+      }),
+      "status?": ref(ChannelStatus, {
+        description:
+          "The status object encapsulates information about the privacy status of the channel.",
+      }),
+      "topicDetails?": ref(ChannelTopicDetails, {
+        description:
+          "The topicDetails object encapsulates information about Freebase topics associated with the channel.",
+      }),
     },
     {
       description:
         "A *channel* resource contains information about a YouTube channel.",
     },
   )
-const ChannelAuditDetails = () =>
-  object(
+
+function ChannelAuditDetails() {
+  return object(
     {
       "communityGuidelinesGoodStanding?": boolean({
         description:
@@ -610,8 +747,9 @@ const ChannelAuditDetails = () =>
         "The auditDetails object encapsulates channel data that is relevant for YouTube Partners during the audit process.",
     },
   )
-const ChannelBannerResource = () =>
-  object(
+}
+function ChannelBannerResource() {
+  return object(
     {
       "etag?": string(),
       "kind?": string({
@@ -628,23 +766,30 @@ const ChannelBannerResource = () =>
         "A channel banner returned as the response to a channel_banner.insert call.",
     },
   )
-const ChannelBrandingSettings = () =>
-  object(
+}
+function ChannelBrandingSettings() {
+  return object(
     {
-      "channel?": ChannelSettings,
+      "channel?": ref(ChannelSettings, {
+        description: "Branding properties for the channel view.",
+      }),
       "hints?": array(PropertyValue, {
         description: "Additional experimental branding properties.",
       }),
-      "image?": ImageSettings,
-      "watch?": WatchSettings,
+      "image?": ref(ImageSettings, {
+        description: "Branding properties for branding images.",
+      }),
+      "watch?": ref(WatchSettings, {
+        description: "Branding properties for the watch page.",
+      }),
     },
     {
       description: "Branding properties of a YouTube channel.",
     },
   )
-
-const ChannelContentDetails = () =>
-  object(
+}
+function ChannelContentDetails() {
+  return object(
     {
       "relatedPlaylists?": object({
         "favorites?": string({
@@ -673,8 +818,9 @@ const ChannelContentDetails = () =>
       description: "Details about the content of a channel.",
     },
   )
-const ChannelContentOwnerDetails = () =>
-  object(
+}
+function ChannelContentOwnerDetails() {
+  return object(
     {
       "contentOwner?": string({
         description: "The ID of the content owner linked to the channel.",
@@ -690,8 +836,9 @@ const ChannelContentOwnerDetails = () =>
         "The contentOwnerDetails object encapsulates channel data that is relevant for YouTube Partners linked with the channel.",
     },
   )
-const ChannelConversionPing = () =>
-  object(
+}
+function ChannelConversionPing() {
+  return object(
     {
       "context?": string({
         description: "Defines the context of the ping.",
@@ -707,8 +854,9 @@ const ChannelConversionPing = () =>
         "Pings that the app shall fire (authenticated by biscotti cookie). Each ping has a context, in which the app must fire the ping, and a url identifying the ping.",
     },
   )
-const ChannelConversionPings = () =>
-  object(
+}
+function ChannelConversionPings() {
+  return object(
     {
       "pings?": array(ChannelConversionPing, {
         description:
@@ -720,8 +868,9 @@ const ChannelConversionPings = () =>
         "The conversionPings object encapsulates information about conversion pings that need to be respected by the channel.",
     },
   )
-const ChannelListResponse = () =>
-  object({
+}
+function ChannelListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -739,7 +888,9 @@ const ChannelListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -749,22 +900,10 @@ const ChannelListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const ChannelLocalization = () =>
-  object(
-    {
-      "description?": string({
-        description: "The localized strings for channel's description.",
-      }),
-      "title?": string({
-        description: "The localized strings for channel's title.",
-      }),
-    },
-    {
-      description: "Channel localization setting",
-    },
-  )
-const ChannelProfileDetails = () =>
-  object({
+}
+
+function ChannelProfileDetails() {
+  return object({
     "channelId?": string({
       description: "The YouTube channel ID.",
     }),
@@ -778,9 +917,13 @@ const ChannelProfileDetails = () =>
       description: "The channels's avatar URL.",
     }),
   })
-const ChannelSection = () =>
-  object({
-    "contentDetails?": ChannelSectionContentDetails,
+}
+function ChannelSection() {
+  return object({
+    "contentDetails?": ref(ChannelSectionContentDetails, {
+      description:
+        "The contentDetails object contains details about the channel section content, such as a list of playlists or channels featured in the section.",
+    }),
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -796,11 +939,18 @@ const ChannelSection = () =>
     "localizations?": dict(string(), ChannelSectionLocalization, {
       description: "Localizations for different languages",
     }),
-    "snippet?": ChannelSectionSnippet,
-    "targeting?": ChannelSectionTargeting,
+    "snippet?": ref(ChannelSectionSnippet, {
+      description:
+        "The snippet object contains basic details about the channel section, such as its type, style and title.",
+    }),
+    "targeting?": ref(ChannelSectionTargeting, {
+      description:
+        "The targeting object contains basic targeting settings about the channel section.",
+    }),
   })
-const ChannelSectionContentDetails = () =>
-  object(
+}
+function ChannelSectionContentDetails() {
+  return object(
     {
       "channels?": array(string(), {
         description: "The channel ids for type multiple_channels.",
@@ -815,8 +965,9 @@ const ChannelSectionContentDetails = () =>
         "Details about a channelsection, including playlists and channels.",
     },
   )
-const ChannelSectionListResponse = () =>
-  object({
+}
+function ChannelSectionListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -836,8 +987,9 @@ const ChannelSectionListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const ChannelSectionLocalization = () =>
-  object(
+}
+function ChannelSectionLocalization() {
+  return object(
     {
       "title?": string({
         description: "The localized strings for channel section's title.",
@@ -847,8 +999,9 @@ const ChannelSectionLocalization = () =>
       description: "ChannelSection localization setting",
     },
   )
-const ChannelSectionSnippet = () =>
-  object(
+}
+function ChannelSectionSnippet() {
+  return object(
     {
       "channelId?": string({
         description:
@@ -858,7 +1011,9 @@ const ChannelSectionSnippet = () =>
         description:
           "The language of the channel section's default title and description.",
       }),
-      "localized?": ChannelSectionLocalization,
+      "localized?": ref(ChannelSectionLocalization, {
+        description: "Localized title, read-only.",
+      }),
       "position?": uint32({
         description: "The position of the channel section in the channel.",
       }),
@@ -902,8 +1057,9 @@ const ChannelSectionSnippet = () =>
         "Basic details about a channel section, including title, style and position.",
     },
   )
-const ChannelSectionTargeting = () =>
-  object(
+}
+function ChannelSectionTargeting() {
+  return object(
     {
       "countries?": array(string(), {
         description: "The country the channel section is targeting.",
@@ -919,8 +1075,9 @@ const ChannelSectionTargeting = () =>
       description: "ChannelSection targeting setting.",
     },
   )
-const ChannelSettings = () =>
-  object(
+}
+function ChannelSettings() {
+  return object(
     {
       "country?": string({
         description: "The country of the channel.",
@@ -974,8 +1131,9 @@ const ChannelSettings = () =>
       description: "Branding properties for the channel view.",
     },
   )
-const ChannelSnippet = () =>
-  object(
+}
+function ChannelSnippet() {
+  return object(
     {
       "country?": string({
         description: "The country of the channel.",
@@ -990,12 +1148,17 @@ const ChannelSnippet = () =>
       "description?": string({
         description: "The description of the channel.",
       }),
-      "localized?": ChannelLocalization,
+      "localized?": ref(ChannelLocalization, {
+        description: "Localized title and description, read-only.",
+      }),
       "publishedAt?": string({
         description: "The date and time that the channel was created.",
         format: "date-time",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the channel. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail. When displaying thumbnails in your application, make sure that your code uses the image URLs exactly as they are returned in API responses. For example, your application should not use the http domain instead of the https domain in a URL returned in an API response. Beginning in July 2018, channel thumbnail URLs will only be available in the https domain, which is how the URLs appear in API responses. After that time, you might see broken images in your application if it tries to load YouTube images from the http domain. Thumbnail images might be empty for newly created channels and might take up to one day to populate.",
+      }),
       "title?": string({
         description: "The channel's title.",
       }),
@@ -1005,8 +1168,9 @@ const ChannelSnippet = () =>
         "Basic details about a channel, including title, description and thumbnails.",
     },
   )
-const ChannelStatistics = () =>
-  object(
+}
+function ChannelStatistics() {
+  return object(
     {
       "commentCount?": string({
         description: "The number of comments for the channel.",
@@ -1034,8 +1198,9 @@ const ChannelStatistics = () =>
         "Statistics about a channel: number of subscribers, number of videos in the channel, etc.",
     },
   )
-const ChannelStatus = () =>
-  object(
+}
+function ChannelStatus() {
+  return object(
     {
       "isLinked?": boolean({
         description:
@@ -1057,8 +1222,9 @@ const ChannelStatus = () =>
       description: "JSON template for the status part of a channel.",
     },
   )
-const ChannelToStoreLinkDetails = () =>
-  object(
+}
+function ChannelToStoreLinkDetails() {
+  return object(
     {
       "merchantId?": string({
         description: "Google Merchant Center id of the store.",
@@ -1076,8 +1242,9 @@ const ChannelToStoreLinkDetails = () =>
         "Information specific to a store on a merchandising platform linked to a YouTube channel.",
     },
   )
-const ChannelTopicDetails = () =>
-  object(
+}
+function ChannelTopicDetails() {
+  return object(
     {
       "topicCategories?": array(string(), {
         description:
@@ -1092,8 +1259,9 @@ const ChannelTopicDetails = () =>
       description: "Freebase topic information related to the channel.",
     },
   )
-const Comment = () =>
-  object(
+}
+function Comment() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -1107,14 +1275,18 @@ const Comment = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#comment".',
       }),
-      "snippet?": CommentSnippet,
+      "snippet?": ref(CommentSnippet, {
+        description:
+          "The snippet object contains basic details about the comment.",
+      }),
     },
     {
       description: "A *comment* represents a single YouTube comment.",
     },
   )
-const CommentListResponse = () =>
-  object({
+}
+function CommentListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -1134,14 +1306,17 @@ const CommentListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "tokenPagination?": TokenPagination,
     "visitorId?": string({
       description: "The visitorId identifies the visitor.",
     }),
   })
-const CommentSnippet = () =>
-  object(
+}
+function CommentSnippet() {
+  return object(
     {
       "authorChannelId?": CommentSnippetAuthorChannelId,
       "authorChannelUrl?": string({
@@ -1204,8 +1379,9 @@ const CommentSnippet = () =>
         "Basic details about a comment, such as its author and text.",
     },
   )
-const CommentSnippetAuthorChannelId = () =>
-  object(
+}
+function CommentSnippetAuthorChannelId() {
+  return object(
     {
       "value?": string(),
     },
@@ -1213,8 +1389,9 @@ const CommentSnippetAuthorChannelId = () =>
       description: "The id of the author's YouTube channel, if any.",
     },
   )
-const CommentThread = () =>
-  object(
+}
+function CommentThread() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -1228,16 +1405,23 @@ const CommentThread = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#commentThread".',
       }),
-      "replies?": CommentThreadReplies,
-      "snippet?": CommentThreadSnippet,
+      "replies?": ref(CommentThreadReplies, {
+        description:
+          "The replies object contains a limited number of replies (if any) to the top level comment found in the snippet.",
+      }),
+      "snippet?": ref(CommentThreadSnippet, {
+        description:
+          "The snippet object contains basic details about the comment thread and also the top level comment.",
+      }),
     },
     {
       description:
         "A *comment thread* represents information that applies to a top level comment and all its replies. It can also include the top level comment itself and some of the replies.",
     },
   )
-const CommentThreadListResponse = () =>
-  object({
+}
+function CommentThreadListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -1257,14 +1441,17 @@ const CommentThreadListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "tokenPagination?": TokenPagination,
     "visitorId?": string({
       description: "The visitorId identifies the visitor.",
     }),
   })
-const CommentThreadReplies = () =>
-  object(
+}
+function CommentThreadReplies() {
+  return object(
     {
       "comments?": array(Comment, {
         description:
@@ -1276,8 +1463,9 @@ const CommentThreadReplies = () =>
         "Comments written in (direct or indirect) reply to the top level comment.",
     },
   )
-const CommentThreadSnippet = () =>
-  object(
+}
+function CommentThreadSnippet() {
+  return object(
     {
       "canReply?": boolean({
         description:
@@ -1291,7 +1479,9 @@ const CommentThreadSnippet = () =>
         description:
           "Whether the thread (and therefore all its comments) is visible to all YouTube users.",
       }),
-      "topLevelComment?": Comment,
+      "topLevelComment?": ref(Comment, {
+        description: "The top level comment of this thread.",
+      }),
       "totalReplyCount?": uint32({
         description:
           "The total number of replies (not including the top level comment).",
@@ -1305,9 +1495,9 @@ const CommentThreadSnippet = () =>
       description: "Basic details about a comment thread.",
     },
   )
-
-const ContentRating = () =>
-  object(
+}
+function ContentRating() {
+  return object(
     {
       "acbRating?": string({
         description:
@@ -2311,9 +2501,9 @@ const ContentRating = () =>
         "Ratings schemes. The country-specific ratings are mostly for movies and shows. LINT.IfChange",
     },
   )
-
-const Cuepoint = () =>
-  object(
+}
+function Cuepoint() {
+  return object(
     {
       "cueType?": string({
         enum: ["cueTypeUnspecified", "cueTypeAd"],
@@ -2341,16 +2531,9 @@ const Cuepoint = () =>
         "Note that there may be a 5-second end-point resolution issue. For instance, if a cuepoint comes in for 22:03:27, we may stuff the cuepoint into 22:03:25 or 22:03:30, depending. This is an artifact of HLS.",
     },
   )
-
-const Entity = () =>
-  object({
-    "id?": string(),
-    "typeId?": string(),
-    "url?": string(),
-  })
-
-const GeoPoint = () =>
-  object(
+}
+function GeoPoint() {
+  return object(
     {
       "altitude?": double({
         description: "Altitude above the reference ellipsoid, in meters.",
@@ -2362,9 +2545,9 @@ const GeoPoint = () =>
       description: "Geographical coordinates of a point, in WGS84.",
     },
   )
-
-const I18nLanguage = () =>
-  object(
+}
+function I18nLanguage() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -2378,16 +2561,19 @@ const I18nLanguage = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#i18nLanguage".',
       }),
-      "snippet?": I18nLanguageSnippet,
+      "snippet?": ref(I18nLanguageSnippet, {
+        description:
+          "The snippet object contains basic details about the i18n language, such as language code and human-readable name.",
+      }),
     },
     {
       description:
         "An *i18nLanguage* resource identifies a UI language currently supported by YouTube.",
     },
   )
-
-const I18nLanguageListResponse = () =>
-  object({
+}
+function I18nLanguageListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -2408,9 +2594,9 @@ const I18nLanguageListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-
-const I18nLanguageSnippet = () =>
-  object(
+}
+function I18nLanguageSnippet() {
+  return object(
     {
       "hl?": string({
         description: "A short BCP-47 code that uniquely identifies a language.",
@@ -2425,9 +2611,9 @@ const I18nLanguageSnippet = () =>
         "Basic details about an i18n language, such as language code and human-readable name.",
     },
   )
-
-const I18nRegion = () =>
-  object(
+}
+function I18nRegion() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -2441,16 +2627,19 @@ const I18nRegion = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#i18nRegion".',
       }),
-      "snippet?": I18nRegionSnippet,
+      "snippet?": ref(I18nRegionSnippet, {
+        description:
+          "The snippet object contains basic details about the i18n region, such as region code and human-readable name.",
+      }),
     },
     {
       description:
         "A *i18nRegion* resource identifies a region where YouTube is available.",
     },
   )
-
-const I18nRegionListResponse = () =>
-  object({
+}
+function I18nRegionListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -2471,9 +2660,9 @@ const I18nRegionListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-
-const I18nRegionSnippet = () =>
-  object(
+}
+function I18nRegionSnippet() {
+  return object(
     {
       "gl?": string({
         description: "The region code as a 2-letter ISO country code.",
@@ -2487,10 +2676,14 @@ const I18nRegionSnippet = () =>
         "Basic details about an i18n region, such as region code and human-readable name.",
     },
   )
-const ImageSettings = () =>
-  object(
+}
+function ImageSettings() {
+  return object(
     {
-      "backgroundImageUrl?": LocalizedProperty,
+      "backgroundImageUrl?": ref(LocalizedProperty, {
+        description:
+          "The URL for the background image shown on the video watch page. The image should be 1200px by 615px, with a maximum file size of 128k.",
+      }),
       "bannerExternalUrl?": string({
         description:
           "This is generated when a ChannelBanner.Insert request has succeeded for the given channel.",
@@ -2539,10 +2732,20 @@ const ImageSettings = () =>
       "bannerTvMediumImageUrl?": string({
         description: "Banner image. TV size medium resolution (1280x720).",
       }),
-      "largeBrandedBannerImageImapScript?": LocalizedProperty,
-      "largeBrandedBannerImageUrl?": LocalizedProperty,
-      "smallBrandedBannerImageImapScript?": LocalizedProperty,
-      "smallBrandedBannerImageUrl?": LocalizedProperty,
+      "largeBrandedBannerImageImapScript?": ref(LocalizedProperty, {
+        description: "The image map script for the large banner image.",
+      }),
+      "largeBrandedBannerImageUrl?": ref(LocalizedProperty, {
+        description:
+          "The URL for the 854px by 70px image that appears below the video player in the expanded video view of the video watch page.",
+      }),
+      "smallBrandedBannerImageImapScript?": ref(LocalizedProperty, {
+        description: "The image map script for the small banner image.",
+      }),
+      "smallBrandedBannerImageUrl?": ref(LocalizedProperty, {
+        description:
+          "The URL for the 640px by 70px banner image that appears below the video player in the default view of the video watch page. The URL for the image that appears above the top-left corner of the video player. This is a 25-pixel-high image with a flexible width that cannot exceed 170 pixels.",
+      }),
       "trackingImageUrl?": string({
         description:
           "The URL for a 1px by 1px tracking pixel that can be used to collect statistics for views of the channel or video pages.",
@@ -2554,8 +2757,9 @@ const ImageSettings = () =>
         "Branding properties for images associated with the channel.",
     },
   )
-const IngestionInfo = () =>
-  object(
+}
+function IngestionInfo() {
+  return object(
     {
       "backupIngestionAddress?": string({
         description:
@@ -2583,8 +2787,9 @@ const IngestionInfo = () =>
         "Describes information necessary for ingesting an RTMP, HTTP, or SRT stream.",
     },
   )
-const InvideoBranding = () =>
-  object(
+}
+function InvideoBranding() {
+  return object(
     {
       "imageBytes?": string({
         description:
@@ -2595,20 +2800,26 @@ const InvideoBranding = () =>
         description:
           "The url of the uploaded image. Only used in apiary to api communication.",
       }),
-      "position?": InvideoPosition,
+      "position?": ref(InvideoPosition, {
+        description:
+          "The spatial position within the video where the branding watermark will be displayed.",
+      }),
       "targetChannelId?": string({
         description:
           "The channel to which this branding links. If not present it defaults to the current channel.",
       }),
-      "timing?": InvideoTiming,
+      "timing?": ref(InvideoTiming, {
+        description:
+          "The temporal position within the video where watermark will be displayed.",
+      }),
     },
     {
       description: "LINT.IfChange Describes an invideo branding.",
     },
   )
-
-const InvideoPosition = () =>
-  object(
+}
+function InvideoPosition() {
+  return object(
     {
       "cornerPosition?": string({
         description:
@@ -2617,7 +2828,7 @@ const InvideoPosition = () =>
       }),
       "type?": string({
         description: "Defines the position type.",
-        enum: ["corner"],
+        const: "corner",
       }),
     },
     {
@@ -2625,8 +2836,9 @@ const InvideoPosition = () =>
         "Describes the spatial position of a visual widget inside a video. It is a union of various position types, out of which only will be set one.",
     },
   )
-const InvideoTiming = () =>
-  object(
+}
+function InvideoTiming() {
+  return object(
     {
       "durationMs?": string({
         description:
@@ -2649,20 +2861,26 @@ const InvideoTiming = () =>
         "Describes a temporal position of a visual widget inside a video.",
     },
   )
-const LanguageTag = () =>
-  object({
+}
+function LanguageTag() {
+  return object({
     "value?": string(),
   })
-const LevelDetails = () =>
-  object({
+}
+function LevelDetails() {
+  return object({
     "displayName?": string({
       description: "The name that should be used when referring to this level.",
     }),
   })
-const LiveBroadcast = () =>
-  object(
+}
+function LiveBroadcast() {
+  return object(
     {
-      "contentDetails?": LiveBroadcastContentDetails,
+      "contentDetails?": ref(LiveBroadcastContentDetails, {
+        description:
+          "The contentDetails object contains information about the event's video content, such as whether the content can be shown in an embedded video player or if it will be archived and therefore available for viewing after the event has concluded.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -2675,17 +2893,27 @@ const LiveBroadcast = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#liveBroadcast".',
       }),
-      "snippet?": LiveBroadcastSnippet,
-      "statistics?": LiveBroadcastStatistics,
-      "status?": LiveBroadcastStatus,
+      "snippet?": ref(LiveBroadcastSnippet, {
+        description:
+          "The snippet object contains basic details about the event, including its title, description, start time, and end time.",
+      }),
+      "statistics?": ref(LiveBroadcastStatistics, {
+        description:
+          "The statistics object contains info about the event's current stats. These include concurrent viewers and total chat count. Statistics can change (in either direction) during the lifetime of an event. Statistics are only returned while the event is live.",
+      }),
+      "status?": ref(LiveBroadcastStatus, {
+        description:
+          "The status object contains information about the event's status.",
+      }),
     },
     {
       description:
         "A *liveBroadcast* resource represents an event that will be streamed, via live video, on YouTube.",
     },
   )
-const LiveBroadcastContentDetails = () =>
-  object(
+}
+function LiveBroadcastContentDetails() {
+  return object(
     {
       "boundStreamId?": string({
         description:
@@ -2742,7 +2970,10 @@ const LiveBroadcastContentDetails = () =>
           "The mesh for projecting the video if projection is mesh. The mesh value must be a UTF-8 string containing the base-64 encoding of 3D mesh data that follows the Spherical Video V2 RFC specification for an mshp box, excluding the box size and type but including the following four reserved zero bytes for the version and flags.",
         format: "byte",
       }),
-      "monitorStream?": MonitorStreamInfo,
+      "monitorStream?": ref(MonitorStreamInfo, {
+        description:
+          "The monitorStream object contains information about the monitor stream, which the broadcaster can use to review the event content before the broadcast stream is shown publicly.",
+      }),
       "projection?": string({
         description:
           "The projection format of this broadcast. This defaults to rectangular.",
@@ -2766,8 +2997,9 @@ const LiveBroadcastContentDetails = () =>
       description: "Detailed settings of a broadcast.",
     },
   )
-const LiveBroadcastListResponse = () =>
-  object({
+}
+function LiveBroadcastListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -2787,7 +3019,9 @@ const LiveBroadcastListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -2797,8 +3031,9 @@ const LiveBroadcastListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const LiveBroadcastSnippet = () =>
-  object(
+}
+function LiveBroadcastSnippet() {
+  return object(
     {
       "actualEndTime?": string({
         description:
@@ -2840,7 +3075,10 @@ const LiveBroadcastSnippet = () =>
           "The date and time that the broadcast is scheduled to start.",
         format: "date-time",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the broadcast. For each nested object in this object, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description:
           "The broadcast's title. Note that the broadcast represents exactly one YouTube video. You can set this field by modifying the broadcast resource or by setting the title field of the corresponding video resource.",
@@ -2850,8 +3088,9 @@ const LiveBroadcastSnippet = () =>
       description: "Basic broadcast information.",
     },
   )
-const LiveBroadcastStatistics = () =>
-  object(
+}
+function LiveBroadcastStatistics() {
+  return object(
     {
       "concurrentViewers?": string({
         description:
@@ -2864,9 +3103,9 @@ const LiveBroadcastStatistics = () =>
         "Statistics about the live broadcast. These represent a snapshot of the values at the time of the request. Statistics are only returned for live broadcasts.",
     },
   )
-
-const LiveBroadcastStatus = () =>
-  object(
+}
+function LiveBroadcastStatus() {
+  return object(
     {
       "lifeCycleStatus?": string({
         description:
@@ -2914,8 +3153,9 @@ const LiveBroadcastStatus = () =>
       description: "Live broadcast state.",
     },
   )
-const LiveChatBan = () =>
-  object(
+}
+function LiveChatBan() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -2929,15 +3169,19 @@ const LiveChatBan = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string `"youtube#liveChatBan"`.',
       }),
-      "snippet?": LiveChatBanSnippet,
+      "snippet?": ref(LiveChatBanSnippet, {
+        description:
+          "The `snippet` object contains basic details about the ban.",
+      }),
     },
     {
       description:
         "A `__liveChatBan__` resource represents a ban for a YouTube live chat.",
     },
   )
-const LiveChatBanSnippet = () =>
-  object({
+}
+function LiveChatBanSnippet() {
+  return object({
     "banDurationSeconds?": string({
       description:
         "The duration of a ban, only filled if the ban has type TEMPORARY.",
@@ -2952,8 +3196,9 @@ const LiveChatBanSnippet = () =>
       enum: ["liveChatBanTypeUnspecified", "permanent", "temporary"],
     }),
   })
-const LiveChatFanFundingEventDetails = () =>
-  object({
+}
+function LiveChatFanFundingEventDetails() {
+  return object({
     "amountDisplayString?": string({
       description:
         "A rendered string that displays the fund amount and currency to the user.",
@@ -2969,8 +3214,9 @@ const LiveChatFanFundingEventDetails = () =>
       description: "The comment added by the user to this fan funding event.",
     }),
   })
-const LiveChatGiftMembershipReceivedDetails = () =>
-  object({
+}
+function LiveChatGiftMembershipReceivedDetails() {
+  return object({
     "associatedMembershipGiftingMessageId?": string({
       description:
         "The ID of the membership gifting message that is related to this gift membership. This ID will always refer to a message whose type is 'membershipGiftingEvent'.",
@@ -2984,8 +3230,9 @@ const LiveChatGiftMembershipReceivedDetails = () =>
         "The name of the Level at which the viewer is a member. This matches the `snippet.membershipGiftingDetails.giftMembershipsLevelName` of the associated membership gifting message. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
     }),
   })
-const LiveChatMemberMilestoneChatDetails = () =>
-  object({
+}
+function LiveChatMemberMilestoneChatDetails() {
+  return object({
     "memberLevelName?": string({
       description:
         "The name of the Level at which the viever is a member. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
@@ -2999,8 +3246,9 @@ const LiveChatMemberMilestoneChatDetails = () =>
         "The comment added by the member to this Member Milestone Chat. This field is empty for messages without a comment from the member.",
     }),
   })
-const LiveChatMembershipGiftingDetails = () =>
-  object({
+}
+function LiveChatMembershipGiftingDetails() {
+  return object({
     "giftMembershipsCount?": int32({
       description: "The number of gift memberships purchased by the user.",
     }),
@@ -3009,10 +3257,14 @@ const LiveChatMembershipGiftingDetails = () =>
         "The name of the level of the gift memberships purchased by the user. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
     }),
   })
-const LiveChatMessage = () =>
-  object(
+}
+function LiveChatMessage() {
+  return object(
     {
-      "authorDetails?": LiveChatMessageAuthorDetails,
+      "authorDetails?": ref(LiveChatMessageAuthorDetails, {
+        description:
+          "The authorDetails object contains basic details about the user that posted this message.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -3025,15 +3277,19 @@ const LiveChatMessage = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatMessage".',
       }),
-      "snippet?": LiveChatMessageSnippet,
+      "snippet?": ref(LiveChatMessageSnippet, {
+        description:
+          "The snippet object contains basic details about the message.",
+      }),
     },
     {
       description:
         "A *liveChatMessage* resource represents a chat message in a YouTube Live Chat.",
     },
   )
-const LiveChatMessageAuthorDetails = () =>
-  object({
+}
+function LiveChatMessageAuthorDetails() {
+  return object({
     "channelId?": string({
       description: "The YouTube channel ID.",
     }),
@@ -3060,12 +3316,14 @@ const LiveChatMessageAuthorDetails = () =>
       description: "The channels's avatar URL.",
     }),
   })
-const LiveChatMessageDeletedDetails = () =>
-  object({
+}
+function LiveChatMessageDeletedDetails() {
+  return object({
     "deletedMessageId?": string(),
   })
-const LiveChatMessageListResponse = () =>
-  object({
+}
+function LiveChatMessageListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -3084,7 +3342,9 @@ const LiveChatMessageListResponse = () =>
       description: "The date and time when the underlying stream went offline.",
       format: "date-time",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "pollingIntervalMillis?": uint32({
       description:
         "The amount of time the client should wait before polling again.",
@@ -3094,12 +3354,14 @@ const LiveChatMessageListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const LiveChatMessageRetractedDetails = () =>
-  object({
+}
+function LiveChatMessageRetractedDetails() {
+  return object({
     "retractedMessageId?": string(),
   })
-const LiveChatMessageSnippet = () =>
-  object(
+}
+function LiveChatMessageSnippet() {
+  return object(
     {
       "authorChannelId?": string({
         description:
@@ -3109,26 +3371,53 @@ const LiveChatMessageSnippet = () =>
         description:
           "Contains a string that can be displayed to the user. If this field is not present the message is silent, at the moment only messages of type TOMBSTONE and CHAT_ENDED_EVENT are silent.",
       }),
-      "fanFundingEventDetails?": LiveChatFanFundingEventDetails,
-      "giftMembershipReceivedDetails?": LiveChatGiftMembershipReceivedDetails,
+      "fanFundingEventDetails?": ref(LiveChatFanFundingEventDetails, {
+        description:
+          "Details about the funding event, this is only set if the type is 'fanFundingEvent'.",
+      }),
+      "giftMembershipReceivedDetails?": ref(
+        LiveChatGiftMembershipReceivedDetails,
+        {
+          description:
+            "Details about the Gift Membership Received event, this is only set if the type is 'giftMembershipReceivedEvent'.",
+        },
+      ),
       "hasDisplayContent?": boolean({
         description:
           "Whether the message has display content that should be displayed to users.",
       }),
       "liveChatId?": string(),
-      "memberMilestoneChatDetails?": LiveChatMemberMilestoneChatDetails,
-      "membershipGiftingDetails?": LiveChatMembershipGiftingDetails,
+      "memberMilestoneChatDetails?": ref(LiveChatMemberMilestoneChatDetails, {
+        description:
+          "Details about the Member Milestone Chat event, this is only set if the type is 'memberMilestoneChatEvent'.",
+      }),
+      "membershipGiftingDetails?": ref(LiveChatMembershipGiftingDetails, {
+        description:
+          "Details about the Membership Gifting event, this is only set if the type is 'membershipGiftingEvent'.",
+      }),
       "messageDeletedDetails?": LiveChatMessageDeletedDetails,
       "messageRetractedDetails?": LiveChatMessageRetractedDetails,
-      "newSponsorDetails?": LiveChatNewSponsorDetails,
+      "newSponsorDetails?": ref(LiveChatNewSponsorDetails, {
+        description:
+          'Details about the New Member Announcement event, this is only set if the type is \'newSponsorEvent\'. Please note that "member" is the new term for "sponsor".',
+      }),
       "publishedAt?": string({
         description:
           "The date and time when the message was orignally published.",
         format: "date-time",
       }),
-      "superChatDetails?": LiveChatSuperChatDetails,
-      "superStickerDetails?": LiveChatSuperStickerDetails,
-      "textMessageDetails?": LiveChatTextMessageDetails,
+      "superChatDetails?": ref(LiveChatSuperChatDetails, {
+        description:
+          "Details about the Super Chat event, this is only set if the type is 'superChatEvent'.",
+      }),
+      "superStickerDetails?": ref(LiveChatSuperStickerDetails, {
+        description:
+          "Details about the Super Sticker event, this is only set if the type is 'superStickerEvent'.",
+      }),
+      "textMessageDetails?": ref(LiveChatTextMessageDetails, {
+        description:
+          "Details about the text message, this is only set if the type is 'textMessageEvent'.",
+      }),
       "type?": string({
         description:
           "The type of message, this will always be present, it determines the contents of the message as well as which fields will be present.",
@@ -3157,8 +3446,9 @@ const LiveChatMessageSnippet = () =>
       description: "Next ID: 33",
     },
   )
-const LiveChatModerator = () =>
-  object(
+}
+function LiveChatModerator() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -3172,15 +3462,19 @@ const LiveChatModerator = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatModerator".',
       }),
-      "snippet?": LiveChatModeratorSnippet,
+      "snippet?": ref(LiveChatModeratorSnippet, {
+        description:
+          "The snippet object contains basic details about the moderator.",
+      }),
     },
     {
       description:
         "A *liveChatModerator* resource represents a moderator for a YouTube live chat. A chat moderator has the ability to ban/unban users from a chat, remove message, etc.",
     },
   )
-const LiveChatModeratorListResponse = () =>
-  object({
+}
+function LiveChatModeratorListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -3200,7 +3494,9 @@ const LiveChatModeratorListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -3210,15 +3506,21 @@ const LiveChatModeratorListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const LiveChatModeratorSnippet = () =>
-  object({
+}
+
+function LiveChatModeratorSnippet() {
+  return object({
     "liveChatId?": string({
       description: "The ID of the live chat this moderator can act on.",
     }),
-    "moderatorDetails?": ChannelProfileDetails,
+    "moderatorDetails?": ref(ChannelProfileDetails, {
+      description: "Details about the moderator.",
+    }),
   })
-const LiveChatNewSponsorDetails = () =>
-  object({
+}
+
+function LiveChatNewSponsorDetails() {
+  return object({
     "isUpgrade?": boolean({
       description:
         "If the viewer just had upgraded from a lower level. For viewers that were not members at the time of purchase, this field is false.",
@@ -3228,8 +3530,9 @@ const LiveChatNewSponsorDetails = () =>
         "The name of the Level that the viewer just had joined. The Level names are defined by the YouTube channel offering the Membership. In some situations this field isn't filled.",
     }),
   })
-const LiveChatSuperChatDetails = () =>
-  object({
+}
+function LiveChatSuperChatDetails() {
+  return object({
     "amountDisplayString?": string({
       description:
         "A rendered string that displays the fund amount and currency to the user.",
@@ -3250,8 +3553,10 @@ const LiveChatSuperChatDetails = () =>
       description: "The comment added by the user to this Super Chat event.",
     }),
   })
-const LiveChatSuperStickerDetails = () =>
-  object({
+}
+
+function LiveChatSuperStickerDetails() {
+  return object({
     "amountDisplayString?": string({
       description:
         "A rendered string that displays the fund amount and currency to the user.",
@@ -3264,20 +3569,25 @@ const LiveChatSuperStickerDetails = () =>
     "currency?": string({
       description: "The currency in which the purchase was made.",
     }),
-    "superStickerMetadata?": SuperStickerMetadata,
+    "superStickerMetadata?": ref(SuperStickerMetadata, {
+      description: "Information about the Super Sticker.",
+    }),
     "tier?": uint32({
       description:
         "The tier in which the amount belongs. Lower amounts belong to lower tiers. The lowest tier is 1.",
     }),
   })
-const LiveChatTextMessageDetails = () =>
-  object({
+}
+
+function LiveChatTextMessageDetails() {
+  return object({
     "messageText?": string({
       description: "The user's message.",
     }),
   })
-const LiveChatUserBannedMessageDetails = () =>
-  object({
+}
+function LiveChatUserBannedMessageDetails() {
+  return object({
     "banDurationSeconds?": string({
       description:
         "The duration of the ban. This property is only present if the banType is temporary.",
@@ -3287,13 +3597,22 @@ const LiveChatUserBannedMessageDetails = () =>
       description: "The type of ban.",
       enum: ["permanent", "temporary"],
     }),
-    "bannedUserDetails?": ChannelProfileDetails,
+    "bannedUserDetails?": ref(ChannelProfileDetails, {
+      description: "The details of the user that was banned.",
+    }),
   })
-const LiveStream = () =>
-  object(
+}
+function LiveStream() {
+  return object(
     {
-      "cdn?": CdnSettings,
-      "contentDetails?": LiveStreamContentDetails,
+      "cdn?": ref(CdnSettings, {
+        description:
+          "The cdn object defines the live stream's content delivery network (CDN) settings. These settings provide details about the manner in which you stream your content to YouTube.",
+      }),
+      "contentDetails?": ref(LiveStreamContentDetails, {
+        description:
+          "The content_details object contains information about the stream, including the closed captions ingestion URL.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -3306,15 +3625,22 @@ const LiveStream = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#liveStream".',
       }),
-      "snippet?": LiveStreamSnippet,
-      "status?": LiveStreamStatus,
+      "snippet?": ref(LiveStreamSnippet, {
+        description:
+          "The snippet object contains basic details about the stream, including its channel, title, and description.",
+      }),
+      "status?": ref(LiveStreamStatus, {
+        description:
+          "The status object contains information about live stream's status.",
+      }),
     },
     {
       description: "A live stream describes a live ingestion point.",
     },
   )
-const LiveStreamConfigurationIssue = () =>
-  object({
+}
+function LiveStreamConfigurationIssue() {
+  return object({
     "description?": string({
       description:
         "The long-form description of the issue and how to resolve it.",
@@ -3366,8 +3692,9 @@ const LiveStreamConfigurationIssue = () =>
       ],
     }),
   })
-const LiveStreamContentDetails = () =>
-  object(
+}
+function LiveStreamContentDetails() {
+  return object(
     {
       "closedCaptionsIngestionUrl?": string({
         description:
@@ -3382,8 +3709,9 @@ const LiveStreamContentDetails = () =>
       description: "Detailed settings of a stream.",
     },
   )
-const LiveStreamHealthStatus = () =>
-  object({
+}
+function LiveStreamHealthStatus() {
+  return object({
     "configurationIssues?": array(LiveStreamConfigurationIssue, {
       description: "The configurations issues on this stream",
     }),
@@ -3396,8 +3724,9 @@ const LiveStreamHealthStatus = () =>
       enum: ["good", "ok", "bad", "noData", "revoked"],
     }),
   })
-const LiveStreamListResponse = () =>
-  object({
+}
+function LiveStreamListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -3427,8 +3756,9 @@ const LiveStreamListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const LiveStreamSnippet = () =>
-  object({
+}
+function LiveStreamSnippet() {
+  return object({
     "channelId?": string({
       description:
         "The ID that YouTube uses to uniquely identify the channel that is transmitting the stream.",
@@ -3447,10 +3777,13 @@ const LiveStreamSnippet = () =>
         "The stream's title. The value must be between 1 and 128 characters long.",
     }),
   })
-const LiveStreamStatus = () =>
-  object(
+}
+function LiveStreamStatus() {
+  return object(
     {
-      "healthStatus?": LiveStreamHealthStatus,
+      "healthStatus?": ref(LiveStreamHealthStatus, {
+        description: "The health status of the stream.",
+      }),
       "streamStatus?": string({
         enum: ["created", "ready", "active", "inactive", "error"],
       }),
@@ -3459,18 +3792,23 @@ const LiveStreamStatus = () =>
       description: "Brief description of the live stream status.",
     },
   )
-const LocalizedProperty = () =>
-  object({
-    "defaultLanguage?": LanguageTag,
+}
+function LocalizedProperty() {
+  return object({
+    "defaultLanguage?": ref(LanguageTag, {
+      description: "The language of the default property.",
+    }),
     "localized?": array(LocalizedString),
   })
-const LocalizedString = () =>
-  object({
+}
+function LocalizedString() {
+  return object({
     "language?": string(),
     "value?": string(),
   })
-const Member = () =>
-  object(
+}
+function Member() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -3480,15 +3818,19 @@ const Member = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#member".',
       }),
-      "snippet?": MemberSnippet,
+      "snippet?": ref(MemberSnippet, {
+        description:
+          "The snippet object contains basic details about the member.",
+      }),
     },
     {
       description:
         "A *member* resource represents a member for a YouTube channel. A member provides recurring monetary support to a creator and receives special benefits.",
     },
   )
-const MemberListResponse = () =>
-  object({
+}
+function MemberListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -3514,16 +3856,22 @@ const MemberListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const MemberSnippet = () =>
-  object({
+}
+function MemberSnippet() {
+  return object({
     "creatorChannelId?": string({
       description: "The id of the channel that's offering memberships.",
     }),
-    "memberDetails?": ChannelProfileDetails,
-    "membershipsDetails?": MembershipsDetails,
+    "memberDetails?": ref(ChannelProfileDetails, {
+      description: "Details about the member.",
+    }),
+    "membershipsDetails?": ref(MembershipsDetails, {
+      description: "Details about the user's membership.",
+    }),
   })
-const MembershipsDetails = () =>
-  object({
+}
+function MembershipsDetails() {
+  return object({
     "accessibleLevels?": array(string(), {
       description:
         "Ids of all levels that the user has access to. This includes the currently active level and all other levels that are included because of a higher purchase.",
@@ -3536,14 +3884,18 @@ const MembershipsDetails = () =>
       description:
         "Display name for the highest level that the user has access to at the moment.",
     }),
-    "membershipsDuration?": MembershipsDuration,
+    "membershipsDuration?": ref(MembershipsDuration, {
+      description:
+        "Data about memberships duration without taking into consideration pricing levels.",
+    }),
     "membershipsDurationAtLevels?": array(MembershipsDurationAtLevel, {
       description:
         "Data about memberships duration on particular pricing levels.",
     }),
   })
-const MembershipsDuration = () =>
-  object({
+}
+function MembershipsDuration() {
+  return object({
     "memberSince?": string({
       description:
         "The date and time when the user became a continuous member across all levels.",
@@ -3553,8 +3905,9 @@ const MembershipsDuration = () =>
         "The cumulative time the user has been a member across all levels in complete months (the time is rounded down to the nearest integer).",
     }),
   })
-const MembershipsDurationAtLevel = () =>
-  object({
+}
+function MembershipsDurationAtLevel() {
+  return object({
     "level?": string({
       description: "Pricing level ID.",
     }),
@@ -3567,8 +3920,9 @@ const MembershipsDurationAtLevel = () =>
         "The cumulative time the user has been a member for the given level in complete months (the time is rounded down to the nearest integer).",
     }),
   })
-const MembershipsLevel = () =>
-  object(
+}
+function MembershipsLevel() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -3582,15 +3936,19 @@ const MembershipsLevel = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#membershipsLevelListResponse".',
       }),
-      "snippet?": MembershipsLevelSnippet,
+      "snippet?": ref(MembershipsLevelSnippet, {
+        description:
+          "The snippet object contains basic details about the level.",
+      }),
     },
     {
       description:
         "A *membershipsLevel* resource represents an offer made by YouTube creators for their fans. Users can become members of the channel by joining one of the available levels. They will provide recurring monetary support and receives special benefits.",
     },
   )
-const MembershipsLevelListResponse = () =>
-  object({
+}
+function MembershipsLevelListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -3610,15 +3968,19 @@ const MembershipsLevelListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const MembershipsLevelSnippet = () =>
-  object({
+}
+function MembershipsLevelSnippet() {
+  return object({
     "creatorChannelId?": string({
       description: "The id of the channel that's offering channel memberships.",
     }),
-    "levelDetails?": LevelDetails,
+    "levelDetails?": ref(LevelDetails, {
+      description: "Details about the pricing level.",
+    }),
   })
-const MonitorStreamInfo = () =>
-  object(
+}
+function MonitorStreamInfo() {
+  return object(
     {
       "broadcastStreamDelayMs?": uint32({
         description:
@@ -3637,8 +3999,9 @@ const MonitorStreamInfo = () =>
       description: "Settings and Info of the monitor stream",
     },
   )
-const PageInfo = () =>
-  object(
+}
+function PageInfo() {
+  return object(
     {
       "resultsPerPage?": int32({
         description: "The number of results included in the API response.",
@@ -3652,10 +4015,14 @@ const PageInfo = () =>
         "Paging details for lists of resources, including total number of items available and number of resources returned in a single page.",
     },
   )
-const Playlist = () =>
-  object(
+}
+function Playlist() {
+  return object(
     {
-      "contentDetails?": PlaylistContentDetails,
+      "contentDetails?": ref(PlaylistContentDetails, {
+        description:
+          "The contentDetails object contains information like video count.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -3671,25 +4038,39 @@ const Playlist = () =>
       "localizations?": dict(string(), PlaylistLocalization, {
         description: "Localizations for different languages",
       }),
-      "player?": PlaylistPlayer,
-      "snippet?": PlaylistSnippet,
-      "status?": PlaylistStatus,
+      "player?": ref(PlaylistPlayer, {
+        description:
+          "The player object contains information that you would use to play the playlist in an embedded player.",
+      }),
+      "snippet?": ref(PlaylistSnippet, {
+        description:
+          "The snippet object contains basic details about the playlist, such as its title and description.",
+      }),
+      "status?": ref(PlaylistStatus, {
+        description:
+          "The status object contains status information for the playlist.",
+      }),
     },
     {
       description:
         "A *playlist* resource represents a YouTube playlist. A playlist is a collection of videos that can be viewed sequentially and shared with other users. A playlist can contain up to 200 videos, and YouTube does not limit the number of playlists that each user creates. By default, playlists are publicly visible to other users, but playlists can be public or private. YouTube also uses playlists to identify special collections of videos for a channel, such as: - uploaded videos - favorite videos - positively rated (liked) videos - watch history - watch later To be more specific, these lists are associated with a channel, which is a collection of a person, group, or company's videos, playlists, and other YouTube information. You can retrieve the playlist IDs for each of these lists from the channel resource for a given channel. You can then use the playlistItems.list method to retrieve any of those lists. You can also add or remove items from those lists by calling the playlistItems.insert and playlistItems.delete methods.",
     },
   )
-const PlaylistContentDetails = () =>
-  object({
+}
+function PlaylistContentDetails() {
+  return object({
     "itemCount?": uint32({
       description: "The number of videos in the playlist.",
     }),
   })
-const PlaylistItem = () =>
-  object(
+}
+function PlaylistItem() {
+  return object(
     {
-      "contentDetails?": PlaylistItemContentDetails,
+      "contentDetails?": ref(PlaylistItemContentDetails, {
+        description:
+          "The contentDetails object is included in the resource if the included item is a YouTube video. The object contains additional information about the video.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -3702,16 +4083,23 @@ const PlaylistItem = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#playlistItem".',
       }),
-      "snippet?": PlaylistItemSnippet,
-      "status?": PlaylistItemStatus,
+      "snippet?": ref(PlaylistItemSnippet, {
+        description:
+          "The snippet object contains basic details about the playlist item, such as its title and position in the playlist.",
+      }),
+      "status?": ref(PlaylistItemStatus, {
+        description:
+          "The status object contains information about the playlist item's privacy status.",
+      }),
     },
     {
       description:
         "A *playlistItem* resource identifies another resource, such as a video, that is included in a playlist. In addition, the playlistItem resource contains details about the included resource that pertain specifically to how that resource is used in that playlist. YouTube uses playlists to identify special collections of videos for a channel, such as: - uploaded videos - favorite videos - positively rated (liked) videos - watch history - watch later To be more specific, these lists are associated with a channel, which is a collection of a person, group, or company's videos, playlists, and other YouTube information. You can retrieve the playlist IDs for each of these lists from the channel resource for a given channel. You can then use the playlistItems.list method to retrieve any of those lists. You can also add or remove items from those lists by calling the playlistItems.insert and playlistItems.delete methods. For example, if a user gives a positive rating to a video, you would insert that video into the liked videos playlist for that user's channel.",
     },
   )
-const PlaylistItemContentDetails = () =>
-  object({
+}
+function PlaylistItemContentDetails() {
+  return object({
     "endAt?": string({
       description:
         "The time, measured in seconds from the start of the video, when the video should stop playing. (The playlist owner can specify the times when the video should start and stop playing when the video is played in the context of the playlist.) By default, assume that the video.endTime is the end of the video.",
@@ -3732,8 +4120,9 @@ const PlaylistItemContentDetails = () =>
       format: "date-time",
     }),
   })
-const PlaylistItemListResponse = () =>
-  object({
+}
+function PlaylistItemListResponse() {
+  return object({
     "etag?": string(),
     "eventId?": string({
       description:
@@ -3751,7 +4140,9 @@ const PlaylistItemListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -3761,8 +4152,9 @@ const PlaylistItemListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const PlaylistItemSnippet = () =>
-  object(
+}
+function PlaylistItemSnippet() {
+  return object(
     {
       "channelId?": string({
         description:
@@ -3788,8 +4180,14 @@ const PlaylistItemSnippet = () =>
           "The date and time that the item was added to the playlist.",
         format: "date-time",
       }),
-      "resourceId?": ResourceId,
-      "thumbnails?": ThumbnailDetails,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The id object contains information that can be used to uniquely identify the resource that is included in the playlist as the playlist item.",
+      }),
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the playlist item. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description: "The item's title.",
       }),
@@ -3805,8 +4203,9 @@ const PlaylistItemSnippet = () =>
         "Basic details about a playlist, including title, description and thumbnails. Basic details of a YouTube Playlist item provided by the author. Next ID: 15",
     },
   )
-const PlaylistItemStatus = () =>
-  object(
+}
+function PlaylistItemStatus() {
+  return object(
     {
       "privacyStatus?": string({
         description: "This resource's privacy status.",
@@ -3817,8 +4216,9 @@ const PlaylistItemStatus = () =>
       description: "Information about the playlist item's privacy status.",
     },
   )
-const PlaylistListResponse = () =>
-  object({
+}
+function PlaylistListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -3838,7 +4238,9 @@ const PlaylistListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -3848,8 +4250,9 @@ const PlaylistListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const PlaylistLocalization = () =>
-  object(
+}
+function PlaylistLocalization() {
+  return object(
     {
       "description?": string({
         description: "The localized strings for playlist's description.",
@@ -3862,15 +4265,17 @@ const PlaylistLocalization = () =>
       description: "Playlist localization setting",
     },
   )
-const PlaylistPlayer = () =>
-  object({
+}
+function PlaylistPlayer() {
+  return object({
     "embedHtml?": string({
       description:
         "An <iframe> tag that embeds a player that will play the playlist.",
     }),
   })
-const PlaylistSnippet = () =>
-  object(
+}
+function PlaylistSnippet() {
+  return object(
     {
       "channelId?": string({
         description:
@@ -3887,7 +4292,9 @@ const PlaylistSnippet = () =>
       "description?": string({
         description: "The playlist's description.",
       }),
-      "localized?": PlaylistLocalization,
+      "localized?": ref(PlaylistLocalization, {
+        description: "Localized title and description, read-only.",
+      }),
       "publishedAt?": string({
         description: "The date and time that the playlist was created.",
         format: "date-time",
@@ -3899,7 +4306,10 @@ const PlaylistSnippet = () =>
         description:
           "Note: if the playlist has a custom thumbnail, this field will not be populated. The video id selected by the user that will be used as the thumbnail of this playlist. This field defaults to the first publicly viewable video in the playlist, if: 1. The user has never selected a video to be the thumbnail of the playlist. 2. The user selects a video to be the thumbnail, and then removes that video from the playlist. 3. The user selects a non-owned video to be the thumbnail, but that video becomes private, or gets deleted.",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the playlist. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description: "The playlist's title.",
       }),
@@ -3909,15 +4319,17 @@ const PlaylistSnippet = () =>
         "Basic details about a playlist, including title, description and thumbnails.",
     },
   )
-const PlaylistStatus = () =>
-  object({
+}
+function PlaylistStatus() {
+  return object({
     "privacyStatus?": string({
       description: "The playlist's privacy status.",
       enum: ["public", "unlisted", "private"],
     }),
   })
-const PropertyValue = () =>
-  object(
+}
+function PropertyValue() {
+  return object(
     {
       "property?": string({
         description: "A property.",
@@ -3930,12 +4342,14 @@ const PropertyValue = () =>
       description: "A pair Property / Value.",
     },
   )
-const RelatedEntity = () =>
-  object({
+}
+function RelatedEntity() {
+  return object({
     "entity?": Entity,
   })
-const ResourceId = () =>
-  object(
+}
+function ResourceId() {
+  return object(
     {
       "channelId?": string({
         description:
@@ -3958,8 +4372,9 @@ const ResourceId = () =>
         "A resource id is a generic reference that points to another YouTube resource.",
     },
   )
-const SearchListResponse = () =>
-  object({
+}
+function SearchListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -3979,7 +4394,9 @@ const SearchListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -3990,27 +4407,35 @@ const SearchListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const SearchResult = () =>
-  object(
+}
+function SearchResult() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
       }),
-      "id?": ResourceId,
+      "id?": ref(ResourceId, {
+        description:
+          "The id object contains information that can be used to uniquely identify the resource that matches the search request.",
+      }),
       "kind?": string({
         default: "youtube#searchResult",
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#searchResult".',
       }),
-      "snippet?": SearchResultSnippet,
+      "snippet?": ref(SearchResultSnippet, {
+        description:
+          "The snippet object contains basic details about a search result, such as its title or description. For example, if the search result is a video, then the title will be the video's title and the description will be the video's description.",
+      }),
     },
     {
       description:
         "A search result contains information about a YouTube video, channel, or playlist that matches the search parameters specified in an API request. While a search result points to a uniquely identifiable resource, like a video, it does not have its own persistent data.",
     },
   )
-const SearchResultSnippet = () =>
-  object(
+}
+function SearchResultSnippet() {
+  return object(
     {
       "channelId?": string({
         description:
@@ -4033,7 +4458,10 @@ const SearchResultSnippet = () =>
           "The creation date and time of the resource that the search result identifies.",
         format: "date-time",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the search result. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description: "The title of the search result.",
       }),
@@ -4043,10 +4471,14 @@ const SearchResultSnippet = () =>
         "Basic details about a search result, including title, description and thumbnails of the item referenced by the search result.",
     },
   )
-const Subscription = () =>
-  object(
+}
+function Subscription() {
+  return object(
     {
-      "contentDetails?": SubscriptionContentDetails,
+      "contentDetails?": ref(SubscriptionContentDetails, {
+        description:
+          "The contentDetails object contains basic statistics about the subscription.",
+      }),
       "etag?": string({
         description: "Etag of this resource.",
       }),
@@ -4059,16 +4491,23 @@ const Subscription = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#subscription".',
       }),
-      "snippet?": SubscriptionSnippet,
-      "subscriberSnippet?": SubscriptionSubscriberSnippet,
+      "snippet?": ref(SubscriptionSnippet, {
+        description:
+          "The snippet object contains basic details about the subscription, including its title and the channel that the user subscribed to.",
+      }),
+      "subscriberSnippet?": ref(SubscriptionSubscriberSnippet, {
+        description:
+          "The subscriberSnippet object contains basic details about the subscriber.",
+      }),
     },
     {
       description:
         "A *subscription* resource contains information about a YouTube user subscription. A subscription notifies a user when new videos are added to a channel or when another user takes one of several actions on YouTube, such as uploading a video, rating a video, or commenting on a video.",
     },
   )
-const SubscriptionContentDetails = () =>
-  object(
+}
+function SubscriptionContentDetails() {
+  return object(
     {
       "activityType?": string({
         description:
@@ -4088,8 +4527,9 @@ const SubscriptionContentDetails = () =>
       description: "Details about the content to witch a subscription refers.",
     },
   )
-const SubscriptionListResponse = () =>
-  object({
+}
+function SubscriptionListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -4119,8 +4559,9 @@ const SubscriptionListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const SubscriptionSnippet = () =>
-  object(
+}
+function SubscriptionSnippet() {
+  return object(
     {
       "channelId?": string({
         description:
@@ -4137,8 +4578,14 @@ const SubscriptionSnippet = () =>
         description: "The date and time that the subscription was created.",
         format: "date-time",
       }),
-      "resourceId?": ResourceId,
-      "thumbnails?": ThumbnailDetails,
+      "resourceId?": ref(ResourceId, {
+        description:
+          "The id object contains information about the channel that the user subscribed to.",
+      }),
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the video. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description: "The subscription's title.",
       }),
@@ -4148,8 +4595,9 @@ const SubscriptionSnippet = () =>
         "Basic details about a subscription, including title, description and thumbnails of the subscribed item.",
     },
   )
-const SubscriptionSubscriberSnippet = () =>
-  object(
+}
+function SubscriptionSubscriberSnippet() {
+  return object(
     {
       "channelId?": string({
         description: "The channel ID of the subscriber.",
@@ -4157,7 +4605,9 @@ const SubscriptionSubscriberSnippet = () =>
       "description?": string({
         description: "The description of the subscriber.",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description: "Thumbnails for this subscriber.",
+      }),
       "title?": string({
         description: "The title of the subscriber.",
       }),
@@ -4167,8 +4617,9 @@ const SubscriptionSubscriberSnippet = () =>
         "Basic details about a subscription's subscriber including title, description, channel ID and thumbnails.",
     },
   )
-const SuperChatEvent = () =>
-  object(
+}
+function SuperChatEvent() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -4182,15 +4633,19 @@ const SuperChatEvent = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string `"youtube#superChatEvent"`.',
       }),
-      "snippet?": SuperChatEventSnippet,
+      "snippet?": ref(SuperChatEventSnippet, {
+        description:
+          "The `snippet` object contains basic details about the Super Chat event.",
+      }),
     },
     {
       description:
         "A `__superChatEvent__` resource represents a Super Chat purchase on a YouTube channel.",
     },
   )
-const SuperChatEventListResponse = () =>
-  object({
+}
+function SuperChatEventListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -4217,8 +4672,9 @@ const SuperChatEventListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const SuperChatEventSnippet = () =>
-  object({
+}
+function SuperChatEventSnippet() {
+  return object({
     "amountMicros?": string({
       description:
         "The purchase amount, in micros of the purchase currency. e.g., 1 is represented as 1000000.",
@@ -4248,11 +4704,17 @@ const SuperChatEventSnippet = () =>
       description:
         "The tier for the paid message, which is based on the amount of money spent to purchase the message.",
     }),
-    "superStickerMetadata?": SuperStickerMetadata,
-    "supporterDetails?": ChannelProfileDetails,
+    "superStickerMetadata?": ref(SuperStickerMetadata, {
+      description:
+        "If this event is a Super Sticker event, this field will contain metadata about the Super Sticker.",
+    }),
+    "supporterDetails?": ref(ChannelProfileDetails, {
+      description: "Details about the supporter.",
+    }),
   })
-const SuperStickerMetadata = () =>
-  object({
+}
+function SuperStickerMetadata() {
+  return object({
     "altText?": string({
       description:
         "Internationalized alt text that describes the sticker image and any animation associated with it.",
@@ -4266,8 +4728,9 @@ const SuperStickerMetadata = () =>
         "Unique identifier of the Super Sticker. This is a shorter form of the alt_text that includes pack name and a recognizable characteristic of the sticker.",
     }),
   })
-const TestItem = () =>
-  object({
+}
+function TestItem() {
+  return object({
     "featuredPart?": boolean(),
     "gaia?": string({
       format: "int64",
@@ -4275,9 +4738,12 @@ const TestItem = () =>
     "id?": string(),
     "snippet?": TestItemTestItemSnippet,
   })
-const TestItemTestItemSnippet = () => object({})
-const ThirdPartyLink = () =>
-  object(
+}
+function TestItemTestItemSnippet() {
+  return object({})
+}
+function ThirdPartyLink() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource",
@@ -4291,16 +4757,23 @@ const ThirdPartyLink = () =>
         description:
           "The linking_token identifies a YouTube account and channel with which the third party account is linked.",
       }),
-      "snippet?": ThirdPartyLinkSnippet,
-      "status?": ThirdPartyLinkStatus,
+      "snippet?": ref(ThirdPartyLinkSnippet, {
+        description:
+          "The snippet object contains basic details about the third- party account link.",
+      }),
+      "status?": ref(ThirdPartyLinkStatus, {
+        description:
+          "The status object contains information about the status of the link.",
+      }),
     },
     {
       description:
         "A *third party account link* resource represents a link between a YouTube account or a channel and an account on a third-party service.",
     },
   )
-const ThirdPartyLinkListResponse = () =>
-  object({
+}
+function ThirdPartyLinkListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -4311,10 +4784,14 @@ const ThirdPartyLinkListResponse = () =>
         'Identifies what kind of resource this is. Value: the fixed string "youtube#thirdPartyLinkListResponse".',
     }),
   })
-const ThirdPartyLinkSnippet = () =>
-  object(
+}
+function ThirdPartyLinkSnippet() {
+  return object(
     {
-      "channelToStoreLink?": ChannelToStoreLinkDetails,
+      "channelToStoreLink?": ref(ChannelToStoreLinkDetails, {
+        description:
+          "Information specific to a link between a channel and a store on a merchandising platform.",
+      }),
       "type?": string({
         description:
           "Type of the link named after the entities that are being linked.",
@@ -4326,8 +4803,9 @@ const ThirdPartyLinkSnippet = () =>
         "Basic information about a third party account link, including its type and type-specific information.",
     },
   )
-const ThirdPartyLinkStatus = () =>
-  object(
+}
+function ThirdPartyLinkStatus() {
+  return object(
     {
       "linkStatus?": string({
         enum: ["unknown", "failed", "pending", "linked"],
@@ -4338,8 +4816,9 @@ const ThirdPartyLinkStatus = () =>
         "The third-party link status object contains information about the status of the link.",
     },
   )
-const Thumbnail = () =>
-  object(
+}
+function Thumbnail() {
+  return object(
     {
       "height?": uint32({
         description: "(Optional) Height of the thumbnail image.",
@@ -4355,21 +4834,31 @@ const Thumbnail = () =>
       description: "A thumbnail is an image representing a YouTube resource.",
     },
   )
-const ThumbnailDetails = () =>
-  object(
+}
+function ThumbnailDetails() {
+  return object(
     {
-      "high?": Thumbnail,
-      "maxres?": Thumbnail,
-      "medium?": Thumbnail,
-      "standard?": Thumbnail,
+      "high?": ref(Thumbnail, {
+        description: "The high quality image for this resource.",
+      }),
+      "maxres?": ref(Thumbnail, {
+        description: "The maximum resolution quality image for this resource.",
+      }),
+      "medium?": ref(Thumbnail, {
+        description: "The medium quality image for this resource.",
+      }),
+      "standard?": ref(Thumbnail, {
+        description: "The standard quality image for this resource.",
+      }),
     },
     {
       description:
         "Internal representation of thumbnails for a YouTube resource.",
     },
   )
-const ThumbnailSetResponse = () =>
-  object({
+}
+function ThumbnailSetResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -4389,21 +4878,31 @@ const ThumbnailSetResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const TokenPagination = () =>
-  object(
+}
+function TokenPagination() {
+  return object(
     {},
     {
       description: "Stub token pagination template to suppress results.",
     },
   )
-
-const Video = () =>
-  object(
+}
+function Video() {
+  return object(
     {
-      "ageGating?": VideoAgeGating,
-      "contentDetails?": VideoContentDetails,
+      "ageGating?": ref(VideoAgeGating, {
+        description:
+          "Age restriction details related to a video. This data can only be retrieved by the video owner.",
+      }),
+      "contentDetails?": ref(VideoContentDetails, {
+        description:
+          "The contentDetails object contains information about the video content, including the length of the video and its aspect ratio.",
+      }),
       "etag?": string({ description: "Etag of this resource." }),
-      "fileDetails?": VideoFileDetails,
+      "fileDetails?": ref(VideoFileDetails, {
+        description:
+          "The fileDetails object encapsulates information about the video file that was uploaded to YouTube, including the file's resolution, duration, audio and video codecs, stream bitrates, and more. This data can only be retrieved by the video owner.",
+      }),
       "id?": string({
         description: "The ID that YouTube uses to uniquely identify the video.",
       }),
@@ -4412,29 +4911,62 @@ const Video = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#video".',
       }),
-      "liveStreamingDetails?": VideoLiveStreamingDetails,
+      "liveStreamingDetails?": ref(VideoLiveStreamingDetails, {
+        description:
+          "The liveStreamingDetails object contains metadata about a live video broadcast. The object will only be present in a video resource if the video is an upcoming, live, or completed live broadcast.",
+      }),
       "localizations?": dict(string(), VideoLocalization, {
         description:
           "The localizations object contains localized versions of the basic details about the video, such as its title and description.",
       }),
-      "monetizationDetails?": VideoMonetizationDetails,
-      "player?": VideoPlayer,
-      "processingDetails?": VideoProcessingDetails,
-      "projectDetails?": VideoProjectDetails,
-      "recordingDetails?": VideoRecordingDetails,
-      "snippet?": VideoSnippet,
-      "statistics?": VideoStatistics,
-      "status?": VideoStatus,
-      "suggestions?": VideoSuggestions,
-      "topicDetails?": VideoTopicDetails,
+      "monetizationDetails?": ref(VideoMonetizationDetails, {
+        description:
+          "The monetizationDetails object encapsulates information about the monetization status of the video.",
+      }),
+      "player?": ref(VideoPlayer, {
+        description:
+          "The player object contains information that you would use to play the video in an embedded player.",
+      }),
+      "processingDetails?": ref(VideoProcessingDetails, {
+        description:
+          "The processingDetails object encapsulates information about YouTube's progress in processing the uploaded video file. The properties in the object identify the current processing status and an estimate of the time remaining until YouTube finishes processing the video. This part also indicates whether different types of data or content, such as file details or thumbnail images, are available for the video. The processingProgress object is designed to be polled so that the video uploaded can track the progress that YouTube has made in processing the uploaded video file. This data can only be retrieved by the video owner.",
+      }),
+      "projectDetails?": ref(VideoProjectDetails, {
+        description:
+          "The projectDetails object contains information about the project specific video metadata. b/157517979: This part was never populated after it was added. However, it sees non-zero traffic because there is generated client code in the wild that refers to it [1]. We keep this field and do NOT remove it because otherwise V3 would return an error when this part gets requested [2]. [1] https://developers.google.com/resources/api-libraries/documentation/youtube/v3/csharp/latest/classGoogle_1_1Apis_1_1YouTube_1_1v3_1_1Data_1_1VideoProjectDetails.html [2] http://google3/video/youtube/src/python/servers/data_api/common.py?l=1565-1569&rcl=344141677",
+      }),
+      "recordingDetails?": ref(VideoRecordingDetails, {
+        description:
+          "The recordingDetails object encapsulates information about the location, date and address where the video was recorded.",
+      }),
+      "snippet?": ref(VideoSnippet, {
+        description:
+          "The snippet object contains basic details about the video, such as its title, description, and category.",
+      }),
+      "statistics?": ref(VideoStatistics, {
+        description:
+          "The statistics object contains statistics about the video.",
+      }),
+      "status?": ref(VideoStatus, {
+        description:
+          "The status object contains information about the video's uploading, processing, and privacy statuses.",
+      }),
+      "suggestions?": ref(VideoSuggestions, {
+        description:
+          "The suggestions object encapsulates suggestions that identify opportunities to improve the video quality or the metadata for the uploaded video. This data can only be retrieved by the video owner.",
+      }),
+      "topicDetails?": ref(VideoTopicDetails, {
+        description:
+          "The topicDetails object encapsulates information about Freebase topics associated with the video.",
+      }),
     },
     {
       description: "A *video* resource represents a YouTube video.",
     },
   )
-
-const VideoAbuseReport = () =>
-  object({
+}
+function VideoAbuseReport() {
+  return object({
     "comments?": string({
       description: "Additional comments regarding the abuse report.",
     }),
@@ -4453,9 +4985,9 @@ const VideoAbuseReport = () =>
       description: "The ID that YouTube uses to uniquely identify the video.",
     }),
   })
-
-const VideoAbuseReportReason = () =>
-  object(
+}
+function VideoAbuseReportReason() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -4468,15 +5000,19 @@ const VideoAbuseReportReason = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string `"youtube#videoAbuseReportReason"`.',
       }),
-      "snippet?": VideoAbuseReportReasonSnippet,
+      "snippet?": ref(VideoAbuseReportReasonSnippet, {
+        description:
+          "The `snippet` object contains basic details about the abuse report reason.",
+      }),
     },
     {
       description:
         "A `__videoAbuseReportReason__` resource identifies a reason that a video could be reported as abusive. Video abuse report reasons are used with `video.ReportAbuse`.",
     },
   )
-const VideoAbuseReportReasonListResponse = () =>
-  object({
+}
+function VideoAbuseReportReasonListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -4497,8 +5033,9 @@ const VideoAbuseReportReasonListResponse = () =>
       description: "The `visitorId` identifies the visitor.",
     }),
   })
-const VideoAbuseReportReasonSnippet = () =>
-  object(
+}
+function VideoAbuseReportReasonSnippet() {
+  return object(
     {
       "label?": string({
         description:
@@ -4514,8 +5051,9 @@ const VideoAbuseReportReasonSnippet = () =>
         "Basic details about a video category, such as its localized title.",
     },
   )
-const VideoAbuseReportSecondaryReason = () =>
-  object({
+}
+function VideoAbuseReportSecondaryReason() {
+  return object({
     "id?": string({
       description: "The ID of this abuse report secondary reason.",
     }),
@@ -4524,8 +5062,9 @@ const VideoAbuseReportSecondaryReason = () =>
         "The localized label for this abuse report secondary reason.",
     }),
   })
-const VideoAgeGating = () =>
-  object({
+}
+function VideoAgeGating() {
+  return object({
     "alcoholContent?": boolean({
       description:
         "Indicates whether or not the video has alcoholic beverage content. Only users of legal purchasing age in a particular country, as identified by ICAP, can view the content.",
@@ -4539,8 +5078,9 @@ const VideoAgeGating = () =>
       enum: ["anyone", "m15Plus", "m16Plus", "m17Plus"],
     }),
   })
-const VideoCategory = () =>
-  object(
+}
+function VideoCategory() {
+  return object(
     {
       "etag?": string({
         description: "Etag of this resource.",
@@ -4554,15 +5094,19 @@ const VideoCategory = () =>
         description:
           'Identifies what kind of resource this is. Value: the fixed string "youtube#videoCategory".',
       }),
-      "snippet?": VideoCategorySnippet,
+      "snippet?": ref(VideoCategorySnippet, {
+        description:
+          "The snippet object contains basic details about the video category, including its title.",
+      }),
     },
     {
       description:
         "A *videoCategory* resource identifies a category that has been or could be associated with uploaded videos.",
     },
   )
-const VideoCategoryListResponse = () =>
-  object({
+}
+function VideoCategoryListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -4583,7 +5127,9 @@ const VideoCategoryListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -4593,8 +5139,9 @@ const VideoCategoryListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const VideoCategorySnippet = () =>
-  object(
+}
+function VideoCategorySnippet() {
+  return object(
     {
       "assignable?": boolean(),
       "channelId?": string({
@@ -4610,16 +5157,23 @@ const VideoCategorySnippet = () =>
         "Basic details about a video category, such as its localized title.",
     },
   )
-const VideoContentDetails = () =>
-  object(
+}
+function VideoContentDetails() {
+  return object(
     {
       "caption?": string({
         description:
           "The value of captions indicates whether the video has captions or not.",
         enum: ["true", "false"],
       }),
-      "contentRating?": ContentRating,
-      "countryRestriction?": AccessPolicy,
+      "contentRating?": ref(ContentRating, {
+        description:
+          "Specifies the ratings that the video received under various rating schemes.",
+      }),
+      "countryRestriction?": ref(AccessPolicy, {
+        description:
+          "The countryRestriction object contains information about the countries where a video is (or is not) viewable.",
+      }),
       "definition?": string({
         description:
           "The value of definition indicates whether the video is available in high definition or only in standard definition.",
@@ -4645,14 +5199,18 @@ const VideoContentDetails = () =>
         description: "Specifies the projection format of the video.",
         enum: ["rectangular", "360"],
       }),
-      "regionRestriction?": VideoContentDetailsRegionRestriction,
+      "regionRestriction?": ref(VideoContentDetailsRegionRestriction, {
+        description:
+          "The regionRestriction object contains information about the countries where a video is (or is not) viewable. The object will contain either the contentDetails.regionRestriction.allowed property or the contentDetails.regionRestriction.blocked property.",
+      }),
     },
     {
       description: "Details about the content of a YouTube Video.",
     },
   )
-const VideoContentDetailsRegionRestriction = () =>
-  object(
+}
+function VideoContentDetailsRegionRestriction() {
+  return object(
     {
       "allowed?": array(string(), {
         description:
@@ -4667,8 +5225,9 @@ const VideoContentDetailsRegionRestriction = () =>
       description: "DEPRECATED Region restriction of the video.",
     },
   )
-const VideoFileDetails = () =>
-  object(
+}
+function VideoFileDetails() {
+  return object(
     {
       "audioStreams?": array(VideoFileDetailsAudioStream, {
         description:
@@ -4722,8 +5281,9 @@ const VideoFileDetails = () =>
         "Describes original video file properties, including technical details about audio and video streams, but also metadata information like content length, digitization time, or geotagging information.",
     },
   )
-const VideoFileDetailsAudioStream = () =>
-  object(
+}
+function VideoFileDetailsAudioStream() {
+  return object(
     {
       "bitrateBps?": string({
         description: "The audio stream's bitrate, in bits per second.",
@@ -4744,8 +5304,9 @@ const VideoFileDetailsAudioStream = () =>
       description: "Information about an audio stream.",
     },
   )
-const VideoFileDetailsVideoStream = () =>
-  object(
+}
+function VideoFileDetailsVideoStream() {
+  return object(
     {
       "aspectRatio?": double({
         description:
@@ -4782,8 +5343,9 @@ const VideoFileDetailsVideoStream = () =>
       description: "Information about a video stream.",
     },
   )
-const VideoGetRatingResponse = () =>
-  object({
+}
+function VideoGetRatingResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -4803,8 +5365,9 @@ const VideoGetRatingResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const VideoListResponse = () =>
-  object({
+}
+function VideoListResponse() {
+  return object({
     "etag?": string({
       description: "Etag of this resource.",
     }),
@@ -4822,7 +5385,9 @@ const VideoListResponse = () =>
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set.",
     }),
-    "pageInfo?": PageInfo,
+    "pageInfo?": ref(PageInfo, {
+      description: "General pagination information.",
+    }),
     "prevPageToken?": string({
       description:
         "The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set.",
@@ -4832,8 +5397,9 @@ const VideoListResponse = () =>
       description: "The visitorId identifies the visitor.",
     }),
   })
-const VideoLiveStreamingDetails = () =>
-  object(
+}
+function VideoLiveStreamingDetails() {
+  return object(
     {
       "activeLiveChatId?": string({
         description:
@@ -4868,8 +5434,9 @@ const VideoLiveStreamingDetails = () =>
       description: "Details about the live streaming metadata.",
     },
   )
-const VideoLocalization = () =>
-  object(
+}
+function VideoLocalization() {
+  return object(
     {
       "description?": string({
         description: "Localized version of the video's description.",
@@ -4883,17 +5450,22 @@ const VideoLocalization = () =>
         "Localized versions of certain video properties (e.g. title).",
     },
   )
-const VideoMonetizationDetails = () =>
-  object(
+}
+function VideoMonetizationDetails() {
+  return object(
     {
-      "access?": AccessPolicy,
+      "access?": ref(AccessPolicy, {
+        description:
+          "The value of access indicates whether the video can be monetized or not.",
+      }),
     },
     {
       description: "Details about monetization of a YouTube Video.",
     },
   )
-const VideoPlayer = () =>
-  object(
+}
+function VideoPlayer() {
+  return object(
     {
       "embedHeight?": string({
         format: "int64",
@@ -4911,8 +5483,9 @@ const VideoPlayer = () =>
       description: "Player to be used for a video playback.",
     },
   )
-const VideoProcessingDetails = () =>
-  object(
+}
+function VideoProcessingDetails() {
+  return object(
     {
       "editorSuggestionsAvailability?": string({
         description:
@@ -4931,7 +5504,10 @@ const VideoProcessingDetails = () =>
         description:
           "This value indicates whether the video processing engine has generated suggestions that might improve YouTube's ability to process the the video, warnings that explain video processing problems, or errors that cause video processing problems. You can retrieve these suggestions by requesting the suggestions part in your videos.list() request.",
       }),
-      "processingProgress?": VideoProcessingDetailsProcessingProgress,
+      "processingProgress?": ref(VideoProcessingDetailsProcessingProgress, {
+        description:
+          "The processingProgress object contains information about the progress YouTube has made in processing the video. The values are really only relevant if the video's processing status is processing.",
+      }),
       "processingStatus?": string({
         description:
           "The video's processing status. This value indicates whether YouTube was able to process the video or if the video is still being processed.",
@@ -4951,8 +5527,9 @@ const VideoProcessingDetails = () =>
         "Describes processing status and progress and availability of some other Video resource parts.",
     },
   )
-const VideoProcessingDetailsProcessingProgress = () =>
-  object(
+}
+function VideoProcessingDetailsProcessingProgress() {
+  return object(
     {
       "partsProcessed?": string({
         description:
@@ -4974,16 +5551,18 @@ const VideoProcessingDetailsProcessingProgress = () =>
       description: "Video processing progress and completion time estimate.",
     },
   )
-const VideoProjectDetails = () =>
-  object(
+}
+function VideoProjectDetails() {
+  return object(
     {},
     {
       description:
         "DEPRECATED. b/157517979: This part was never populated after it was added. However, it sees non-zero traffic because there is generated client code in the wild that refers to it [1]. We keep this field and do NOT remove it because otherwise V3 would return an error when this part gets requested [2]. [1] https://developers.google.com/resources/api-libraries/documentation/youtube/v3/csharp/latest/classGoogle_1_1Apis_1_1YouTube_1_1v3_1_1Data_1_1VideoProjectDetails.html [2] http://google3/video/youtube/src/python/servers/data_api/common.py?l=1565-1569&rcl=344141677",
     },
   )
-const VideoRating = () =>
-  object(
+}
+function VideoRating() {
+  return object(
     {
       "rating?": string({
         description: "Rating of a video.",
@@ -4997,11 +5576,13 @@ const VideoRating = () =>
       description: "Basic details about rating of a video.",
     },
   )
-
-const VideoRecordingDetails = () =>
-  object(
+}
+function VideoRecordingDetails() {
+  return object(
     {
-      "location?": GeoPoint,
+      "location?": ref(GeoPoint, {
+        description: "The geolocation information associated with the video.",
+      }),
       "locationDescription?": string({
         description:
           "The text description of the location where the video was recorded.",
@@ -5015,9 +5596,9 @@ const VideoRecordingDetails = () =>
       description: "Recording information associated with the video.",
     },
   )
-
-const VideoSnippet = () =>
-  object(
+}
+function VideoSnippet() {
+  return object(
     {
       "categoryId?": string({
         description: "The YouTube video category associated with the video.",
@@ -5045,7 +5626,10 @@ const VideoSnippet = () =>
           'Indicates if the video is an upcoming/active live broadcast. Or it\'s "none" if the video is not an upcoming/active live broadcast.',
         enum: ["none", "upcoming", "live", "completed"],
       }),
-      "localized?": VideoLocalization,
+      "localized?": ref(VideoLocalization, {
+        description:
+          "Localized snippet selected with the hl parameter. If no such localization exists, this field is populated with the default snippet. (Read-only)",
+      }),
       "publishedAt?": string({
         description: "The date and time when the video was uploaded.",
         format: "date-time",
@@ -5054,7 +5638,10 @@ const VideoSnippet = () =>
         description:
           "A list of keyword tags associated with the video. Tags may contain spaces.",
       }),
-      "thumbnails?": ThumbnailDetails,
+      "thumbnails?": ref(ThumbnailDetails, {
+        description:
+          "A map of thumbnail images associated with the video. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.",
+      }),
       "title?": string({
         description:
           "The video's title. @mutable youtube.videos.insert youtube.videos.update",
@@ -5065,8 +5652,9 @@ const VideoSnippet = () =>
         "Basic details about a video, including title, description, uploader, thumbnails and category.",
     },
   )
-const VideoStatistics = () =>
-  object(
+}
+function VideoStatistics() {
+  return object(
     {
       "commentCount?": string({
         description: "The number of comments for the video.",
@@ -5097,8 +5685,9 @@ const VideoStatistics = () =>
         "Statistics about the video, such as the number of times the video was viewed or liked.",
     },
   )
-const VideoStatus = () =>
-  object(
+}
+function VideoStatus() {
+  return object(
     {
       "embeddable?": boolean({
         description:
@@ -5162,9 +5751,10 @@ const VideoStatus = () =>
         "Basic details about a video category, such as its localized title. Next Id: 18",
     },
   )
+}
 
-const VideoSuggestions = () =>
-  object(
+function VideoSuggestions() {
+  return object(
     {
       "editorSuggestions?": array(
         string({
@@ -5245,9 +5835,9 @@ const VideoSuggestions = () =>
         "Specifies suggestions on how to improve video content, including encoding hints, tag suggestions, and editor suggestions.",
     },
   )
-
-const VideoSuggestionsTagSuggestion = () =>
-  object(
+}
+function VideoSuggestionsTagSuggestion() {
+  return object(
     {
       "categoryRestricts?": array(string(), {
         description:
@@ -5261,9 +5851,9 @@ const VideoSuggestionsTagSuggestion = () =>
       description: "A single tag suggestion with it's relevance information.",
     },
   )
-
-const VideoTopicDetails = () =>
-  object(
+}
+function VideoTopicDetails() {
+  return object(
     {
       "relevantTopicIds?": array(string(), {
         description:
@@ -5282,9 +5872,9 @@ const VideoTopicDetails = () =>
       description: "Freebase topic information related to the video.",
     },
   )
-
-const WatchSettings = () =>
-  object(
+}
+function WatchSettings() {
+  return object(
     {
       "backgroundColor?": string({
         description: "The text color for the video watch page's branded area.",
@@ -5302,7 +5892,7 @@ const WatchSettings = () =>
       description: "Branding properties for the watch. All deprecated.",
     },
   )
-
+}
 const tags = declareTags({
   abuseReports: {},
   activities: {},
@@ -5450,38 +6040,47 @@ const videoTags = [tags.videos]
 
 const onBehalfOfContentOwner = queryParam({
   description:
+    "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
+  name: "onBehalfOfContentOwner",
+  schema: string(),
+})
+
+const onBehalfOfContentOwnerSchemaCms = queryParam({
+  description:
     "*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner.",
   name: "onBehalfOfContentOwner",
   schema: string(),
 })
 
-const onBehalfOfContentOwnerChannel = queryParam({
+const onBehalfOfContentOwnerSchemaShort = {
+  description:
+    "The *onBehalfOfContentOwner* parameter indicates that the authenticated user is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with needs to be linked to the specified YouTube content owner.",
+  schema: string(),
+}
+
+const onBehalfOfContentOwnerChannelSchema = {
   description:
     "This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel.",
-  name: "onBehalfOfContentOwnerChannel",
   schema: string(),
-})
+}
 
-const pageToken = queryParam({
+const pageTokenSchema = {
   description:
     "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved.",
-  name: "pageToken",
   schema: string(),
-})
+}
 
-const liveChatMessagesPageToken = queryParam({
+const liveChatMessagesPageTokenSchema = {
   description:
     "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken property identify other pages that could be retrieved.",
-  name: "pageToken",
   schema: string(),
-})
+}
 
-const videosListPageToken = queryParam({
+const videosListPageTokenSchema = {
   description:
     "The *pageToken* parameter identifies a specific page in the result set that should be returned. In an API response, the nextPageToken and prevPageToken properties identify other pages that could be retrieved. *Note:* This parameter is supported for use in conjunction with the myRating and chart parameters, but it is not supported for use in conjunction with the id parameter.",
-  name: "pageToken",
   schema: string(),
-})
+}
 
 const videoPartnerSecurity = oauthScopes(
   "https://www.googleapis.com/auth/youtube",
@@ -5494,83 +6093,110 @@ const youtubeForceSslSecurity = oauthScopes(
   "https://www.googleapis.com/auth/youtube.force-ssl",
 )
 
-const watermarkChannelId = queryParam({
-  name: "channelId",
-  required: true,
+const watermarkChannelIdSchema: InlineQueryParam = { schema: string() }
+
+const onBehalfOf = (description: string): InlineQueryParam => ({
+  description,
   schema: string(),
 })
 
-const liveBroadcastResponse = () =>
-  resp({
+const onBehalfOfPage = onBehalfOf(
+  "ID of the Google+ Page for the channel that the request is on behalf of.",
+)
+
+const onBehalfOfTypo = onBehalfOf(
+  "ID of the Google+ Page for the channel that the request is be on behalf of",
+)
+
+function liveBroadcastResponse() {
+  return resp({
     description: "Successful response",
     body: LiveBroadcast,
   })
-
-const liveBroadcastListResponse = () =>
-  resp({
+}
+function liveBroadcastListResponse() {
+  return resp({
     description: "Successful response",
     body: LiveBroadcastListResponse,
   })
+}
 
-const cuepointResponse = () =>
-  resp({
+function cuepointResponse() {
+  return resp({
     description: "Successful response",
     body: Cuepoint,
   })
+}
 
-const partQuery = ({
+const partArray = (description?: string): InlineQueryParam => ({
+  schema: array(string()),
   description,
-  required = true,
-}: {
-  description: string
-  required?: boolean
-}): QueryParamRaw =>
-  queryParam({
-    explode: true,
-    name: "part",
-    required,
-    schema: description ? array(string(), { description }) : array(string()),
-    style: "form",
-  })
-
-const hlParam = ({ description }: { description?: string }): QueryParamRaw =>
-  queryParam({
-    name: "hl",
-    schema: description ? string({ description }) : string(),
-  })
-
-const maxResultsParam = ({
-  description = "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
-  maximum,
-  minimum,
-}: {
-  description?: string
-  maximum: number
-  minimum: number
-}): QueryParamRaw =>
-  queryParam({
-    name: "maxResults",
-    schema: integer({ description, maximum, minimum }),
-  })
-
-const listMaxResults = maxResultsParam({
-  maximum: 50,
-  minimum: 0,
+  explode: true,
+  style: "form",
 })
 
-const requiredListMaxResults = maxResultsParam({
-  maximum: 50,
-  minimum: 1,
+const hlQuery = (description?: string): InlineQueryParam => ({
+  description,
+  schema: string(),
 })
 
-const commentMaxResults = maxResultsParam({
-  maximum: 100,
-  minimum: 1,
-})
+const listMaxResultsSchema: InlineQueryParam = {
+  description:
+    "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
+  schema: integer({
+    maximum: 50,
+    minimum: 0,
+  }),
+}
+
+const requiredListMaxResultsSchema: InlineQueryParam = {
+  description:
+    "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
+  schema: integer({
+    maximum: 50,
+    minimum: 1,
+  }),
+}
+
+const commentMaxResultsSchema: InlineQueryParam = {
+  description:
+    "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
+  schema: integer({
+    maximum: 100,
+    minimum: 1,
+  }),
+}
+
+const liveChatListMaxResultsSchema: InlineQueryParam = {
+  description:
+    "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
+  schema: integer({
+    maximum: 2000,
+    minimum: 200,
+  }),
+}
+
+const membersListMaxResultsSchema: InlineQueryParam = {
+  description:
+    "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
+  schema: integer({
+    maximum: 1000,
+    minimum: 0,
+  }),
+}
+
+const videosListMaxResultsSchema: InlineQueryParam = {
+  description:
+    "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set. *Note:* This parameter is supported for use in conjunction with the myRating and chart parameters, but it is not supported for use in conjunction with the id parameter.",
+  schema: integer({
+    maximum: 50,
+    minimum: 1,
+  }),
+}
 
 export default responsibleAPI({
   partialDoc: {
-    openapi: "3.0.0",
+    openapi: "3.1.0",
     info: {
       contact: {
         name: "Google",
@@ -5613,22 +6239,24 @@ export default responsibleAPI({
     ],
     tags: Object.values(tags),
   },
-  forAll: {
+  forEachPath: {
+    params: [
+      __xgafv,
+      access_token,
+      alt,
+      callback,
+      fields,
+      key,
+      oauth_token,
+      prettyPrint,
+      quotaUser,
+      upload_protocol,
+      uploadType,
+    ],
+  },
+  forEachOp: {
     req: {
       mime: "application/json",
-      params: [
-        __xgafv,
-        access_token,
-        alt,
-        callback,
-        fields,
-        key,
-        oauth_token,
-        prettyPrint,
-        quotaUser,
-        uploadType,
-        upload_protocol,
-      ],
     },
     res: {
       mime: "application/json",
@@ -5639,17 +6267,16 @@ export default responsibleAPI({
       description: "Inserts a new resource into this collection.",
       id: "youtube.abuseReports.insert",
       req: {
-        params: [
-          partQuery({
-            description:
-              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
-          }),
-        ],
+        query: {
+          part: partArray(
+            "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
+          ),
+        },
         security: oauthScopes(
           "https://www.googleapis.com/auth/youtube",
           "https://www.googleapis.com/auth/youtube.force-ssl",
         ),
-        body: AbuseReport,
+        "body?": AbuseReport,
       },
       res: {
         200: resp({
@@ -5663,21 +6290,30 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.activities.list",
       req: {
-        params: [
-          partQuery({
-            description:
-              "The *part* parameter specifies a comma-separated list of one or more activity resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in an activity resource, the snippet property contains other properties that identify the type of activity, a display title for the activity, and so forth. If you set *part=snippet*, the API response will also contain all of those nested properties.",
-          }),
-          listMaxResults,
-          pageToken,
-        ],
         query: {
-          "channelId?": string(),
-          "home?": boolean(),
-          "mine?": boolean(),
-          "publishedAfter?": string(),
-          "publishedBefore?": string(),
-          "regionCode?": string(),
+          part: partArray(
+            "The *part* parameter specifies a comma-separated list of one or more activity resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in an activity resource, the snippet property contains other properties that identify the type of activity, a display title for the activity, and so forth. If you set *part=snippet*, the API response will also contain all of those nested properties.",
+          ),
+          "maxResults?": listMaxResultsSchema,
+          "pageToken?": pageTokenSchema,
+          "channelId?": {
+            schema: string(),
+          },
+          "home?": {
+            schema: boolean(),
+          },
+          "mine?": {
+            schema: boolean(),
+          },
+          "publishedAfter?": {
+            schema: string(),
+          },
+          "publishedBefore?": {
+            schema: string(),
+          },
+          "regionCode?": {
+            schema: string(),
+          },
         },
         security: oauthScopes(
           "https://www.googleapis.com/auth/youtube",
@@ -5697,13 +6333,6 @@ export default responsibleAPI({
       forAll: {
         tags: [tags.captions],
         req: {
-          params: [onBehalfOfContentOwner],
-          query: {
-            "onBehalfOf?": string({
-              description:
-                "ID of the Google+ Page for the channel that the request is on behalf of.",
-            }),
-          },
           security: oauthScopes(
             "https://www.googleapis.com/auth/youtube.force-ssl",
             "https://www.googleapis.com/auth/youtubepartner",
@@ -5719,8 +6348,10 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.captions.delete",
         req: {
+          params: [onBehalfOfContentOwner],
           query: {
-            id: string(),
+            id: { schema: string() },
+            "onBehalfOf?": onBehalfOfTypo,
           },
         },
       },
@@ -5728,20 +6359,23 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.captions.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more caption resource parts that the API response will include. The part names that you can include in the parameter value are id and snippet.",
-            }),
-          ],
+          params: [onBehalfOfContentOwner],
           query: {
-            videoId: string({
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more caption resource parts that the API response will include. The part names that you can include in the parameter value are id and snippet.",
+            ),
+            videoId: {
               description: "Returns the captions for the specified video.",
-            }),
-            "id?": array(string(), {
+              schema: string(),
+            },
+            "id?": {
               description:
                 "Returns the captions with the given IDs for Stubby or Apiary.",
-            }),
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "onBehalfOf?": onBehalfOfPage,
           },
         },
         res: {
@@ -5755,20 +6389,20 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.captions.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies the caption resource parts that the API response will include. Set the parameter value to snippet.",
-            }),
-          ],
+          params: [onBehalfOfContentOwner],
           query: {
-            "sync?": boolean({
+            part: partArray(
+              "The *part* parameter specifies the caption resource parts that the API response will include. Set the parameter value to snippet.",
+            ),
+            "onBehalfOf?": onBehalfOfTypo,
+            "sync?": {
               description:
                 "Extra parameter to allow automatically syncing the uploaded caption/transcript with the audio.",
-            }),
+              schema: boolean(),
+            },
           },
-          body: {
-            "application/octet-stream": Caption,
+          "body?": {
+            "application/octet-stream": unknown(),
             "text/xml": Caption,
           },
         },
@@ -5783,20 +6417,20 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.captions.update",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more caption resource parts that the API response will include. The part names that you can include in the parameter value are id and snippet.",
-            }),
-          ],
+          params: [onBehalfOfContentOwner],
           query: {
-            "sync?": boolean({
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more caption resource parts that the API response will include. The part names that you can include in the parameter value are id and snippet.",
+            ),
+            "onBehalfOf?": onBehalfOfPage,
+            "sync?": {
               description:
                 "Extra parameter to allow automatically syncing the uploaded caption/transcript with the audio.",
-            }),
+              schema: boolean(),
+            },
           },
-          body: {
-            "application/octet-stream": Caption,
+          "body?": {
+            "application/octet-stream": unknown(),
             "text/xml": Caption,
           },
         },
@@ -5812,20 +6446,25 @@ export default responsibleAPI({
         id: "youtube.captions.download",
         req: {
           pathParams: {
-            id: string({
+            id: {
               description:
                 "The ID of the caption track to download, required for One Platform.",
-            }),
+              schema: string(),
+            },
           },
+          params: [onBehalfOfContentOwner],
           query: {
-            "tfmt?": string({
+            "onBehalfOf?": onBehalfOfTypo,
+            "tfmt?": {
               description:
                 "Convert the captions into this format. Supported options are sbv, srt, and vtt.",
-            }),
-            "tlang?": string({
+              schema: string(),
+            },
+            "tlang?": {
               description:
                 "tlang is the language code; machine translate the captions into this language.",
-            }),
+              schema: string(),
+            },
           },
         },
       }),
@@ -5834,20 +6473,22 @@ export default responsibleAPI({
       description: "Inserts a new resource into this collection.",
       id: "youtube.channelBanners.insert",
       req: {
-        params: [onBehalfOfContentOwner, onBehalfOfContentOwnerChannel],
+        params: [onBehalfOfContentOwner],
         query: {
-          "channelId?": string({
+          "onBehalfOfContentOwnerChannel?": onBehalfOfContentOwnerChannelSchema,
+          "channelId?": {
             description:
               "Unused, channel_id is currently derived from the security context of the requestor.",
-          }),
+            schema: string(),
+          },
         },
         security: oauthScopes(
           "https://www.googleapis.com/auth/youtube",
           "https://www.googleapis.com/auth/youtube.force-ssl",
           "https://www.googleapis.com/auth/youtube.upload",
         ),
-        body: {
-          "application/octet-stream": ChannelBannerResource,
+        "body?": {
+          "application/octet-stream": unknown(),
           "image/jpeg": ChannelBannerResource,
           "image/png": ChannelBannerResource,
         },
@@ -5864,7 +6505,6 @@ export default responsibleAPI({
       forAll: {
         tags: [tags.channelSections],
         req: {
-          params: [onBehalfOfContentOwner],
           security: videoPartnerSecurity,
         },
         res: {
@@ -5880,8 +6520,11 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.channelSections.delete",
         req: {
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            id: string(),
+            id: {
+              schema: string(),
+            },
           },
         },
         res: {
@@ -5892,26 +6535,29 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.channelSections.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more channelSection resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, and contentDetails. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channelSection resource, the snippet property contains other properties, such as a display title for the channelSection. If you set *part=snippet*, the API response will also contain all of those nested properties.",
-            }),
-            hlParam({ description: "Return content in specified language" }),
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            "channelId?": string({
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more channelSection resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, and contentDetails. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channelSection resource, the snippet property contains other properties, such as a display title for the channelSection. If you set *part=snippet*, the API response will also contain all of those nested properties.",
+            ),
+            "hl?": hlQuery("Return content in specified language"),
+            "channelId?": {
               description:
                 "Return the ChannelSections owned by the specified channel ID.",
-            }),
-            "id?": array(string(), {
+              schema: string(),
+            },
+            "id?": {
               description:
                 "Return the ChannelSections with the given IDs for Stubby or Apiary.",
-            }),
-            "mine?": boolean({
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "mine?": {
               description:
                 "Return the ChannelSections owned by the authenticated user.",
-            }),
+              schema: boolean(),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
@@ -5928,27 +6574,28 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.channelSections.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
-            }),
-            onBehalfOfContentOwnerChannel,
-          ],
-          body: ChannelSection,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
+            ),
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+          },
+          "body?": ChannelSection,
         },
       },
       PUT: {
         description: "Updates an existing resource.",
         id: "youtube.channelSections.update",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
-            }),
-          ],
-          body: ChannelSection,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
+            ),
+          },
+          "body?": ChannelSection,
         },
       },
     }),
@@ -5963,43 +6610,47 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.channels.list",
         req: {
-          params: [
-            onBehalfOfContentOwner,
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more channel resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channel resource, the contentDetails property contains other properties, such as the uploads properties. As such, if you set *part=contentDetails*, the API response will also contain all of those nested properties.",
-            }),
-            hlParam({
-              description:
-                'Stands for "host language". Specifies the localization language of the metadata to be filled into snippet.localized. The field is filled with the default metadata if there is no localization in the specified language. The parameter value must be a language code included in the list returned by the i18nLanguages.list method (e.g. en_US, es_MX).',
-            }),
-            listMaxResults,
-            pageToken,
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            "categoryId?": string({
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more channel resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a channel resource, the contentDetails property contains other properties, such as the uploads properties. As such, if you set *part=contentDetails*, the API response will also contain all of those nested properties.",
+            ),
+            "hl?": hlQuery(
+              'Stands for "host language". Specifies the localization language of the metadata to be filled into snippet.localized. The field is filled with the default metadata if there is no localization in the specified language. The parameter value must be a language code included in the list returned by the i18nLanguages.list method (e.g. en_US, es_MX).',
+            ),
+            "maxResults?": listMaxResultsSchema,
+            "pageToken?": pageTokenSchema,
+            "categoryId?": {
               description:
                 "Return the channels within the specified guide category ID.",
-            }),
-            "forUsername?": string({
+              schema: string(),
+            },
+            "forUsername?": {
               description:
                 "Return the channel associated with a YouTube username.",
-            }),
-            "id?": array(string(), {
+              schema: string(),
+            },
+            "id?": {
               description: "Return the channels with the specified IDs.",
-            }),
-            "managedByMe?": boolean({
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "managedByMe?": {
               description:
                 "Return the channels managed by the authenticated user.",
-            }),
-            "mine?": boolean({
+              schema: boolean(),
+            },
+            "mine?": {
               description:
                 "Return the ids of channels owned by the authenticated user.",
-            }),
-            "mySubscribers?": boolean({
+              schema: boolean(),
+            },
+            "mySubscribers?": {
               description:
                 "Return the channels subscribed to the authenticated user",
-            }),
+              schema: boolean(),
+            },
           },
           security: oauthScopes(
             "https://www.googleapis.com/auth/youtube.readonly",
@@ -6017,14 +6668,13 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.channels.update",
         req: {
-          params: [
-            onBehalfOfContentOwner,
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The API currently only allows the parameter value to be set to either brandingSettings or invideoPromotion. (You cannot update both of those parts with a single request.) Note that this method overrides the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies.",
-            }),
-          ],
-          body: Channel,
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The API currently only allows the parameter value to be set to either brandingSettings or invideoPromotion. (You cannot update both of those parts with a single request.) Note that this method overrides the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies.",
+            ),
+            "onBehalfOfContentOwner?": onBehalfOfContentOwnerSchemaShort,
+          },
+          "body?": Channel,
         },
         res: {
           200: resp({
@@ -6050,48 +6700,58 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.commentThreads.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more commentThread resource properties that the API response will include.",
-            }),
-            commentMaxResults,
-            pageToken,
-          ],
           query: {
-            "allThreadsRelatedToChannelId?": string({
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more commentThread resource properties that the API response will include.",
+            ),
+            "maxResults?": commentMaxResultsSchema,
+            "pageToken?": pageTokenSchema,
+            "allThreadsRelatedToChannelId?": {
               description:
                 "Returns the comment threads of all videos of the channel and the channel comments as well.",
-            }),
-            "channelId?": string({
+              schema: string(),
+            },
+            "channelId?": {
               description:
                 "Returns the comment threads for all the channel comments (ie does not include comments left on videos).",
-            }),
-            "id?": array(string(), {
+              schema: string(),
+            },
+            "id?": {
               description:
                 "Returns the comment threads with the given IDs for Stubby or Apiary.",
-            }),
-            "moderationStatus?": string({
-              enum: ["published", "heldForReview", "likelySpam", "rejected"],
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "moderationStatus?": {
               description:
                 "Limits the returned comment threads to those with the specified moderation status. Not compatible with the 'id' filter. Valid values: published, heldForReview, likelySpam.",
-            }),
-            "order?": string({
-              enum: ["orderUnspecified", "time", "relevance"],
-            }),
-            "searchTerms?": string({
+              schema: string({
+                enum: ["published", "heldForReview", "likelySpam", "rejected"],
+              }),
+            },
+            "order?": {
+              schema: string({
+                enum: ["orderUnspecified", "time", "relevance"],
+              }),
+            },
+            "searchTerms?": {
               description:
                 "Limits the returned comment threads to those matching the specified key words. Not compatible with the 'id' filter.",
-            }),
-            "textFormat?": string({
-              enum: ["textFormatUnspecified", "html", "plainText"],
+              schema: string(),
+            },
+            "textFormat?": {
               description:
                 "The requested text format for the returned comments.",
-            }),
-            "videoId?": string({
+              schema: string({
+                enum: ["textFormatUnspecified", "html", "plainText"],
+              }),
+            },
+            "videoId?": {
               description:
                 "Returns the comment threads of the specified video.",
-            }),
+              schema: string(),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.force-ssl",
@@ -6108,30 +6768,27 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.commentThreads.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units.",
-            }),
-          ],
+          query: {
+            part: partArray(
+              "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units.",
+            ),
+          },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: CommentThread,
+          "body?": CommentThread,
         },
       },
       PUT: {
         description: "Updates an existing resource.",
         id: "youtube.youtube.v3.updateCommentThreads",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of commentThread resource properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
-              required: false,
-            }),
-          ],
-          body: CommentThread,
+          query: {
+            "part?": partArray(
+              "The *part* parameter specifies a comma-separated list of commentThread resource properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
+            ),
+          },
+          "body?": CommentThread,
         },
         tags: [tags.youtube],
       },
@@ -6155,7 +6812,9 @@ export default responsibleAPI({
         id: "youtube.comments.delete",
         req: {
           query: {
-            id: string(),
+            id: {
+              schema: string(),
+            },
           },
         },
       },
@@ -6163,28 +6822,31 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.comments.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more comment resource properties that the API response will include.",
-            }),
-            commentMaxResults,
-            pageToken,
-          ],
           query: {
-            "id?": array(string(), {
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more comment resource properties that the API response will include.",
+            ),
+            "maxResults?": commentMaxResultsSchema,
+            "pageToken?": pageTokenSchema,
+            "id?": {
               description:
                 "Returns the comments with the given IDs for One Platform.",
-            }),
-            "parentId?": string({
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "parentId?": {
               description:
                 "Returns replies to the specified comment. Note, currently YouTube features only one level of replies (ie replies to top level comments). However replies to replies may be supported in the future.",
-            }),
-            "textFormat?": string({
-              enum: ["textFormatUnspecified", "html", "plainText"],
+              schema: string(),
+            },
+            "textFormat?": {
               description:
                 "The requested text format for the returned comments.",
-            }),
+              schema: string({
+                enum: ["textFormatUnspecified", "html", "plainText"],
+              }),
+            },
           },
         },
         res: {
@@ -6198,13 +6860,12 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.comments.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units.",
-            }),
-          ],
-          body: Comment,
+          query: {
+            part: partArray(
+              "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units.",
+            ),
+          },
+          "body?": Comment,
         },
         res: {
           200: resp({
@@ -6217,13 +6878,12 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.comments.update",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter identifies the properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
-            }),
-          ],
-          body: Comment,
+          query: {
+            part: partArray(
+              "The *part* parameter identifies the properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
+            ),
+          },
+          "body?": Comment,
         },
         res: {
           200: resp({
@@ -6238,10 +6898,13 @@ export default responsibleAPI({
         id: "youtube.comments.markAsSpam",
         req: {
           query: {
-            id: array(string(), {
+            id: {
               description:
                 "Flags the comments with the given IDs as spam in the caller's opinion.",
-            }),
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
           },
         },
       }),
@@ -6250,19 +6913,25 @@ export default responsibleAPI({
         id: "youtube.comments.setModerationStatus",
         req: {
           query: {
-            id: array(string(), {
+            id: {
               description:
                 "Modifies the moderation status of the comments with the given IDs",
-            }),
-            moderationStatus: string({
-              enum: ["published", "heldForReview", "likelySpam", "rejected"],
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            moderationStatus: {
               description:
                 "Specifies the requested moderation status. Note, comments can be in statuses, which are not available through this call. For example, this call does not allow to mark a comment as 'likely spam'. Valid values: MODERATION_STATUS_PUBLISHED, MODERATION_STATUS_HELD_FOR_REVIEW, MODERATION_STATUS_REJECTED.",
-            }),
-            "banAuthor?": boolean({
+              schema: string({
+                enum: ["published", "heldForReview", "likelySpam", "rejected"],
+              }),
+            },
+            "banAuthor?": {
               description:
                 "If set to true the author of the comment gets added to the ban list. This means all future comments of the author will autmomatically be rejected. Only valid in combination with STATUS_REJECTED.",
-            }),
+              schema: boolean(),
+            },
           },
         },
       }),
@@ -6271,13 +6940,12 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.i18nLanguages.list",
       req: {
-        params: [
-          partQuery({
-            description:
-              "The *part* parameter specifies the i18nLanguage resource properties that the API response will include. Set the parameter value to snippet.",
-          }),
-          hlParam({}),
-        ],
+        query: {
+          part: partArray(
+            "The *part* parameter specifies the i18nLanguage resource properties that the API response will include. Set the parameter value to snippet.",
+          ),
+          "hl?": hlQuery(),
+        },
         security: oauthScopes(
           "https://www.googleapis.com/auth/youtube",
           "https://www.googleapis.com/auth/youtube.force-ssl",
@@ -6297,13 +6965,12 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.i18nRegions.list",
       req: {
-        params: [
-          partQuery({
-            description:
-              "The *part* parameter specifies the i18nRegion resource properties that the API response will include. Set the parameter value to snippet.",
-          }),
-          hlParam({}),
-        ],
+        query: {
+          part: partArray(
+            "The *part* parameter specifies the i18nRegion resource properties that the API response will include. Set the parameter value to snippet.",
+          ),
+          "hl?": hlQuery(),
+        },
         security: oauthScopes(
           "https://www.googleapis.com/auth/youtube",
           "https://www.googleapis.com/auth/youtube.force-ssl",
@@ -6323,7 +6990,6 @@ export default responsibleAPI({
       forAll: {
         tags: liveBroadcastTags,
         req: {
-          params: [onBehalfOfContentOwner, onBehalfOfContentOwnerChannel],
           security: youtubeForceSslSecurity,
         },
         res: {
@@ -6336,10 +7002,14 @@ export default responsibleAPI({
         description: "Delete a given broadcast.",
         id: "youtube.liveBroadcasts.delete",
         req: {
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            id: string({
+            id: {
               description: "Broadcast to delete.",
-            }),
+              schema: string(),
+            },
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
           },
         },
         res: {
@@ -6351,40 +7021,49 @@ export default responsibleAPI({
           "Retrieve the list of broadcasts associated with the given channel.",
         id: "youtube.liveBroadcasts.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, status and statistics.",
-            }),
-            listMaxResults,
-            pageToken,
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            "broadcastStatus?": string({
-              enum: [
-                "broadcastStatusFilterUnspecified",
-                "all",
-                "active",
-                "upcoming",
-                "completed",
-              ],
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, status and statistics.",
+            ),
+            "maxResults?": listMaxResultsSchema,
+            "pageToken?": pageTokenSchema,
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+            "broadcastStatus?": {
               description:
                 "Return broadcasts with a certain status, e.g. active broadcasts.",
-            }),
-            "broadcastType?": string({
-              enum: [
-                "broadcastTypeFilterUnspecified",
-                "all",
-                "event",
-                "persistent",
-              ],
+              schema: string({
+                enum: [
+                  "broadcastStatusFilterUnspecified",
+                  "all",
+                  "active",
+                  "upcoming",
+                  "completed",
+                ],
+              }),
+            },
+            "broadcastType?": {
               description: "Return only broadcasts with the selected type.",
-            }),
-            "id?": array(string(), {
+              schema: string({
+                enum: [
+                  "broadcastTypeFilterUnspecified",
+                  "all",
+                  "event",
+                  "persistent",
+                ],
+              }),
+            },
+            "id?": {
               description:
                 "Return broadcasts with the given ids from Stubby or Apiary.",
-            }),
-            "mine?": boolean(),
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "mine?": {
+              schema: boolean(),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
@@ -6398,13 +7077,15 @@ export default responsibleAPI({
         description: "Inserts a new stream for the authenticated user.",
         id: "youtube.liveBroadcasts.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status.",
-            }),
-          ],
-          body: LiveBroadcast,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status.",
+            ),
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+          },
+          "body?": LiveBroadcast,
         },
       },
       PUT: {
@@ -6412,32 +7093,36 @@ export default responsibleAPI({
           "Updates an existing broadcast for the authenticated user.",
         id: "youtube.liveBroadcasts.update",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a broadcast's privacy status is defined in the status part. As such, if your request is updating a private or unlisted broadcast, and the request's part parameter value includes the status part, the broadcast's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the broadcast will revert to the default privacy setting.",
-            }),
-          ],
-          body: LiveBroadcast,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, contentDetails, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a broadcast's privacy status is defined in the status part. As such, if your request is updating a private or unlisted broadcast, and the request's part parameter value includes the status part, the broadcast's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the broadcast will revert to the default privacy setting.",
+            ),
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+          },
+          "body?": LiveBroadcast,
         },
       },
       "/bind": POST({
         description: "Bind a broadcast to a stream.",
         id: "youtube.liveBroadcasts.bind",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
-            }),
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            id: string({
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
+            ),
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+            id: {
               description: "Broadcast to bind to the stream",
-            }),
-            "streamId?": string({
+              schema: string(),
+            },
+            "streamId?": {
               description: "Stream to bind, if not set unbind the current one.",
-            }),
+              schema: string(),
+            },
           },
         },
       }),
@@ -6445,23 +7130,23 @@ export default responsibleAPI({
         description: "Insert cuepoints in a broadcast",
         id: "youtube.liveBroadcasts.insertCuepoint",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
-              required: false,
-            }),
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            "id?": string({
+            "part?": partArray(
+              "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
+            ),
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+            "id?": {
               description:
                 "Broadcast to insert ads to, or equivalently `external_video_id` for internal use.",
-            }),
+              schema: string(),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtubepartner",
           ),
-          body: Cuepoint,
+          "body?": Cuepoint,
         },
         res: {
           200: cuepointResponse(),
@@ -6471,21 +7156,24 @@ export default responsibleAPI({
         description: "Transition a broadcast to a given status.",
         id: "youtube.liveBroadcasts.transition",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
-            }),
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            broadcastStatus: string({
-              enum: ["statusUnspecified", "testing", "live", "complete"],
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more liveBroadcast resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, contentDetails, and status.",
+            ),
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+            broadcastStatus: {
               description:
                 "The status to which the broadcast is going to transition.",
-            }),
-            id: string({
+              schema: string({
+                enum: ["statusUnspecified", "testing", "live", "complete"],
+              }),
+            },
+            id: {
               description: "Broadcast to transition.",
-            }),
+              schema: string(),
+            },
           },
         },
       }),
@@ -6502,7 +7190,9 @@ export default responsibleAPI({
         id: "youtube.liveChatBans.delete",
         req: {
           query: {
-            id: string(),
+            id: {
+              schema: string(),
+            },
           },
         },
         res: {
@@ -6513,13 +7203,12 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.liveChatBans.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
-            }),
-          ],
-          body: LiveChatBan,
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
+            ),
+          },
+          "body?": LiveChatBan,
         },
         res: {
           200: resp({
@@ -6541,7 +7230,9 @@ export default responsibleAPI({
         id: "youtube.liveChatMessages.delete",
         req: {
           query: {
-            id: string(),
+            id: {
+              schema: string(),
+            },
           },
         },
         res: {
@@ -6552,32 +7243,28 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.liveChatMessages.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies the liveChatComment resource parts that the API response will include. Supported values are id and snippet.",
-            }),
-            hlParam({
-              description:
-                "Specifies the localization language in which the system messages should be returned.",
-            }),
-            maxResultsParam({
-              maximum: 2000,
-              minimum: 200,
-            }),
-            liveChatMessagesPageToken,
-          ],
           query: {
-            liveChatId: string({
+            part: partArray(
+              "The *part* parameter specifies the liveChatComment resource parts that the API response will include. Supported values are id and snippet.",
+            ),
+            "hl?": hlQuery(
+              "Specifies the localization language in which the system messages should be returned.",
+            ),
+            "maxResults?": liveChatListMaxResultsSchema,
+            "pageToken?": liveChatMessagesPageTokenSchema,
+            liveChatId: {
               description:
                 "The id of the live chat for which comments should be returned.",
-            }),
-            "profileImageSize?": integer({
-              maximum: 720,
-              minimum: 16,
+              schema: string(),
+            },
+            "profileImageSize?": {
               description:
                 "Specifies the size of the profile image that should be returned for each user.",
-            }),
+              schema: integer({
+                maximum: 720,
+                minimum: 16,
+              }),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
@@ -6594,13 +7281,12 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.liveChatMessages.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes. It identifies the properties that the write operation will set as well as the properties that the API response will include. Set the parameter value to snippet.",
-            }),
-          ],
-          body: LiveChatMessage,
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes. It identifies the properties that the write operation will set as well as the properties that the API response will include. Set the parameter value to snippet.",
+            ),
+          },
+          "body?": LiveChatMessage,
         },
         res: {
           200: resp({
@@ -6622,7 +7308,9 @@ export default responsibleAPI({
         id: "youtube.liveChatModerators.delete",
         req: {
           query: {
-            id: string(),
+            id: {
+              schema: string(),
+            },
           },
         },
         res: {
@@ -6633,19 +7321,17 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.liveChatModerators.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies the liveChatModerator resource parts that the API response will include. Supported values are id and snippet.",
-            }),
-            listMaxResults,
-            pageToken,
-          ],
           query: {
-            liveChatId: string({
+            part: partArray(
+              "The *part* parameter specifies the liveChatModerator resource parts that the API response will include. Supported values are id and snippet.",
+            ),
+            "maxResults?": listMaxResultsSchema,
+            "pageToken?": pageTokenSchema,
+            liveChatId: {
               description:
                 "The id of the live chat for which moderators should be returned.",
-            }),
+              schema: string(),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
@@ -6662,13 +7348,12 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.liveChatModerators.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
-            }),
-          ],
-          body: LiveChatModerator,
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
+            ),
+          },
+          "body?": LiveChatModerator,
         },
         res: {
           200: resp({
@@ -6682,7 +7367,6 @@ export default responsibleAPI({
       forAll: {
         tags: [tags.liveStreams],
         req: {
-          params: [onBehalfOfContentOwner, onBehalfOfContentOwnerChannel],
           security: youtubeForceSslSecurity,
         },
         res: {
@@ -6698,8 +7382,13 @@ export default responsibleAPI({
         description: "Deletes an existing stream for the authenticated user.",
         id: "youtube.liveStreams.delete",
         req: {
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            id: string(),
+            id: {
+              schema: string(),
+            },
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
           },
         },
         res: {
@@ -6711,20 +7400,25 @@ export default responsibleAPI({
           "Retrieve the list of streams associated with the given channel. --",
         id: "youtube.liveStreams.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more liveStream resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, cdn, and status.",
-            }),
-            listMaxResults,
-            pageToken,
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            "id?": array(string(), {
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more liveStream resource properties that the API response will include. The part names that you can include in the parameter value are id, snippet, cdn, and status.",
+            ),
+            "maxResults?": listMaxResultsSchema,
+            "pageToken?": pageTokenSchema,
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+            "id?": {
               description:
                 "Return LiveStreams with the given ids from Stubby or Apiary.",
-            }),
-            "mine?": boolean(),
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "mine?": {
+              schema: boolean(),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
@@ -6741,26 +7435,30 @@ export default responsibleAPI({
         description: "Inserts a new stream for the authenticated user.",
         id: "youtube.liveStreams.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, content_details, and status.",
-            }),
-          ],
-          body: LiveStream,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, content_details, and status.",
+            ),
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+          },
+          "body?": LiveStream,
         },
       },
       PUT: {
         description: "Updates an existing stream for the authenticated user.",
         id: "youtube.liveStreams.update",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. If the request body does not specify a value for a mutable property, the existing value for that property will be removed.",
-            }),
-          ],
-          body: LiveStream,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part properties that you can include in the parameter value are id, snippet, cdn, and status. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. If the request body does not specify a value for a mutable property, the existing value for that property will be removed.",
+            ),
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+          },
+          "body?": LiveStream,
         },
       },
     }),
@@ -6769,31 +7467,29 @@ export default responsibleAPI({
         "Retrieves a list of members that match the request criteria for a channel.",
       id: "youtube.members.list",
       req: {
-        params: [
-          partQuery({
-            description:
-              "The *part* parameter specifies the member resource parts that the API response will include. Set the parameter value to snippet.",
-          }),
-          maxResultsParam({
-            maximum: 1000,
-            minimum: 0,
-          }),
-          pageToken,
-        ],
         query: {
-          "filterByMemberChannelId?": string({
+          part: partArray(
+            "The *part* parameter specifies the member resource parts that the API response will include. Set the parameter value to snippet.",
+          ),
+          "maxResults?": membersListMaxResultsSchema,
+          "pageToken?": pageTokenSchema,
+          "filterByMemberChannelId?": {
             description:
               "Comma separated list of channel IDs. Only data about members that are part of this list will be included in the response.",
-          }),
-          "hasAccessToLevel?": string({
+            schema: string(),
+          },
+          "hasAccessToLevel?": {
             description:
               "Filter members in the results set to the ones that have access to a level.",
-          }),
-          "mode?": string({
-            enum: ["listMembersModeUnknown", "updates", "all_current"],
+            schema: string(),
+          },
+          "mode?": {
             description:
               "Parameter that specifies which channel members to return.",
-          }),
+            schema: string({
+              enum: ["listMembersModeUnknown", "updates", "all_current"],
+            }),
+          },
         },
         security: oauthScope(
           "https://www.googleapis.com/auth/youtube.channel-memberships.creator",
@@ -6812,12 +7508,11 @@ export default responsibleAPI({
         "Retrieves a list of all pricing levels offered by a creator to the fans.",
       id: "youtube.membershipsLevels.list",
       req: {
-        params: [
-          partQuery({
-            description:
-              "The *part* parameter specifies the membershipsLevel resource parts that the API response will include. Supported values are id and snippet.",
-          }),
-        ],
+        query: {
+          part: partArray(
+            "The *part* parameter specifies the membershipsLevel resource parts that the API response will include. Supported values are id and snippet.",
+          ),
+        },
         security: oauthScope(
           "https://www.googleapis.com/auth/youtube.channel-memberships.creator",
         ),
@@ -6834,7 +7529,6 @@ export default responsibleAPI({
       forAll: {
         tags: [tags.playlistItems],
         req: {
-          params: [onBehalfOfContentOwner],
           security: videoPartnerSecurity,
         },
         res: {
@@ -6850,8 +7544,11 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.playlistItems.delete",
         req: {
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            id: string(),
+            id: {
+              schema: string(),
+            },
           },
         },
         res: {
@@ -6862,24 +7559,28 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.playlistItems.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more playlistItem resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlistItem resource, the snippet property contains numerous fields, including the title, description, position, and resourceId properties. As such, if you set *part=snippet*, the API response will contain all of those properties.",
-            }),
-            listMaxResults,
-            pageToken,
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            "id?": array(string()),
-            "playlistId?": string({
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more playlistItem resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlistItem resource, the snippet property contains numerous fields, including the title, description, position, and resourceId properties. As such, if you set *part=snippet*, the API response will contain all of those properties.",
+            ),
+            "maxResults?": listMaxResultsSchema,
+            "pageToken?": pageTokenSchema,
+            "id?": {
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "playlistId?": {
               description:
                 "Return the playlist items within the given playlist.",
-            }),
-            "videoId?": string({
+              schema: string(),
+            },
+            "videoId?": {
               description:
                 "Return the playlist items associated with the given video ID.",
-            }),
+              schema: string(),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
@@ -6896,26 +7597,26 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.playlistItems.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
-            }),
-          ],
-          body: PlaylistItem,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
+            ),
+          },
+          "body?": PlaylistItem,
         },
       },
       PUT: {
         description: "Updates an existing resource.",
         id: "youtube.playlistItems.update",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a playlist item can specify a start time and end time, which identify the times portion of the video that should play when users watch the video in the playlist. If your request is updating a playlist item that sets these values, and the request's part parameter value includes the contentDetails part, the playlist item's start and end times will be updated to whatever value the request body specifies. If the request body does not specify values, the existing start and end times will be removed and replaced with the default settings.",
-            }),
-          ],
-          body: PlaylistItem,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a playlist item can specify a start time and end time, which identify the times portion of the video that should play when users watch the video in the playlist. If your request is updating a playlist item that sets these values, and the request's part parameter value includes the contentDetails part, the playlist item's start and end times will be updated to whatever value the request body specifies. If the request body does not specify values, the existing start and end times will be removed and replaced with the default settings.",
+            ),
+          },
+          "body?": PlaylistItem,
         },
       },
     }),
@@ -6923,7 +7624,6 @@ export default responsibleAPI({
       forAll: {
         tags: [tags.playlists],
         req: {
-          params: [onBehalfOfContentOwner],
           security: videoPartnerSecurity,
         },
         res: {
@@ -6939,8 +7639,11 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.playlists.delete",
         req: {
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            id: string(),
+            id: {
+              schema: string(),
+            },
           },
         },
         res: {
@@ -6951,29 +7654,33 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.playlists.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more playlist resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlist resource, the snippet property contains properties like author, title, description, tags, and timeCreated. As such, if you set *part=snippet*, the API response will contain all of those properties.",
-            }),
-            hlParam({ description: "Return content in specified language" }),
-            listMaxResults,
-            onBehalfOfContentOwnerChannel,
-            pageToken,
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            "channelId?": string({
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more playlist resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a playlist resource, the snippet property contains properties like author, title, description, tags, and timeCreated. As such, if you set *part=snippet*, the API response will contain all of those properties.",
+            ),
+            "hl?": hlQuery("Return content in specified language"),
+            "maxResults?": listMaxResultsSchema,
+            "pageToken?": pageTokenSchema,
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+            "channelId?": {
               description:
                 "Return the playlists owned by the specified channel ID.",
-            }),
-            "id?": array(string(), {
+              schema: string(),
+            },
+            "id?": {
               description:
                 "Return the playlists with the given IDs for Stubby or Apiary.",
-            }),
-            "mine?": boolean({
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "mine?": {
               description:
                 "Return the playlists owned by the authenticated user.",
-            }),
+              schema: boolean(),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
@@ -6990,27 +7697,28 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.playlists.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
-            }),
-            onBehalfOfContentOwnerChannel,
-          ],
-          body: Playlist,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
+            ),
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+          },
+          "body?": Playlist,
         },
       },
       PUT: {
         description: "Updates an existing resource.",
         id: "youtube.playlists.update",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for mutable properties that are contained in any parts that the request body specifies. For example, a playlist's description is contained in the snippet part, which must be included in the request body. If the request does not specify a value for the snippet.description property, the playlist's existing description will be deleted.",
-            }),
-          ],
-          body: Playlist,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for mutable properties that are contained in any parts that the request body specifies. For example, a playlist's description is contained in the snippet part, which must be included in the request body. If the request does not specify a value for the snippet.description property, the playlist's existing description will be deleted.",
+            ),
+          },
+          "body?": Playlist,
         },
       },
     }),
@@ -7018,134 +7726,172 @@ export default responsibleAPI({
       description: "Retrieves a list of search resources",
       id: "youtube.search.list",
       req: {
-        params: [
-          onBehalfOfContentOwner,
-          partQuery({
-            description:
-              "The *part* parameter specifies a comma-separated list of one or more search resource properties that the API response will include. Set the parameter value to snippet.",
-          }),
-          listMaxResults,
-          pageToken,
-        ],
+        params: [onBehalfOfContentOwnerSchemaCms],
         query: {
-          "channelId?": string({
+          part: partArray(
+            "The *part* parameter specifies a comma-separated list of one or more search resource properties that the API response will include. Set the parameter value to snippet.",
+          ),
+          "maxResults?": listMaxResultsSchema,
+          "pageToken?": pageTokenSchema,
+          "channelId?": {
             description: "Filter on resources belonging to this channelId.",
-          }),
-          "channelType?": string({
-            enum: ["channelTypeUnspecified", "any", "show"],
+            schema: string(),
+          },
+          "channelType?": {
             description: "Add a filter on the channel search.",
-          }),
-          "eventType?": string({
-            enum: ["none", "upcoming", "live", "completed"],
+            schema: string({
+              enum: ["channelTypeUnspecified", "any", "show"],
+            }),
+          },
+          "eventType?": {
             description: "Filter on the livestream status of the videos.",
-          }),
-          "forContentOwner?": boolean({
+            schema: string({
+              enum: ["none", "upcoming", "live", "completed"],
+            }),
+          },
+          "forContentOwner?": {
             description: "Search owned by a content owner.",
-          }),
-          "forDeveloper?": boolean({
+            schema: boolean(),
+          },
+          "forDeveloper?": {
             description:
               "Restrict the search to only retrieve videos uploaded using the project id of the authenticated user.",
-          }),
-          "forMine?": boolean({
+            schema: boolean(),
+          },
+          "forMine?": {
             description:
               "Search for the private videos of the authenticated user.",
-          }),
-          "location?": string({
+            schema: boolean(),
+          },
+          "location?": {
             description: "Filter on location of the video",
-          }),
-          "locationRadius?": string({
+            schema: string(),
+          },
+          "locationRadius?": {
             description:
               "Filter on distance from the location (specified above).",
-          }),
-          "order?": string({
-            enum: [
-              "searchSortUnspecified",
-              "date",
-              "rating",
-              "viewCount",
-              "relevance",
-              "title",
-              "videoCount",
-            ],
+            schema: string(),
+          },
+          "order?": {
             description: "Sort order of the results.",
-          }),
-          "publishedAfter?": string({
+            schema: string({
+              enum: [
+                "searchSortUnspecified",
+                "date",
+                "rating",
+                "viewCount",
+                "relevance",
+                "title",
+                "videoCount",
+              ],
+            }),
+          },
+          "publishedAfter?": {
             description: "Filter on resources published after this date.",
-          }),
-          "publishedBefore?": string({
+            schema: string(),
+          },
+          "publishedBefore?": {
             description: "Filter on resources published before this date.",
-          }),
-          "q?": string({
+            schema: string(),
+          },
+          "q?": {
             description: "Textual search terms to match.",
-          }),
-          "regionCode?": string({
+            schema: string(),
+          },
+          "regionCode?": {
             description:
               "Display the content as seen by viewers in this country.",
-          }),
-          "relatedToVideoId?": string({
+            schema: string(),
+          },
+          "relatedToVideoId?": {
             description: "Search related to a resource.",
-          }),
-          "relevanceLanguage?": string({
+            schema: string(),
+          },
+          "relevanceLanguage?": {
             description: "Return results relevant to this language.",
-          }),
-          "safeSearch?": string({
-            enum: [
-              "safeSearchSettingUnspecified",
-              "none",
-              "moderate",
-              "strict",
-            ],
+            schema: string(),
+          },
+          "safeSearch?": {
             description:
               "Indicates whether the search results should include restricted content as well as standard content.",
-          }),
-          "topicId?": string({
+            schema: string({
+              enum: [
+                "safeSearchSettingUnspecified",
+                "none",
+                "moderate",
+                "strict",
+              ],
+            }),
+          },
+          "topicId?": {
             description: "Restrict results to a particular topic.",
-          }),
-          "type?": array(string(), {
+            schema: string(),
+          },
+          "type?": {
             description:
               "Restrict results to a particular set of resource types from One Platform.",
-          }),
-          "videoCaption?": string({
-            enum: ["videoCaptionUnspecified", "any", "closedCaption", "none"],
+            explode: true,
+            schema: array(string()),
+            style: "form",
+          },
+          "videoCaption?": {
             description: "Filter on the presence of captions on the videos.",
-          }),
-          "videoCategoryId?": string({
+            schema: string({
+              enum: ["videoCaptionUnspecified", "any", "closedCaption", "none"],
+            }),
+          },
+          "videoCategoryId?": {
             description: "Filter on videos in a specific category.",
-          }),
-          "videoDefinition?": string({
-            enum: ["any", "standard", "high"],
+            schema: string(),
+          },
+          "videoDefinition?": {
             description: "Filter on the definition of the videos.",
-          }),
-          "videoDimension?": string({
-            enum: ["any", "2d", "3d"],
+            schema: string({
+              enum: ["any", "standard", "high"],
+            }),
+          },
+          "videoDimension?": {
             description: "Filter on 3d videos.",
-          }),
-          "videoDuration?": string({
-            enum: [
-              "videoDurationUnspecified",
-              "any",
-              "short",
-              "medium",
-              "long",
-            ],
+            schema: string({
+              enum: ["any", "2d", "3d"],
+            }),
+          },
+          "videoDuration?": {
             description: "Filter on the duration of the videos.",
-          }),
-          "videoEmbeddable?": string({
-            enum: ["videoEmbeddableUnspecified", "any", "true"],
+            schema: string({
+              enum: [
+                "videoDurationUnspecified",
+                "any",
+                "short",
+                "medium",
+                "long",
+              ],
+            }),
+          },
+          "videoEmbeddable?": {
             description: "Filter on embeddable videos.",
-          }),
-          "videoLicense?": string({
-            enum: ["any", "youtube", "creativeCommon"],
+            schema: string({
+              enum: ["videoEmbeddableUnspecified", "any", "true"],
+            }),
+          },
+          "videoLicense?": {
             description: "Filter on the license of the videos.",
-          }),
-          "videoSyndicated?": string({
-            enum: ["videoSyndicatedUnspecified", "any", "true"],
+            schema: string({
+              enum: ["any", "youtube", "creativeCommon"],
+            }),
+          },
+          "videoSyndicated?": {
             description: "Filter on syndicated videos.",
-          }),
-          "videoType?": string({
-            enum: ["videoTypeUnspecified", "any", "movie", "episode"],
+            schema: string({
+              enum: ["videoSyndicatedUnspecified", "any", "true"],
+            }),
+          },
+          "videoType?": {
             description: "Filter on videos of a specific type.",
-          }),
+            schema: string({
+              enum: ["videoTypeUnspecified", "any", "movie", "episode"],
+            }),
+          },
         },
         security: oauthScopes(
           "https://www.googleapis.com/auth/youtube",
@@ -7174,7 +7920,9 @@ export default responsibleAPI({
         id: "youtube.subscriptions.delete",
         req: {
           query: {
-            id: string(),
+            id: {
+              schema: string(),
+            },
           },
         },
         res: {
@@ -7185,46 +7933,55 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.subscriptions.list",
         req: {
-          params: [
-            onBehalfOfContentOwner,
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more subscription resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a subscription resource, the snippet property contains other properties, such as a display title for the subscription. If you set *part=snippet*, the API response will also contain all of those nested properties.",
-            }),
-            listMaxResults,
-            onBehalfOfContentOwnerChannel,
-            pageToken,
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            "channelId?": string({
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more subscription resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a subscription resource, the snippet property contains other properties, such as a display title for the subscription. If you set *part=snippet*, the API response will also contain all of those nested properties.",
+            ),
+            "maxResults?": listMaxResultsSchema,
+            "pageToken?": pageTokenSchema,
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+            "channelId?": {
               description:
                 "Return the subscriptions of the given channel owner.",
-            }),
-            "forChannelId?": string({
+              schema: string(),
+            },
+            "forChannelId?": {
               description:
                 "Return the subscriptions to the subset of these channels that the authenticated user is subscribed to.",
-            }),
-            "id?": array(string(), {
+              schema: string(),
+            },
+            "id?": {
               description:
                 "Return the subscriptions with the given IDs for Stubby or Apiary.",
-            }),
-            "mine?": boolean({
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "mine?": {
               description:
                 "Flag for returning the subscriptions of the authenticated user.",
-            }),
-            "myRecentSubscribers?": boolean(),
-            "mySubscribers?": boolean({
+              schema: boolean(),
+            },
+            "myRecentSubscribers?": {
+              schema: boolean(),
+            },
+            "mySubscribers?": {
               description: "Return the subscribers of the given channel owner.",
-            }),
-            "order?": string({
-              enum: [
-                "subscriptionOrderUnspecified",
-                "relevance",
-                "unread",
-                "alphabetical",
-              ],
+              schema: boolean(),
+            },
+            "order?": {
               description: "The order of the returned subscriptions",
-            }),
+              schema: string({
+                enum: [
+                  "subscriptionOrderUnspecified",
+                  "relevance",
+                  "unread",
+                  "alphabetical",
+                ],
+              }),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
@@ -7241,13 +7998,12 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.subscriptions.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
-            }),
-          ],
-          body: Subscription,
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
+            ),
+          },
+          "body?": Subscription,
         },
         res: {
           200: resp({
@@ -7261,18 +8017,16 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.superChatEvents.list",
       req: {
-        params: [
-          partQuery({
-            description:
-              "The *part* parameter specifies the superChatEvent resource parts that the API response will include. This parameter is currently not supported.",
-          }),
-          hlParam({
-            description:
-              "Return rendered funding amounts in specified language.",
-          }),
-          requiredListMaxResults,
-          pageToken,
-        ],
+        query: {
+          part: partArray(
+            "The *part* parameter specifies the superChatEvent resource parts that the API response will include. This parameter is currently not supported.",
+          ),
+          "hl?": hlQuery(
+            "Return rendered funding amounts in specified language.",
+          ),
+          "maxResults?": requiredListMaxResultsSchema,
+          "pageToken?": pageTokenSchema,
+        },
         security: oauthScopes(
           "https://www.googleapis.com/auth/youtube",
           "https://www.googleapis.com/auth/youtube.force-ssl",
@@ -7291,14 +8045,16 @@ export default responsibleAPI({
       description: "POST method.",
       id: "youtube.tests.insert",
       req: {
-        params: [partQuery({ description: "" })],
         query: {
-          "externalChannelId?": string(),
+          part: partArray(),
+          "externalChannelId?": {
+            schema: string(),
+          },
         },
         security: oauthScope(
           "https://www.googleapis.com/auth/youtube.readonly",
         ),
-        body: TestItem,
+        "body?": TestItem,
       },
       res: {
         200: resp({
@@ -7324,25 +8080,24 @@ export default responsibleAPI({
         description: "Deletes a resource.",
         id: "youtube.thirdPartyLinks.delete",
         req: {
-          params: [
-            partQuery({
-              description: "Do not use. Required for compatibility.",
-              required: false,
-            }),
-          ],
           query: {
-            linkingToken: string({
+            "part?": partArray("Do not use. Required for compatibility."),
+            linkingToken: {
               description:
                 "Delete the partner links with the given linking token.",
-            }),
-            type: string({
-              enum: ["linkUnspecified", "channelToStoreLink"],
+              schema: string(),
+            },
+            type: {
               description: "Type of the link to be deleted.",
-            }),
-            "externalChannelId?": string({
+              schema: string({
+                enum: ["linkUnspecified", "channelToStoreLink"],
+              }),
+            },
+            "externalChannelId?": {
               description:
                 "Channel ID to which changes should be applied, for delegation.",
-            }),
+              schema: string(),
+            },
           },
         },
         res: {
@@ -7353,25 +8108,26 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.thirdPartyLinks.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies the thirdPartyLink resource parts that the API response will include. Supported values are linkingToken, status, and snippet.",
-            }),
-          ],
           query: {
-            "externalChannelId?": string({
+            part: partArray(
+              "The *part* parameter specifies the thirdPartyLink resource parts that the API response will include. Supported values are linkingToken, status, and snippet.",
+            ),
+            "externalChannelId?": {
               description:
                 "Channel ID to which changes should be applied, for delegation.",
-            }),
-            "linkingToken?": string({
+              schema: string(),
+            },
+            "linkingToken?": {
               description:
                 "Get a third party link with the given linking token.",
-            }),
-            "type?": string({
-              enum: ["linkUnspecified", "channelToStoreLink"],
+              schema: string(),
+            },
+            "type?": {
               description: "Get a third party link of the given type.",
-            }),
+              schema: string({
+                enum: ["linkUnspecified", "channelToStoreLink"],
+              }),
+            },
           },
         },
         res: {
@@ -7385,38 +8141,34 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.thirdPartyLinks.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet.",
-            }),
-          ],
           query: {
-            "externalChannelId?": string({
+            part: partArray(
+              "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet.",
+            ),
+            "externalChannelId?": {
               description:
                 "Channel ID to which changes should be applied, for delegation.",
-            }),
+              schema: string(),
+            },
           },
-          body: ThirdPartyLink,
+          "body?": ThirdPartyLink,
         },
       },
       PUT: {
         description: "Updates an existing resource.",
         id: "youtube.thirdPartyLinks.update",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet.",
-            }),
-          ],
           query: {
-            "externalChannelId?": string({
+            part: partArray(
+              "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet.",
+            ),
+            "externalChannelId?": {
               description:
                 "Channel ID to which changes should be applied, for delegation.",
-            }),
+              schema: string(),
+            },
           },
-          body: ThirdPartyLink,
+          "body?": ThirdPartyLink,
         },
       },
     }),
@@ -7427,10 +8179,11 @@ export default responsibleAPI({
       req: {
         params: [onBehalfOfContentOwner],
         query: {
-          videoId: string({
+          videoId: {
             description:
               "Returns the Thumbnail with the given video IDs for Stubby or Apiary.",
-          }),
+            schema: string(),
+          },
         },
         security: oauthScopes(
           "https://www.googleapis.com/auth/youtube",
@@ -7451,13 +8204,12 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.videoAbuseReportReasons.list",
       req: {
-        params: [
-          partQuery({
-            description:
-              "The *part* parameter specifies the videoCategory resource parts that the API response will include. Supported values are id and snippet.",
-          }),
-          hlParam({}),
-        ],
+        query: {
+          part: partArray(
+            "The *part* parameter specifies the videoCategory resource parts that the API response will include. Supported values are id and snippet.",
+          ),
+          "hl?": hlQuery(),
+        },
         security: oauthScopes(
           "https://www.googleapis.com/auth/youtube",
           "https://www.googleapis.com/auth/youtube.force-ssl",
@@ -7476,19 +8228,21 @@ export default responsibleAPI({
       description: "Retrieves a list of resources, possibly filtered.",
       id: "youtube.videoCategories.list",
       req: {
-        params: [
-          partQuery({
-            description:
-              "The *part* parameter specifies the videoCategory resource properties that the API response will include. Set the parameter value to snippet.",
-          }),
-          hlParam({}),
-        ],
         query: {
-          "id?": array(string(), {
+          part: partArray(
+            "The *part* parameter specifies the videoCategory resource properties that the API response will include. Set the parameter value to snippet.",
+          ),
+          "hl?": hlQuery(),
+          "id?": {
             description:
               "Returns the video categories with the given IDs for Stubby or Apiary.",
-          }),
-          "regionCode?": string(),
+            explode: true,
+            schema: array(string()),
+            style: "form",
+          },
+          "regionCode?": {
+            schema: string(),
+          },
         },
         security: oauthScopes(
           "https://www.googleapis.com/auth/youtube",
@@ -7523,7 +8277,9 @@ export default responsibleAPI({
         req: {
           params: [onBehalfOfContentOwner],
           query: {
-            id: string(),
+            id: {
+              schema: string(),
+            },
           },
         },
       },
@@ -7531,55 +8287,61 @@ export default responsibleAPI({
         description: "Retrieves a list of resources, possibly filtered.",
         id: "youtube.videos.list",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter specifies a comma-separated list of one or more video resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a video resource, the snippet property contains the channelId, title, description, tags, and categoryId properties. As such, if you set *part=snippet*, the API response will contain all of those properties.",
-            }),
-            hlParam({
-              description:
-                'Stands for "host language". Specifies the localization language of the metadata to be filled into snippet.localized. The field is filled with the default metadata if there is no localization in the specified language. The parameter value must be a language code included in the list returned by the i18nLanguages.list method (e.g. en_US, es_MX).',
-            }),
-            maxResultsParam({
-              description:
-                "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set. *Note:* This parameter is supported for use in conjunction with the myRating and chart parameters, but it is not supported for use in conjunction with the id parameter.",
-              maximum: 50,
-              minimum: 1,
-            }),
-            onBehalfOfContentOwner,
-            videosListPageToken,
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            "chart?": string({
-              enum: ["chartUnspecified", "mostPopular"],
+            part: partArray(
+              "The *part* parameter specifies a comma-separated list of one or more video resource properties that the API response will include. If the parameter identifies a property that contains child properties, the child properties will be included in the response. For example, in a video resource, the snippet property contains the channelId, title, description, tags, and categoryId properties. As such, if you set *part=snippet*, the API response will contain all of those properties.",
+            ),
+            "hl?": hlQuery(
+              'Stands for "host language". Specifies the localization language of the metadata to be filled into snippet.localized. The field is filled with the default metadata if there is no localization in the specified language. The parameter value must be a language code included in the list returned by the i18nLanguages.list method (e.g. en_US, es_MX).',
+            ),
+            "maxResults?": videosListMaxResultsSchema,
+            "pageToken?": videosListPageTokenSchema,
+            "chart?": {
               description: "Return the videos that are in the specified chart.",
-            }),
-            "id?": array(string(), {
+              schema: string({
+                enum: ["chartUnspecified", "mostPopular"],
+              }),
+            },
+            "id?": {
               description: "Return videos with the given ids.",
-            }),
-            "locale?": string(),
-            "maxHeight?": integer({
-              maximum: 8192,
-              minimum: 72,
-            }),
-            "maxWidth?": integer({
-              maximum: 8192,
-              minimum: 72,
+              explode: true,
+              schema: array(string()),
+              style: "form",
+            },
+            "locale?": {
+              schema: string(),
+            },
+            "maxHeight?": {
+              schema: integer({
+                maximum: 8192,
+                minimum: 72,
+              }),
+            },
+            "maxWidth?": {
               description: "Return the player with maximum height specified in",
-            }),
-            "myRating?": string({
-              enum: ["none", "like", "dislike"],
+              schema: integer({
+                maximum: 8192,
+                minimum: 72,
+              }),
+            },
+            "myRating?": {
               description:
                 "Return videos liked/disliked by the authenticated user. Does not support RateType.RATED_TYPE_NONE.",
-            }),
-            "regionCode?": string({
+              schema: string({
+                enum: ["none", "like", "dislike"],
+              }),
+            },
+            "regionCode?": {
               description:
                 "Use a chart that is specific to the specified region",
-            }),
-            "videoCategoryId?": string({
+              schema: string(),
+            },
+            "videoCategoryId?": {
               description:
                 "Use chart that is specific to the specified video category",
-            }),
+              schema: string(),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.readonly",
@@ -7596,31 +8358,32 @@ export default responsibleAPI({
         description: "Inserts a new resource into this collection.",
         id: "youtube.videos.insert",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response.",
-            }),
-            onBehalfOfContentOwner,
-            onBehalfOfContentOwnerChannel,
-          ],
+          params: [onBehalfOfContentOwnerSchemaCms],
           query: {
-            "autoLevels?": boolean({
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response.",
+            ),
+            "onBehalfOfContentOwnerChannel?":
+              onBehalfOfContentOwnerChannelSchema,
+            "autoLevels?": {
               description: "Should auto-levels be applied to the upload.",
-            }),
-            "notifySubscribers?": boolean({
+              schema: boolean(),
+            },
+            "notifySubscribers?": {
               description:
                 "Notify the channel subscribers about the new video. As default, the notification is enabled.",
-            }),
-            "stabilize?": boolean({
+              schema: boolean(),
+            },
+            "stabilize?": {
               description: "Should stabilize be applied to the upload.",
-            }),
+              schema: boolean(),
+            },
           },
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.upload",
           ),
-          body: {
-            "application/octet-stream": Video,
+          "body?": {
+            "application/octet-stream": unknown(),
             "video/1d-interleaved-parityfec": Video,
             "video/3gpp": Video,
             "video/3gpp-tt": Video,
@@ -7738,14 +8501,13 @@ export default responsibleAPI({
         description: "Updates an existing resource.",
         id: "youtube.videos.update",
         req: {
-          params: [
-            partQuery({
-              description:
-                "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a video's privacy setting is contained in the status part. As such, if your request is updating a private video, and the request's part parameter value includes the status part, the video's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the video will revert to the default privacy setting. In addition, not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response.",
-            }),
-            onBehalfOfContentOwner,
-          ],
-          body: Video,
+          params: [onBehalfOfContentOwner],
+          query: {
+            part: partArray(
+              "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a video's privacy setting is contained in the status part. As such, if your request is updating a private video, and the request's part parameter value includes the status part, the video's privacy setting will be updated to whatever value the request body specifies. If the request body does not specify a value, the existing privacy setting will be removed and the video will revert to the default privacy setting. In addition, not all parts contain properties that can be set when inserting or updating a video. For example, the statistics object encapsulates statistics that YouTube calculates for a video and does not contain values that you can set or modify. If the parameter value specifies a part that does not contain mutable values, that part will still be included in the API response.",
+            ),
+          },
+          "body?": Video,
         },
         res: {
           200: resp({
@@ -7759,10 +8521,16 @@ export default responsibleAPI({
           "Retrieves the ratings that the authorized user gave to a list of specified videos.",
         id: "youtube.videos.getRating",
         req: {
-          params: [onBehalfOfContentOwner],
-          query: {
-            id: array(string()),
-          },
+          params: [
+            onBehalfOfContentOwnerSchemaCms,
+            queryParam({
+              required: true,
+              schema: array(string()),
+              explode: true,
+              style: "form",
+              name: "id",
+            }),
+          ],
         },
         res: {
           200: resp({
@@ -7777,10 +8545,14 @@ export default responsibleAPI({
         id: "youtube.videos.rate",
         req: {
           query: {
-            id: string(),
-            rating: string({
-              enum: ["none", "like", "dislike"],
-            }),
+            id: {
+              schema: string(),
+            },
+            rating: {
+              schema: string({
+                enum: ["none", "like", "dislike"],
+              }),
+            },
           },
         },
       }),
@@ -7788,18 +8560,14 @@ export default responsibleAPI({
         description: "Report abuse for a video.",
         id: "youtube.videos.reportAbuse",
         req: {
-          params: [onBehalfOfContentOwner],
-          body: VideoAbuseReport,
+          params: [onBehalfOfContentOwnerSchemaCms],
+          "body?": VideoAbuseReport,
         },
       }),
     }),
     "/youtube/v3/watermarks": scope({
       forAll: {
         tags: [tags.watermarks],
-        req: {
-          params: [onBehalfOfContentOwner, watermarkChannelId],
-          security: videoPartnerSecurity,
-        },
         res: {
           add: {
             200: successfulResponse,
@@ -7811,11 +8579,18 @@ export default responsibleAPI({
           "Allows upload of watermark image and setting it for a channel.",
         id: "youtube.watermarks.set",
         req: {
-          security: oauthScope(
-            "https://www.googleapis.com/auth/youtube.upload",
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            channelId: watermarkChannelIdSchema,
+          },
+          security: securityOR(
+            oauthScope("https://www.googleapis.com/auth/youtube"),
+            oauthScope("https://www.googleapis.com/auth/youtube.force-ssl"),
+            oauthScope("https://www.googleapis.com/auth/youtube.upload"),
+            oauthScope("https://www.googleapis.com/auth/youtubepartner"),
           ),
-          body: {
-            "application/octet-stream": InvideoBranding,
+          "body?": {
+            "application/octet-stream": unknown(),
             "image/jpeg": InvideoBranding,
             "image/png": InvideoBranding,
           },
@@ -7824,6 +8599,13 @@ export default responsibleAPI({
       "/unset": POST({
         description: "Allows removal of channel watermark.",
         id: "youtube.watermarks.unset",
+        req: {
+          params: [onBehalfOfContentOwnerSchemaCms],
+          query: {
+            channelId: watermarkChannelIdSchema,
+          },
+          security: videoPartnerSecurity,
+        },
       }),
     }),
   },

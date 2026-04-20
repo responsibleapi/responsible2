@@ -1,72 +1,12 @@
 # AGENTS.md
 
-## Current state of things
-
 - 100% TypeScript codebase
-- DSL is ready
-- have not started implementing the compiler
-- never run the whole test suite, run individual test files instead
+- Scope of the compiler: OpenAPI 3.1+. If any work touches OpenAPI 3.0.x and
+  lower, stop and tell the human
 
-## TypeScript
+## Vocabulary
 
-- ALWAYS run `typecheck` and `lint` after making changes
-- never add `oxlint-disable-next-line` unless explicitly asked
-
-## Imports from packages
-
-- never import from "openapi3-ts/oas31",
-  `import type { oas31 } from "openapi3-ts"` instead
-- never import from "bun:test", import from "vitest" instead
-
-## CLI tools
-
-- never call `node`, call `bun` instead
-- never call `npx` or `bunx`:
-  - if a package is missing, ask to add it to `package.json`
-  - if a package is present, call through `bun`
-- never run code formatting unless explicitly asked
-- [never call `vitest`](docs/package.jsonc), `bun test` instead
-- `rg`, `ast-grep`, `jq` are available for calling
-- never call `wc`, call `scc` instead (both on files and folders)
-- never pass multiple paths to `scc`. A single dir or a single file only.
-
-### Code search
-
-Use `ripgrep` for:
-
-- exact strings
-- symbol/file discovery
-- comments/docs/config text
-- first-pass broad narrowing
-
-Use `ast-grep` for:
-
-- “find X inside Y”
-- syntax/context constraints
-- refactoring/codemod search
-- “find behavior pattern, not exact text”
-
-### `git`
-
-- never run `git commit` without running `git add` first
-
-### Refactoring with `ast-grep`
-
-- Use `scc <path>` first when a large-file or large-folder refactor needs a
-  quick size estimate.
-- Prefer `ast-grep` for large repetitive syntax-preserving refactors instead of
-  writing an ad hoc TypeScript codemod.
-- Start with `ast-grep run` without `-U` to preview the rewrite and inspect the
-  diff. Rerun with `-U` only after the preview looks correct.
-- Use plain `--rewrite` only when replacing matched node text is enough. If the
-  edit must also move or remove commas, brackets, or other separators, switch to
-  a YAML rule with `fix`.
-- When removing a list/object item plus its trailing comma, use `fix` with
-  `expandStart` and/or `expandEnd`.
-- When one match needs coordinated rewrites across multiple child nodes, prefer
-  `rewriters` with `transform.rewrite`.
-- Use `ast-grep` for the bulk rewrite, then do a small cleanup pass for naming
-  or edge cases.
+- never refer to https://readme.com as "README". Use "readme.com"
 
 ## DSL design
 
@@ -77,17 +17,56 @@ Use `ast-grep` for:
 
 ## Compiler design
 
-Still TODO.
-
 Single pass compiler design:
 
 - Each nested level inherits and extends the context, and as you return up the
   stack, you merge the generated OpenAPI paths. No AST needed - just function
   calls and return values
 
+## Rules
+
+- verify changes to `src/` with `bun check`
+- never add `oxlint-disable-next-line` unless explicitly asked
+- never edit [package.json](package.json) unless explicitly asked
+- never edit [bunfig.toml](bunfig.toml) unless explicitly asked
+- never disable or skip or ignore tests
+- never edit `src/examples/*.json` files unless explicitly asked
+
+## Imports from packages
+
+- never import from "openapi3-ts/oas31",
+  `import type { oas31 } from "openapi3-ts"` instead
+- never import from "bun:test", import from "vitest" instead
+
+## CLI tools
+
+### Available
+
+- `rg`
+- `jq`
+- `xq`
+- `ast-grep`
+- `scc`
+- `bun`
+- `pkgx` for calling any CLI in existence
+
+### Rules
+
+- never call `rg --files`, call `rg --files --hidden -g '!.git'` instead
+- never call `node`, call `bun` instead
+- never call `ruby` for YAML work.
+  [call `bun` instead](https://bun.com/docs/runtime/yaml)
+- never call `npx` or `bunx`:
+  - if a package is missing, ask to add it to `package.json`
+  - if a package is present, call through `bun`
+- never run code formatting unless explicitly asked
+- [never call `vitest`](docs/package.jsonc), `bun test` instead
+- never call `wc`, call `scc` instead (both on files and folders)
+- never pass multiple paths to `scc`. A single dir or a single file only
+
 ## Docs
 
-- field-by-field `package.json` rationale lives in `docs/package.jsonc`
+- Field-by-field rationale for `package.json` lives in `docs/package.jsonc`
 
 ## Custom commands
 

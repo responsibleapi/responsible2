@@ -920,6 +920,7 @@
     },
     "/japi/show/{show_id}": {
       "get": {
+        "deprecated": true,
         "parameters": [
           {
             "name": "show_id",
@@ -1138,6 +1139,7 @@
     },
     "/japi/show/{show_id}/items": {
       "get": {
+        "deprecated": true,
         "parameters": [
           {
             "name": "show_id",
@@ -2114,6 +2116,7 @@
     },
     "/japi/auth/later": {
       "get": {
+        "deprecated": true,
         "security": [
           {
             "AuthorizationHeader": []
@@ -2704,14 +2707,14 @@
               "cache-control": {
                 "required": true,
                 "schema": {
-                  "enum": ["no-cache"],
+                  "const": "no-cache",
                   "type": "string"
                 }
               },
               "cdn-cache-control": {
                 "required": true,
                 "schema": {
-                  "enum": ["max-age=2147483647"],
+                  "const": "max-age=2147483647",
                   "type": "string"
                 }
               },
@@ -2815,14 +2818,14 @@
               "cache-control": {
                 "required": true,
                 "schema": {
-                  "enum": ["no-cache"],
+                  "const": "no-cache",
                   "type": "string"
                 }
               },
               "cdn-cache-control": {
                 "required": true,
                 "schema": {
-                  "enum": ["max-age=2147483647"],
+                  "const": "max-age=2147483647",
                   "type": "string"
                 }
               },

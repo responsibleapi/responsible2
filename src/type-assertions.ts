@@ -1,8 +1,6 @@
 export type Assert<T extends true> = T
 
-/**
- * `One` extends `Two`
- */
+/** `One` extends `Two` */
 export type OneExtendsTwo<One, Two> = [One] extends [Two] ? true : false
 
 /*
@@ -11,8 +9,12 @@ export type OneExtendsTwo<One, Two> = [One] extends [Two] ? true : false
  * equality.
  */
 export type IsEqual<One, Two> =
-  (<T>() => T extends One ? 1 : 2) extends <T>() => T extends Two ? 1 : 2
-    ? (<T>() => T extends Two ? 1 : 2) extends <T>() => T extends One ? 1 : 2
+  (<T>(value?: T) => T extends One ? 1 : 2) extends <T>(
+    value?: T,
+  ) => T extends Two ? 1 : 2
+    ? (<T>(value?: T) => T extends Two ? 1 : 2) extends <T>(
+        value?: T,
+      ) => T extends One ? 1 : 2
       ? true
       : false
     : false

@@ -7,17 +7,17 @@
   },
   "paths": {
     "/app_errors/{appID}": {
-      "post": {
-        "parameters": [
-          {
-            "name": "appID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/AppID"
-            }
+      "parameters": [
+        {
+          "name": "appID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/AppID"
           }
-        ],
+        }
+      ],
+      "post": {
         "operationId": "newError",
         "requestBody": {
           "required": true,
@@ -31,34 +31,14 @@
         },
         "responses": {
           "201": {
-            "description": "201",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+            "description": "201"
           },
           "400": {
-            "description": "400",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+            "description": "400"
           }
         }
       },
       "get": {
-        "parameters": [
-          {
-            "name": "appID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/AppID"
-            }
-          }
-        ],
         "operationId": "appErrors",
         "responses": {
           "200": {
@@ -75,18 +55,14 @@
             }
           },
           "400": {
-            "description": "400",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+            "description": "400"
           }
         }
       }
     },
     "/errors/{errID}": {
       "get": {
+        "operationId": "errorOccurrences",
         "parameters": [
           {
             "name": "errID",
@@ -97,7 +73,6 @@
             }
           }
         ],
-        "operationId": "errorOccurrences",
         "responses": {
           "200": {
             "description": "200",
@@ -113,12 +88,7 @@
             }
           },
           "400": {
-            "description": "400",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+            "description": "400"
           }
         }
       }
@@ -128,13 +98,13 @@
     "schemas": {
       "AppID": {
         "type": "string",
-        "pattern": "^app_\\w+$",
-        "example": "app_123"
+        "examples": ["app_123"],
+        "pattern": "^app_\\w+$"
       },
       "ErrID": {
         "type": "string",
-        "pattern": "^err_\\w+$",
-        "example": "err_123"
+        "examples": ["err_123"],
+        "pattern": "^err_\\w+$"
       },
       "NonEmptyStr": {
         "type": "string",
@@ -175,10 +145,10 @@
         ]
       },
       "UnixMillis": {
+        "description": "UNIX epoch milliseconds",
         "type": "integer",
         "format": "int64",
-        "description": "UNIX epoch milliseconds",
-        "example": 1739982555384
+        "examples": [1739982555384]
       },
       "OneErr": {
         "type": "object",

@@ -32,7 +32,7 @@ const NewPost = () =>
     content: string({ minLength: 1 }),
   })
 
-export const httpBenchmarkAPI = responsibleAPI({
+export default responsibleAPI({
   partialDoc: {
     openapi: "3.1.0",
     info: {
@@ -40,7 +40,7 @@ export const httpBenchmarkAPI = responsibleAPI({
       version: "1",
     },
   },
-  forAll: {
+  forEachOp: {
     req: { mime: "application/json" },
     res: {
       defaults: {

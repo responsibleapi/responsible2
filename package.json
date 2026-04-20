@@ -9,20 +9,24 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "test": "bun test",
+    "test:coverage": "bun test --coverage",
     "test:slow": "vitest run src/",
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@seriousme/openapi-schema-validator": "^2.8.0",
+    "fast-deep-equal": "^3.1.3",
     "openapi3-ts": "^4.5.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.11",
-    "oxfmt": "^0.43.0",
-    "oxlint": "^1.58.0",
-    "oxlint-tsgolint": "^0.18.1",
-    "typescript": "^6.0.2",
-    "vitest": "4.1.2"
+    "@seriousme/openapi-schema-validator": "^2.9.0",
+    "@types/bun": "^1.3.12",
+    "ajv": "^8.18.0",
+    "openapi-format": "^1.31.0",
+    "oxfmt": "^0.45.0",
+    "oxlint": "^1.60.0",
+    "oxlint-tsgolint": "^0.21.1",
+    "typescript": "^6.0.3",
+    "vitest": "4.1.4"
   },
   "x-package-json-docs": "docs/package.jsonc"
 }

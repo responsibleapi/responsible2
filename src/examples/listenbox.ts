@@ -40,9 +40,7 @@ const UserResp = () =>
     updates: boolean(),
   })
 
-const UnixMillis = int64({
-  description: "UNIX epoch milliseconds",
-})
+const UnixMillis = int64({})
 
 const RecentResp = () =>
   object({
@@ -585,7 +583,7 @@ export default responsibleAPI({
       { url: "http://localhost:8080" },
     ],
   },
-  forAll: {
+  forEachOp: {
     res: {
       add: {
         400: {

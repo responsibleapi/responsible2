@@ -1,12 +1,18 @@
+import type { oas31 } from "openapi3-ts"
 import { describe, expect, test } from "vitest"
-import { validate } from "../validate.ts"
+import { canonical } from "../help/canonical.ts"
+import { validateDoc } from "../help/validate-doc.ts"
 import theJSON from "./exceptions.json"
+import theAPI from "./exceptions.ts"
 
-describe("exceptions example", () => {
-  test("exceptions.json validates as OpenAPI", async () => {
-    /** compiler isn't implemented, this import throws */
-    const { exceptionsAPI } = await import("./exceptions.ts")
+describe("exceptions", () => {
+  test("json", async () => {
+    expect(await validateDoc(theJSON)).toEqual(theJSON)
+  })
 
-    expect(await validate(exceptionsAPI)).toEqual<typeof theJSON>(theJSON)
+  test("fixture", async () => {
+    expect(canonical(await validateDoc(theAPI))).toEqual(
+      canonical(theJSON as oas31.OpenAPIObject),
+    )
   })
 })

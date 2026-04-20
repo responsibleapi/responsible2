@@ -6,13 +6,13 @@ import { scope } from "../dsl/scope.ts"
 const AppID = () =>
   string({
     pattern: /^app_\w+$/,
-    example: "app_123",
+    examples: ["app_123"],
   })
 
 const ErrID = () =>
   string({
     pattern: /^err_\w+$/,
-    example: "err_123",
+    examples: ["err_123"],
   })
 
 const NonEmptyStr = () => string({ minLength: 1 })
@@ -27,7 +27,7 @@ const NewErr = () =>
 const UnixMillis = () =>
   int64({
     description: "UNIX epoch milliseconds",
-    example: 1739982555384,
+    examples: [1739982555384],
   })
 
 const OneErr = () =>
@@ -45,7 +45,7 @@ const ErrLog = () =>
     ts: UnixMillis,
   })
 
-export const exceptionsAPI = responsibleAPI({
+export default responsibleAPI({
   partialDoc: {
     openapi: "3.1.0",
     info: {
@@ -54,7 +54,7 @@ export const exceptionsAPI = responsibleAPI({
       description: "Sentry.io clone",
     },
   },
-  forAll: {
+  forEachOp: {
     req: {
       mime: "application/json",
     },
@@ -68,11 +68,7 @@ export const exceptionsAPI = responsibleAPI({
   },
   routes: {
     "/app_errors/:appID": scope({
-      forAll: {
-        req: {
-          pathParams: { appID: AppID },
-        },
-      },
+      pathParams: { appID: AppID },
       POST: {
         id: "newError",
         req: NewErr,
@@ -85,9 +81,7 @@ export const exceptionsAPI = responsibleAPI({
     }),
     "/errors/:errID": GET({
       id: "errorOccurrences",
-      req: {
-        pathParams: { errID: ErrID },
-      },
+      req: { pathParams: { errID: ErrID } },
       res: { 200: array(ErrLog) },
     }),
   },

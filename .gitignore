@@ -11,3 +11,8 @@ coverage/
 .DS_Store
 
 @eslint/
+tmp/
+# Added by code-review-graph
+.code-review-graph/
+
+.task/

@@ -21,7 +21,7 @@ describe("typelevel", () => {
   test("accepts identical types", () => {
     type _Primitive = Assert<IsEqual<string, string>>
     type _Object = Assert<
-      IsEqual<{ a: string; b: number }, { a: string; b: number }>
+      IsEqual<{ a: string; b: number }, { b: number; a: string }>
     >
     type _Union = Assert<IsEqual<string | number, number | string>>
   })

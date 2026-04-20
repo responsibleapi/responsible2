@@ -1,0 +1,10 @@
+version: "3"
+
+tasks:
+  codex: codex
+  cursor: agent --yolo
+
+  code-review-graph:
+    cmd: code-review-graph build
+    sources:
+      - "src/**/*"

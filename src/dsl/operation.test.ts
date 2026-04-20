@@ -5,7 +5,8 @@ import type {
   IsNever,
   OneExtendsTwo,
 } from "../type-assertions.ts"
-import type { Op, GetOp, PathParams } from "./operation.ts"
+import type { GetOp, GetOpReq, Op, OpReq, ReqAugmentation } from "./operation.ts"
+import type { PathParams } from "./params.ts"
 import { declareTags } from "./tags.ts"
 
 describe("operation", () => {
@@ -34,6 +35,77 @@ describe("operation", () => {
   test("accepts non-optional path param names", () => {
     type _Test = Assert<
       OneExtendsTwo<{ videoID: { type: "string" } }, PathParams>
+    >
+  })
+
+  test("accepts inline map-style request params alongside legacy bare schemas", () => {
+    type _PathInline = Assert<
+      OneExtendsTwo<
+        {
+          videoID: {
+            schema: { type: "string" }
+            style: "label"
+          }
+        },
+        PathParams
+      >
+    >
+    type _QueryInline = Assert<
+      OneExtendsTwo<
+        {
+          "page?": {
+            schema: { type: "integer" }
+            example: 1
+            style: "form"
+          }
+        },
+        NonNullable<GetOpReq["query"]>
+      >
+    >
+    type _HeaderInline = Assert<
+      OneExtendsTwo<
+        {
+          "X-Trace?": {
+            schema: { type: "string" }
+            description: "Trace id"
+          }
+        },
+        NonNullable<GetOpReq["headers"]>
+      >
+    >
+    type _QueryJustSchema = Assert<
+      OneExtendsTwo<
+        { filter: { type: "string" } },
+        NonNullable<GetOpReq["query"]>
+      >
+    >
+  })
+
+  test('makes `body` and `"body?"` mutually exclusive', () => {
+    type _BodyAllowed = Assert<
+      OneExtendsTwo<{ body: { type: "string" } }, OpReq>
+    >
+    type _OptionalBodyAllowed = Assert<
+      OneExtendsTwo<{ "body?": { type: "string" } }, OpReq>
+    >
+    type _NeitherAllowed = Assert<OneExtendsTwo<{}, OpReq>>
+    type _ReqWithBothBodyKinds = {
+      body: { type: "string" }
+      "body?": { type: "string" }
+    }
+    type _ReqAugmentationWithBothBodyKinds = {
+      mime: "application/json"
+      body: { type: "string" }
+      "body?": { type: "string" }
+    }
+    type _BothRejected = Assert<
+      IsEqual<OneExtendsTwo<_ReqWithBothBodyKinds, OpReq>, false>
+    >
+    type _ReqAugmentationAlsoRejectsBoth = Assert<
+      IsEqual<
+        OneExtendsTwo<_ReqAugmentationWithBothBodyKinds, ReqAugmentation>,
+        false
+      >
     >
   })
 

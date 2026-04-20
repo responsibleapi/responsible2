@@ -1,7 +1,15 @@
 import type { oas31 } from "openapi3-ts"
 import type { AtLeastOne, AtLeastTwo } from "../lib.ts"
 import type { HttpMethod, MethodRoutes } from "./methods.ts"
-import type { MatchStatus, Op, OpRes, ReqAugmentation, RespAugmentation } from "./operation.ts"
+import type {
+  MatchStatus,
+  Op,
+  OpBase,
+  OpResponses,
+  ReqAugmentation,
+  RespAugmentation,
+} from "./operation.ts"
+import type { PathParams, ReusableParam } from "./params.ts"
 import type { DeclaredTags, OpTags } from "./tags.ts"
 
 export type Mime = `${string}/${string}`
@@ -10,11 +18,11 @@ type ScopeResAugmentation = NonNullable<
   AtLeastOne<{
     mime?: Mime
     defaults?: Record<MatchStatus, RespAugmentation>
-    add?: OpRes
+    add?: OpResponses
   }>
 >
 
-type ScopeResShape = ScopeResAugmentation | OpRes
+type ScopeResShape = ScopeResAugmentation | OpResponses
 
 /**
  * This validates a concrete scope-level response object. The default keeps the
@@ -30,23 +38,29 @@ export type ScopeRes<T extends object = ScopeResShape> =
         ? T
         : never
 
-type ScopeOrOp<TTags extends DeclaredTags = DeclaredTags> =
-  | Op<TTags>
+export type ScopeOrOp<TTags extends DeclaredTags = DeclaredTags> =
+  | OpBase<TTags>
   | Scope<TTags>
 
-type HttpPath = `/${string}`
+export type HttpPath = `/${string}`
 
-/** for root level; only {@link HttpPath} keys */
+/** For root level; only {@link HttpPath} keys */
 export type PathRoutes<TTags extends DeclaredTags = DeclaredTags> = Record<
   HttpPath,
   ScopeOrOp<TTags>
 >
 
-type ScopeRoutes<TTags extends DeclaredTags = DeclaredTags> = MethodRoutes<TTags> &
-  Partial<PathRoutes<TTags>>
+type ScopeRoutes<TTags extends DeclaredTags = DeclaredTags> =
+  MethodRoutes<TTags> & Partial<PathRoutes<TTags>>
+
+export interface ForEachPath {
+  readonly params?: readonly ReusableParam[]
+  readonly pathParams?: PathParams
+}
 
 type ScopeInput<TTags extends DeclaredTags = DeclaredTags> = {
-  forAll?: ScopeOpts<TTags>
+  readonly forEachOp?: ScopeOpts<TTags>
+  readonly forEachPath?: ForEachPath
 } & ScopeRoutes<TTags>
 
 export interface ScopeOpts<TTags extends DeclaredTags = DeclaredTags> {
@@ -56,10 +70,10 @@ export interface ScopeOpts<TTags extends DeclaredTags = DeclaredTags> {
 }
 
 /**
- * this is a temp placeholder return type while the compiler is still TODO
+ * This is a temp placeholder return type while the compiler is still TODO
  *
- * it's basically a merged context stack, since this is a tree.
- * The only place where this single pass compiler MIGHT have an "AST"
+ * It's basically a merged context stack, since this is a tree. The only place
+ * where this single pass compiler MIGHT have an "AST"
  *
  * @compiler
  */
@@ -90,15 +104,15 @@ type ValidScopeArg<T extends ScopeInput> =
     : T
 
 /**
- * Use this when declaring multiple routes under the same subpath.
- * For single methods, use DSL from {@link file://../methods.ts}
+ * Use this when declaring multiple routes under the same subpath. For single
+ * methods, use DSL from {@link file://../methods.ts}
  *
  * Scope merge behavior:
  *
  * `forAll` is inherited by every nested route and scope.
  *
- * - `req` is additive: parent defaults provide shared mime, params, security,
- *   and request fields, while children extend or narrow them locally.
+ * - `req` is additive: parent defaults provide shared mime, params, security, and
+ *   request fields, while children extend or narrow them locally.
  * - `tags` are inherited from the nearest containing scope.
  * - `res.defaults` augments matching response ranges, for example to add shared
  *   mime or headers to every `2xx` or `4xx` response.
@@ -113,25 +127,30 @@ type ValidScopeArg<T extends ScopeInput> =
  * @dsl
  */
 export function scope<T extends ScopeInput>(arg: ValidScopeArg<T>): Scope {
-  const { forAll, ...routes }: ScopeInput = arg
+  const { forEachOp, ...routes }: ScopeInput = arg
 
-  if (forAll === undefined) {
+  if (forEachOp === undefined) {
     return {
       routes,
     }
   }
 
   return {
-    forAll,
+    forAll: forEachOp,
     routes,
   }
 }
 
 export function isScope<TTags extends DeclaredTags>(
-  _s: ScopeOrOp<TTags>,
-): _s is Scope<TTags> {
-  throw new Error(
-    "we have not figured out how ScopeOrOp is even constructed to start distinguishing them",
+  s: ScopeOrOp<TTags>,
+): s is Scope<TTags> {
+  return (
+    typeof s === "object" &&
+    s !== null &&
+    "routes" in s &&
+    typeof s.routes === "object" &&
+    s.routes !== null &&
+    !("method" in s)
   )
 }
 

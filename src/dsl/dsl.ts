@@ -1,11 +1,21 @@
 import type { oas31 } from "openapi3-ts"
-import type { PathRoutes, ScopeOpts } from "./scope.ts"
+import { compileResponsibleAPI } from "../compiler/index.ts"
+import type { Resp } from "./operation.ts"
+import type { Schema } from "./schema.ts"
+import type { ForEachPath, PathRoutes, ScopeOpts } from "./scope.ts"
+import type { Security } from "./security.ts"
 
 export type OptionalKey = `${string}?`
 
 /**
- * holds info both about the name AND optionality of something
- * used in schemas and req params
+ * **DSL**
+ *
+ * Holds info both about name AND optionality of something used in schemas and
+ * req params.
+ *
+ * **Compiler**
+ *
+ * Emits `required` based on {@link isOptional}.
  *
  * @dsl
  */
@@ -20,14 +30,43 @@ export const isOptional = (k: NameWithOptionality): k is OptionalKey =>
  *
  * @dsl
  */
-type PartialDoc = Partial<Omit<oas31.OpenAPIObject, "components">>
+export type PartialDoc = Partial<
+  Omit<oas31.OpenAPIObject, "components" | "security">
+>
 
-interface ResponsibleAPI {
+export interface ResponsibleApiInput {
   partialDoc: PartialDoc
-  forAll: ScopeOpts
+  forEachOp?: ScopeOpts
+  forEachPath?: ForEachPath
   routes: PathRoutes
+  /**
+   * Doc level security
+   *
+   * @dsl
+   */
+  security?: Security
+
+  /**
+   * Compiler drops unused components, but golden examples may still contain
+   * unused response components. This is compromise for keeping fixture parity.
+   *
+   * DO NOT USE.
+   *
+   * @dsl
+   */
+  missingResponses?: readonly Resp[]
+
+  /**
+   * Compiler drops unused components, but golden examples may still contain
+   * unused schemas. This is compromise for keeping fixture parity.
+   *
+   * DO NOT USE.
+   *
+   * @dsl
+   */
+  missingSchemas?: readonly Schema[]
 }
 
-export function responsibleAPI(_api: ResponsibleAPI): oas31.OpenAPIObject {
-  throw new Error("TODO")
+export function responsibleAPI(api: ResponsibleApiInput): oas31.OpenAPIObject {
+  return compileResponsibleAPI(api)
 }
