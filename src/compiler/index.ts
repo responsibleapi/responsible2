@@ -17,7 +17,13 @@ import type {
 } from "../dsl/operation.ts"
 import type { HeaderRaw, ReusableHeader } from "../dsl/response-headers.ts"
 import type { RawSchema, Schema } from "../dsl/schema.ts"
-import type { HttpPath, Mime, ScopeOpts, ScopeRes } from "../dsl/scope.ts"
+import type {
+  ForEachPath,
+  HttpPath,
+  Mime,
+  ScopeOpts,
+  ScopeRes,
+} from "../dsl/scope.ts"
 import { isScope } from "../dsl/scope.ts"
 import { deepEqual } from "../help/deep-equal.ts"
 import {
@@ -293,10 +299,9 @@ function mergeInheritedReq(
 }
 
 function scopePathLevelReqFromRoutes(
-  routes: Record<string, unknown>,
+  routes: ForEachPath,
 ): ReqAugmentation | undefined {
-  const params = routes["params"]
-  const pathParams = routes["pathParams"]
+  const { params, pathParams } = routes
 
   if (params === undefined && pathParams === undefined) {
     return undefined
@@ -312,7 +317,6 @@ function scopePathLevelReqFromRoutes(
   }
 
   if (isRecord(pathParams)) {
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     req.pathParams = pathParams as ReqAugmentation["pathParams"]
   }
 
@@ -1317,9 +1321,7 @@ export function compileResponsibleAPI(
 
   const schemaState = createComponentRegistryState()
   const rootCtx = compileScopeContextFromForAll(api.forEachOp ?? {})
-  rootCtx.pathReq = scopePathLevelReqFromRoutes(
-    (api.forEachPath ?? {}) as Record<string, unknown>,
-  )
+  rootCtx.pathReq = scopePathLevelReqFromRoutes(api.forEachPath ?? {})
   const paths: oas31.PathsObject = {
     ...(api.partialDoc.paths ?? {}),
   }
