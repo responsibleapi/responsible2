@@ -35,6 +35,7 @@ export interface GetOpReq {
 
 export interface OpReq extends GetOpReq {
   readonly body?: Schema | Record<Mime, Schema>
+  readonly "body?"?: Schema | Record<Mime, Schema>
 }
 
 export interface ReqAugmentation extends OpReq {
