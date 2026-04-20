@@ -6097,9 +6097,15 @@ const watermarkChannelIdSchema = {
   schema: string(),
 }
 
-const onBehalfOfPage = {
+const onBehalfOfPage: InlineQueryParam = {
   description:
     "ID of the Google+ Page for the channel that the request is on behalf of.",
+  schema: string(),
+}
+
+const onBehalfOfTypo: InlineQueryParam = {
+  description:
+    "ID of the Google+ Page for the channel that the request is be on behalf of",
   schema: string(),
 }
 
@@ -6345,10 +6351,8 @@ export default responsibleAPI({
         req: {
           params: [onBehalfOfContentOwner],
           query: {
-            id: {
-              schema: string(),
-            },
-            "onBehalfOf?": onBehalfOfPage,
+            id: { schema: string() },
+            "onBehalfOf?": onBehalfOfTypo,
           },
         },
       },
@@ -6366,7 +6370,8 @@ export default responsibleAPI({
               schema: string(),
             },
             "id?": {
-              description: "Returns the captions with the given IDs for Stubby or Apiary.",
+              description:
+                "Returns the captions with the given IDs for Stubby or Apiary.",
               explode: true,
               schema: array(string()),
               style: "form",
@@ -6390,9 +6395,10 @@ export default responsibleAPI({
             part: partArray(
               "The *part* parameter specifies the caption resource parts that the API response will include. Set the parameter value to snippet.",
             ),
-            "onBehalfOf?": onBehalfOfPage,
+            "onBehalfOf?": onBehalfOfTypo,
             "sync?": {
-              description: "Extra parameter to allow automatically syncing the uploaded caption/transcript with the audio.",
+              description:
+                "Extra parameter to allow automatically syncing the uploaded caption/transcript with the audio.",
               schema: boolean(),
             },
           },
@@ -6419,11 +6425,12 @@ export default responsibleAPI({
             ),
             "onBehalfOf?": onBehalfOfPage,
             "sync?": {
-              description: "Extra parameter to allow automatically syncing the uploaded caption/transcript with the audio.",
+              description:
+                "Extra parameter to allow automatically syncing the uploaded caption/transcript with the audio.",
               schema: boolean(),
             },
           },
-          body: {
+          "body?": {
             "application/octet-stream": unknown(),
             "text/xml": Caption,
           },
@@ -6441,19 +6448,22 @@ export default responsibleAPI({
         req: {
           pathParams: {
             id: {
-              description: "The ID of the caption track to download, required for One Platform.",
+              description:
+                "The ID of the caption track to download, required for One Platform.",
               schema: string(),
             },
           },
           params: [onBehalfOfContentOwner],
           query: {
-            "onBehalfOf?": onBehalfOfPage,
+            "onBehalfOf?": onBehalfOfTypo,
             "tfmt?": {
-              description: "Convert the captions into this format. Supported options are sbv, srt, and vtt.",
+              description:
+                "Convert the captions into this format. Supported options are sbv, srt, and vtt.",
               schema: string(),
             },
             "tlang?": {
-              description: "tlang is the language code; machine translate the captions into this language.",
+              description:
+                "tlang is the language code; machine translate the captions into this language.",
               schema: string(),
             },
           },
@@ -6468,7 +6478,8 @@ export default responsibleAPI({
         query: {
           "onBehalfOfContentOwnerChannel?": onBehalfOfContentOwnerChannelSchema,
           "channelId?": {
-            description: "Unused, channel_id is currently derived from the security context of the requestor.",
+            description:
+              "Unused, channel_id is currently derived from the security context of the requestor.",
             schema: string(),
           },
         },
@@ -6511,9 +6522,11 @@ export default responsibleAPI({
         id: "youtube.channelSections.delete",
         req: {
           params: [onBehalfOfContentOwnerSchemaCms],
-          query: { id: {
-            schema: string(),
-          } },
+          query: {
+            id: {
+              schema: string(),
+            },
+          },
         },
         res: {
           200: successfulResponse,
@@ -6530,17 +6543,20 @@ export default responsibleAPI({
             ),
             "hl?": hlQuery("Return content in specified language"),
             "channelId?": {
-              description: "Return the ChannelSections owned by the specified channel ID.",
+              description:
+                "Return the ChannelSections owned by the specified channel ID.",
               schema: string(),
             },
             "id?": {
-              description: "Return the ChannelSections with the given IDs for Stubby or Apiary.",
+              description:
+                "Return the ChannelSections with the given IDs for Stubby or Apiary.",
               explode: true,
               schema: array(string()),
               style: "form",
             },
             "mine?": {
-              description: "Return the ChannelSections owned by the authenticated user.",
+              description:
+                "Return the ChannelSections owned by the authenticated user.",
               schema: boolean(),
             },
           },
@@ -6567,7 +6583,7 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
           },
-          body: ChannelSection,
+          "body?": ChannelSection,
         },
       },
       PUT: {
@@ -6580,7 +6596,7 @@ export default responsibleAPI({
               "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. The part names that you can include in the parameter value are snippet and contentDetails.",
             ),
           },
-          body: ChannelSection,
+          "body?": ChannelSection,
         },
       },
     }),
@@ -6606,11 +6622,13 @@ export default responsibleAPI({
             "maxResults?": listMaxResultsSchema,
             "pageToken?": pageTokenSchema,
             "categoryId?": {
-              description: "Return the channels within the specified guide category ID.",
+              description:
+                "Return the channels within the specified guide category ID.",
               schema: string(),
             },
             "forUsername?": {
-              description: "Return the channel associated with a YouTube username.",
+              description:
+                "Return the channel associated with a YouTube username.",
               schema: string(),
             },
             "id?": {
@@ -6620,15 +6638,18 @@ export default responsibleAPI({
               style: "form",
             },
             "managedByMe?": {
-              description: "Return the channels managed by the authenticated user.",
+              description:
+                "Return the channels managed by the authenticated user.",
               schema: boolean(),
             },
             "mine?": {
-              description: "Return the ids of channels owned by the authenticated user.",
+              description:
+                "Return the ids of channels owned by the authenticated user.",
               schema: boolean(),
             },
             "mySubscribers?": {
-              description: "Return the channels subscribed to the authenticated user",
+              description:
+                "Return the channels subscribed to the authenticated user",
               schema: boolean(),
             },
           },
@@ -6654,7 +6675,7 @@ export default responsibleAPI({
             ),
             "onBehalfOfContentOwner?": onBehalfOfContentOwnerSchemaShort,
           },
-          body: Channel,
+          "body?": Channel,
         },
         res: {
           200: resp({
@@ -6687,42 +6708,49 @@ export default responsibleAPI({
             "maxResults?": commentMaxResultsSchema,
             "pageToken?": pageTokenSchema,
             "allThreadsRelatedToChannelId?": {
-              description: "Returns the comment threads of all videos of the channel and the channel comments as well.",
+              description:
+                "Returns the comment threads of all videos of the channel and the channel comments as well.",
               schema: string(),
             },
             "channelId?": {
-              description: "Returns the comment threads for all the channel comments (ie does not include comments left on videos).",
+              description:
+                "Returns the comment threads for all the channel comments (ie does not include comments left on videos).",
               schema: string(),
             },
             "id?": {
-              description: "Returns the comment threads with the given IDs for Stubby or Apiary.",
+              description:
+                "Returns the comment threads with the given IDs for Stubby or Apiary.",
               explode: true,
               schema: array(string()),
               style: "form",
             },
             "moderationStatus?": {
-              description: "Limits the returned comment threads to those with the specified moderation status. Not compatible with the 'id' filter. Valid values: published, heldForReview, likelySpam.",
+              description:
+                "Limits the returned comment threads to those with the specified moderation status. Not compatible with the 'id' filter. Valid values: published, heldForReview, likelySpam.",
               schema: string({
-    enum: ["published", "heldForReview", "likelySpam", "rejected"]
-}),
+                enum: ["published", "heldForReview", "likelySpam", "rejected"],
+              }),
             },
             "order?": {
               schema: string({
-    enum: ["orderUnspecified", "time", "relevance"],
-}),
+                enum: ["orderUnspecified", "time", "relevance"],
+              }),
             },
             "searchTerms?": {
-              description: "Limits the returned comment threads to those matching the specified key words. Not compatible with the 'id' filter.",
+              description:
+                "Limits the returned comment threads to those matching the specified key words. Not compatible with the 'id' filter.",
               schema: string(),
             },
             "textFormat?": {
-              description: "The requested text format for the returned comments.",
+              description:
+                "The requested text format for the returned comments.",
               schema: string({
-    enum: ["textFormatUnspecified", "html", "plainText"]
-}),
+                enum: ["textFormatUnspecified", "html", "plainText"],
+              }),
             },
             "videoId?": {
-              description: "Returns the comment threads of the specified video.",
+              description:
+                "Returns the comment threads of the specified video.",
               schema: string(),
             },
           },
@@ -6749,7 +6777,7 @@ export default responsibleAPI({
           security: oauthScope(
             "https://www.googleapis.com/auth/youtube.force-ssl",
           ),
-          body: CommentThread,
+          "body?": CommentThread,
         },
       },
       PUT: {
@@ -6761,7 +6789,7 @@ export default responsibleAPI({
               "The *part* parameter specifies a comma-separated list of commentThread resource properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
             ),
           },
-          body: CommentThread,
+          "body?": CommentThread,
         },
         tags: [tags.youtube],
       },
@@ -6802,20 +6830,23 @@ export default responsibleAPI({
             "maxResults?": commentMaxResultsSchema,
             "pageToken?": pageTokenSchema,
             "id?": {
-              description: "Returns the comments with the given IDs for One Platform.",
+              description:
+                "Returns the comments with the given IDs for One Platform.",
               explode: true,
               schema: array(string()),
               style: "form",
             },
             "parentId?": {
-              description: "Returns replies to the specified comment. Note, currently YouTube features only one level of replies (ie replies to top level comments). However replies to replies may be supported in the future.",
+              description:
+                "Returns replies to the specified comment. Note, currently YouTube features only one level of replies (ie replies to top level comments). However replies to replies may be supported in the future.",
               schema: string(),
             },
             "textFormat?": {
-              description: "The requested text format for the returned comments.",
+              description:
+                "The requested text format for the returned comments.",
               schema: string({
-    enum: ["textFormatUnspecified", "html", "plainText"]
-}),
+                enum: ["textFormatUnspecified", "html", "plainText"],
+              }),
             },
           },
         },
@@ -6835,7 +6866,7 @@ export default responsibleAPI({
               "The *part* parameter identifies the properties that the API response will include. Set the parameter value to snippet. The snippet part has a quota cost of 2 units.",
             ),
           },
-          body: Comment,
+          "body?": Comment,
         },
         res: {
           200: resp({
@@ -6853,7 +6884,7 @@ export default responsibleAPI({
               "The *part* parameter identifies the properties that the API response will include. You must at least include the snippet part in the parameter value since that part contains all of the properties that the API request can update.",
             ),
           },
-          body: Comment,
+          "body?": Comment,
         },
         res: {
           200: resp({
@@ -6869,7 +6900,8 @@ export default responsibleAPI({
         req: {
           query: {
             id: {
-              description: "Flags the comments with the given IDs as spam in the caller's opinion.",
+              description:
+                "Flags the comments with the given IDs as spam in the caller's opinion.",
               explode: true,
               schema: array(string()),
               style: "form",
@@ -6883,19 +6915,22 @@ export default responsibleAPI({
         req: {
           query: {
             id: {
-              description: "Modifies the moderation status of the comments with the given IDs",
+              description:
+                "Modifies the moderation status of the comments with the given IDs",
               explode: true,
               schema: array(string()),
               style: "form",
             },
             moderationStatus: {
-              description: "Specifies the requested moderation status. Note, comments can be in statuses, which are not available through this call. For example, this call does not allow to mark a comment as 'likely spam'. Valid values: MODERATION_STATUS_PUBLISHED, MODERATION_STATUS_HELD_FOR_REVIEW, MODERATION_STATUS_REJECTED.",
+              description:
+                "Specifies the requested moderation status. Note, comments can be in statuses, which are not available through this call. For example, this call does not allow to mark a comment as 'likely spam'. Valid values: MODERATION_STATUS_PUBLISHED, MODERATION_STATUS_HELD_FOR_REVIEW, MODERATION_STATUS_REJECTED.",
               schema: string({
-    enum: ["published", "heldForReview", "likelySpam", "rejected"]
-}),
+                enum: ["published", "heldForReview", "likelySpam", "rejected"],
+              }),
             },
             "banAuthor?": {
-              description: "If set to true the author of the comment gets added to the ban list. This means all future comments of the author will autmomatically be rejected. Only valid in combination with STATUS_REJECTED.",
+              description:
+                "If set to true the author of the comment gets added to the ban list. This means all future comments of the author will autmomatically be rejected. Only valid in combination with STATUS_REJECTED.",
               schema: boolean(),
             },
           },
@@ -6997,30 +7032,32 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
             "broadcastStatus?": {
-              description: "Return broadcasts with a certain status, e.g. active broadcasts.",
+              description:
+                "Return broadcasts with a certain status, e.g. active broadcasts.",
               schema: string({
-    enum: [
-        "broadcastStatusFilterUnspecified",
-        "all",
-        "active",
-        "upcoming",
-        "completed",
-    ]
-}),
+                enum: [
+                  "broadcastStatusFilterUnspecified",
+                  "all",
+                  "active",
+                  "upcoming",
+                  "completed",
+                ],
+              }),
             },
             "broadcastType?": {
               description: "Return only broadcasts with the selected type.",
               schema: string({
-    enum: [
-        "broadcastTypeFilterUnspecified",
-        "all",
-        "event",
-        "persistent",
-    ]
-}),
+                enum: [
+                  "broadcastTypeFilterUnspecified",
+                  "all",
+                  "event",
+                  "persistent",
+                ],
+              }),
             },
             "id?": {
-              description: "Return broadcasts with the given ids from Stubby or Apiary.",
+              description:
+                "Return broadcasts with the given ids from Stubby or Apiary.",
               explode: true,
               schema: array(string()),
               style: "form",
@@ -7049,7 +7086,7 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
           },
-          body: LiveBroadcast,
+          "body?": LiveBroadcast,
         },
       },
       PUT: {
@@ -7065,7 +7102,7 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
           },
-          body: LiveBroadcast,
+          "body?": LiveBroadcast,
         },
       },
       "/bind": POST({
@@ -7102,7 +7139,8 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
             "id?": {
-              description: "Broadcast to insert ads to, or equivalently `external_video_id` for internal use.",
+              description:
+                "Broadcast to insert ads to, or equivalently `external_video_id` for internal use.",
               schema: string(),
             },
           },
@@ -7127,10 +7165,11 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
             broadcastStatus: {
-              description: "The status to which the broadcast is going to transition.",
+              description:
+                "The status to which the broadcast is going to transition.",
               schema: string({
-    enum: ["statusUnspecified", "testing", "live", "complete"]
-}),
+                enum: ["statusUnspecified", "testing", "live", "complete"],
+              }),
             },
             id: {
               description: "Broadcast to transition.",
@@ -7170,7 +7209,7 @@ export default responsibleAPI({
               "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
             ),
           },
-          body: LiveChatBan,
+          "body?": LiveChatBan,
         },
         res: {
           200: resp({
@@ -7215,15 +7254,17 @@ export default responsibleAPI({
             "maxResults?": liveChatListMaxResultsSchema,
             "pageToken?": liveChatMessagesPageTokenSchema,
             liveChatId: {
-              description: "The id of the live chat for which comments should be returned.",
+              description:
+                "The id of the live chat for which comments should be returned.",
               schema: string(),
             },
             "profileImageSize?": {
-              description: "Specifies the size of the profile image that should be returned for each user.",
+              description:
+                "Specifies the size of the profile image that should be returned for each user.",
               schema: integer({
-    maximum: 720,
-    minimum: 16
-}),
+                maximum: 720,
+                minimum: 16,
+              }),
             },
           },
           security: oauthScope(
@@ -7246,7 +7287,7 @@ export default responsibleAPI({
               "The *part* parameter serves two purposes. It identifies the properties that the write operation will set as well as the properties that the API response will include. Set the parameter value to snippet.",
             ),
           },
-          body: LiveChatMessage,
+          "body?": LiveChatMessage,
         },
         res: {
           200: resp({
@@ -7288,7 +7329,8 @@ export default responsibleAPI({
             "maxResults?": listMaxResultsSchema,
             "pageToken?": pageTokenSchema,
             liveChatId: {
-              description: "The id of the live chat for which moderators should be returned.",
+              description:
+                "The id of the live chat for which moderators should be returned.",
               schema: string(),
             },
           },
@@ -7312,7 +7354,7 @@ export default responsibleAPI({
               "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response returns. Set the parameter value to snippet.",
             ),
           },
-          body: LiveChatModerator,
+          "body?": LiveChatModerator,
         },
         res: {
           200: resp({
@@ -7369,7 +7411,8 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
             "id?": {
-              description: "Return LiveStreams with the given ids from Stubby or Apiary.",
+              description:
+                "Return LiveStreams with the given ids from Stubby or Apiary.",
               explode: true,
               schema: array(string()),
               style: "form",
@@ -7401,7 +7444,7 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
           },
-          body: LiveStream,
+          "body?": LiveStream,
         },
       },
       PUT: {
@@ -7416,7 +7459,7 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
           },
-          body: LiveStream,
+          "body?": LiveStream,
         },
       },
     }),
@@ -7432,18 +7475,21 @@ export default responsibleAPI({
           "maxResults?": membersListMaxResultsSchema,
           "pageToken?": pageTokenSchema,
           "filterByMemberChannelId?": {
-            description: "Comma separated list of channel IDs. Only data about members that are part of this list will be included in the response.",
+            description:
+              "Comma separated list of channel IDs. Only data about members that are part of this list will be included in the response.",
             schema: string(),
           },
           "hasAccessToLevel?": {
-            description: "Filter members in the results set to the ones that have access to a level.",
+            description:
+              "Filter members in the results set to the ones that have access to a level.",
             schema: string(),
           },
           "mode?": {
-            description: "Parameter that specifies which channel members to return.",
+            description:
+              "Parameter that specifies which channel members to return.",
             schema: string({
-    enum: ["listMembersModeUnknown", "updates", "all_current"]
-}),
+              enum: ["listMembersModeUnknown", "updates", "all_current"],
+            }),
           },
         },
         security: oauthScope(
@@ -7527,11 +7573,13 @@ export default responsibleAPI({
               style: "form",
             },
             "playlistId?": {
-              description: "Return the playlist items within the given playlist.",
+              description:
+                "Return the playlist items within the given playlist.",
               schema: string(),
             },
             "videoId?": {
-              description: "Return the playlist items associated with the given video ID.",
+              description:
+                "Return the playlist items associated with the given video ID.",
               schema: string(),
             },
           },
@@ -7556,7 +7604,7 @@ export default responsibleAPI({
               "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
             ),
           },
-          body: PlaylistItem,
+          "body?": PlaylistItem,
         },
       },
       PUT: {
@@ -7569,7 +7617,7 @@ export default responsibleAPI({
               "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for all of the mutable properties that are contained in any parts that the parameter value specifies. For example, a playlist item can specify a start time and end time, which identify the times portion of the video that should play when users watch the video in the playlist. If your request is updating a playlist item that sets these values, and the request's part parameter value includes the contentDetails part, the playlist item's start and end times will be updated to whatever value the request body specifies. If the request body does not specify values, the existing start and end times will be removed and replaced with the default settings.",
             ),
           },
-          body: PlaylistItem,
+          "body?": PlaylistItem,
         },
       },
     }),
@@ -7618,17 +7666,20 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
             "channelId?": {
-              description: "Return the playlists owned by the specified channel ID.",
+              description:
+                "Return the playlists owned by the specified channel ID.",
               schema: string(),
             },
             "id?": {
-              description: "Return the playlists with the given IDs for Stubby or Apiary.",
+              description:
+                "Return the playlists with the given IDs for Stubby or Apiary.",
               explode: true,
               schema: array(string()),
               style: "form",
             },
             "mine?": {
-              description: "Return the playlists owned by the authenticated user.",
+              description:
+                "Return the playlists owned by the authenticated user.",
               schema: boolean(),
             },
           },
@@ -7655,7 +7706,7 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
           },
-          body: Playlist,
+          "body?": Playlist,
         },
       },
       PUT: {
@@ -7668,7 +7719,7 @@ export default responsibleAPI({
               "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include. Note that this method will override the existing values for mutable properties that are contained in any parts that the request body specifies. For example, a playlist's description is contained in the snippet part, which must be included in the request body. If the request does not specify a value for the snippet.description property, the playlist's existing description will be deleted.",
             ),
           },
-          body: Playlist,
+          "body?": Playlist,
         },
       },
     }),
@@ -7690,25 +7741,27 @@ export default responsibleAPI({
           "channelType?": {
             description: "Add a filter on the channel search.",
             schema: string({
-    enum: ["channelTypeUnspecified", "any", "show"]
-}),
+              enum: ["channelTypeUnspecified", "any", "show"],
+            }),
           },
           "eventType?": {
             description: "Filter on the livestream status of the videos.",
             schema: string({
-    enum: ["none", "upcoming", "live", "completed"]
-}),
+              enum: ["none", "upcoming", "live", "completed"],
+            }),
           },
           "forContentOwner?": {
             description: "Search owned by a content owner.",
             schema: boolean(),
           },
           "forDeveloper?": {
-            description: "Restrict the search to only retrieve videos uploaded using the project id of the authenticated user.",
+            description:
+              "Restrict the search to only retrieve videos uploaded using the project id of the authenticated user.",
             schema: boolean(),
           },
           "forMine?": {
-            description: "Search for the private videos of the authenticated user.",
+            description:
+              "Search for the private videos of the authenticated user.",
             schema: boolean(),
           },
           "location?": {
@@ -7716,22 +7769,23 @@ export default responsibleAPI({
             schema: string(),
           },
           "locationRadius?": {
-            description: "Filter on distance from the location (specified above).",
+            description:
+              "Filter on distance from the location (specified above).",
             schema: string(),
           },
           "order?": {
             description: "Sort order of the results.",
             schema: string({
-    enum: [
-        "searchSortUnspecified",
-        "date",
-        "rating",
-        "viewCount",
-        "relevance",
-        "title",
-        "videoCount",
-    ]
-}),
+              enum: [
+                "searchSortUnspecified",
+                "date",
+                "rating",
+                "viewCount",
+                "relevance",
+                "title",
+                "videoCount",
+              ],
+            }),
           },
           "publishedAfter?": {
             description: "Filter on resources published after this date.",
@@ -7746,7 +7800,8 @@ export default responsibleAPI({
             schema: string(),
           },
           "regionCode?": {
-            description: "Display the content as seen by viewers in this country.",
+            description:
+              "Display the content as seen by viewers in this country.",
             schema: string(),
           },
           "relatedToVideoId?": {
@@ -7758,22 +7813,24 @@ export default responsibleAPI({
             schema: string(),
           },
           "safeSearch?": {
-            description: "Indicates whether the search results should include restricted content as well as standard content.",
+            description:
+              "Indicates whether the search results should include restricted content as well as standard content.",
             schema: string({
-    enum: [
-        "safeSearchSettingUnspecified",
-        "none",
-        "moderate",
-        "strict",
-    ]
-}),
+              enum: [
+                "safeSearchSettingUnspecified",
+                "none",
+                "moderate",
+                "strict",
+              ],
+            }),
           },
           "topicId?": {
             description: "Restrict results to a particular topic.",
             schema: string(),
           },
           "type?": {
-            description: "Restrict results to a particular set of resource types from One Platform.",
+            description:
+              "Restrict results to a particular set of resource types from One Platform.",
             explode: true,
             schema: array(string()),
             style: "form",
@@ -7781,8 +7838,8 @@ export default responsibleAPI({
           "videoCaption?": {
             description: "Filter on the presence of captions on the videos.",
             schema: string({
-    enum: ["videoCaptionUnspecified", "any", "closedCaption", "none"]
-}),
+              enum: ["videoCaptionUnspecified", "any", "closedCaption", "none"],
+            }),
           },
           "videoCategoryId?": {
             description: "Filter on videos in a specific category.",
@@ -7791,50 +7848,50 @@ export default responsibleAPI({
           "videoDefinition?": {
             description: "Filter on the definition of the videos.",
             schema: string({
-    enum: ["any", "standard", "high"]
-}),
+              enum: ["any", "standard", "high"],
+            }),
           },
           "videoDimension?": {
             description: "Filter on 3d videos.",
             schema: string({
-    enum: ["any", "2d", "3d"]
-}),
+              enum: ["any", "2d", "3d"],
+            }),
           },
           "videoDuration?": {
             description: "Filter on the duration of the videos.",
             schema: string({
-    enum: [
-        "videoDurationUnspecified",
-        "any",
-        "short",
-        "medium",
-        "long",
-    ]
-}),
+              enum: [
+                "videoDurationUnspecified",
+                "any",
+                "short",
+                "medium",
+                "long",
+              ],
+            }),
           },
           "videoEmbeddable?": {
             description: "Filter on embeddable videos.",
             schema: string({
-    enum: ["videoEmbeddableUnspecified", "any", "true"]
-}),
+              enum: ["videoEmbeddableUnspecified", "any", "true"],
+            }),
           },
           "videoLicense?": {
             description: "Filter on the license of the videos.",
             schema: string({
-    enum: ["any", "youtube", "creativeCommon"]
-}),
+              enum: ["any", "youtube", "creativeCommon"],
+            }),
           },
           "videoSyndicated?": {
             description: "Filter on syndicated videos.",
             schema: string({
-    enum: ["videoSyndicatedUnspecified", "any", "true"]
-}),
+              enum: ["videoSyndicatedUnspecified", "any", "true"],
+            }),
           },
           "videoType?": {
             description: "Filter on videos of a specific type.",
             schema: string({
-    enum: ["videoTypeUnspecified", "any", "movie", "episode"]
-}),
+              enum: ["videoTypeUnspecified", "any", "movie", "episode"],
+            }),
           },
         },
         security: oauthScopes(
@@ -7887,21 +7944,25 @@ export default responsibleAPI({
             "onBehalfOfContentOwnerChannel?":
               onBehalfOfContentOwnerChannelSchema,
             "channelId?": {
-              description: "Return the subscriptions of the given channel owner.",
+              description:
+                "Return the subscriptions of the given channel owner.",
               schema: string(),
             },
             "forChannelId?": {
-              description: "Return the subscriptions to the subset of these channels that the authenticated user is subscribed to.",
+              description:
+                "Return the subscriptions to the subset of these channels that the authenticated user is subscribed to.",
               schema: string(),
             },
             "id?": {
-              description: "Return the subscriptions with the given IDs for Stubby or Apiary.",
+              description:
+                "Return the subscriptions with the given IDs for Stubby or Apiary.",
               explode: true,
               schema: array(string()),
               style: "form",
             },
             "mine?": {
-              description: "Flag for returning the subscriptions of the authenticated user.",
+              description:
+                "Flag for returning the subscriptions of the authenticated user.",
               schema: boolean(),
             },
             "myRecentSubscribers?": {
@@ -7914,13 +7975,13 @@ export default responsibleAPI({
             "order?": {
               description: "The order of the returned subscriptions",
               schema: string({
-    enum: [
-        "subscriptionOrderUnspecified",
-        "relevance",
-        "unread",
-        "alphabetical",
-    ]
-}),
+                enum: [
+                  "subscriptionOrderUnspecified",
+                  "relevance",
+                  "unread",
+                  "alphabetical",
+                ],
+              }),
             },
           },
           security: oauthScope(
@@ -7943,7 +8004,7 @@ export default responsibleAPI({
               "The *part* parameter serves two purposes in this operation. It identifies the properties that the write operation will set as well as the properties that the API response will include.",
             ),
           },
-          body: Subscription,
+          "body?": Subscription,
         },
         res: {
           200: resp({
@@ -8023,17 +8084,19 @@ export default responsibleAPI({
           query: {
             "part?": partArray("Do not use. Required for compatibility."),
             linkingToken: {
-              description: "Delete the partner links with the given linking token.",
+              description:
+                "Delete the partner links with the given linking token.",
               schema: string(),
             },
             type: {
               description: "Type of the link to be deleted.",
               schema: string({
-    enum: ["linkUnspecified", "channelToStoreLink"]
-}),
+                enum: ["linkUnspecified", "channelToStoreLink"],
+              }),
             },
             "externalChannelId?": {
-              description: "Channel ID to which changes should be applied, for delegation.",
+              description:
+                "Channel ID to which changes should be applied, for delegation.",
               schema: string(),
             },
           },
@@ -8051,18 +8114,20 @@ export default responsibleAPI({
               "The *part* parameter specifies the thirdPartyLink resource parts that the API response will include. Supported values are linkingToken, status, and snippet.",
             ),
             "externalChannelId?": {
-              description: "Channel ID to which changes should be applied, for delegation.",
+              description:
+                "Channel ID to which changes should be applied, for delegation.",
               schema: string(),
             },
             "linkingToken?": {
-              description: "Get a third party link with the given linking token.",
+              description:
+                "Get a third party link with the given linking token.",
               schema: string(),
             },
             "type?": {
               description: "Get a third party link of the given type.",
               schema: string({
-    enum: ["linkUnspecified", "channelToStoreLink"]
-}),
+                enum: ["linkUnspecified", "channelToStoreLink"],
+              }),
             },
           },
         },
@@ -8082,11 +8147,12 @@ export default responsibleAPI({
               "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet.",
             ),
             "externalChannelId?": {
-              description: "Channel ID to which changes should be applied, for delegation.",
+              description:
+                "Channel ID to which changes should be applied, for delegation.",
               schema: string(),
             },
           },
-          body: ThirdPartyLink,
+          "body?": ThirdPartyLink,
         },
       },
       PUT: {
@@ -8098,11 +8164,12 @@ export default responsibleAPI({
               "The *part* parameter specifies the thirdPartyLink resource parts that the API request and response will include. Supported values are linkingToken, status, and snippet.",
             ),
             "externalChannelId?": {
-              description: "Channel ID to which changes should be applied, for delegation.",
+              description:
+                "Channel ID to which changes should be applied, for delegation.",
               schema: string(),
             },
           },
-          body: ThirdPartyLink,
+          "body?": ThirdPartyLink,
         },
       },
     }),
@@ -8114,7 +8181,8 @@ export default responsibleAPI({
         params: [onBehalfOfContentOwner],
         query: {
           videoId: {
-            description: "Returns the Thumbnail with the given video IDs for Stubby or Apiary.",
+            description:
+              "Returns the Thumbnail with the given video IDs for Stubby or Apiary.",
             schema: string(),
           },
         },
@@ -8167,7 +8235,8 @@ export default responsibleAPI({
           ),
           "hl?": hlQuery(),
           "id?": {
-            description: "Returns the video categories with the given IDs for Stubby or Apiary.",
+            description:
+              "Returns the video categories with the given IDs for Stubby or Apiary.",
             explode: true,
             schema: array(string()),
             style: "form",
@@ -8232,8 +8301,8 @@ export default responsibleAPI({
             "chart?": {
               description: "Return the videos that are in the specified chart.",
               schema: string({
-    enum: ["chartUnspecified", "mostPopular"]
-}),
+                enum: ["chartUnspecified", "mostPopular"],
+              }),
             },
             "id?": {
               description: "Return videos with the given ids.",
@@ -8246,29 +8315,32 @@ export default responsibleAPI({
             },
             "maxHeight?": {
               schema: integer({
-    maximum: 8192,
-    minimum: 72,
-}),
+                maximum: 8192,
+                minimum: 72,
+              }),
             },
             "maxWidth?": {
               description: "Return the player with maximum height specified in",
               schema: integer({
-    maximum: 8192,
-    minimum: 72
-}),
+                maximum: 8192,
+                minimum: 72,
+              }),
             },
             "myRating?": {
-              description: "Return videos liked/disliked by the authenticated user. Does not support RateType.RATED_TYPE_NONE.",
+              description:
+                "Return videos liked/disliked by the authenticated user. Does not support RateType.RATED_TYPE_NONE.",
               schema: string({
-    enum: ["none", "like", "dislike"]
-}),
+                enum: ["none", "like", "dislike"],
+              }),
             },
             "regionCode?": {
-              description: "Use a chart that is specific to the specified region",
+              description:
+                "Use a chart that is specific to the specified region",
               schema: string(),
             },
             "videoCategoryId?": {
-              description: "Use chart that is specific to the specified video category",
+              description:
+                "Use chart that is specific to the specified video category",
               schema: string(),
             },
           },
@@ -8299,7 +8371,8 @@ export default responsibleAPI({
               schema: boolean(),
             },
             "notifySubscribers?": {
-              description: "Notify the channel subscribers about the new video. As default, the notification is enabled.",
+              description:
+                "Notify the channel subscribers about the new video. As default, the notification is enabled.",
               schema: boolean(),
             },
             "stabilize?": {
@@ -8478,8 +8551,8 @@ export default responsibleAPI({
             },
             rating: {
               schema: string({
-    enum: ["none", "like", "dislike"],
-}),
+                enum: ["none", "like", "dislike"],
+              }),
             },
           },
         },
