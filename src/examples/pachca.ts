@@ -1,8 +1,6 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { DELETE, GET, POST, PUT } from "../dsl/methods.ts"
 import { resp } from "../dsl/operation.ts"
-import { pathParam, queryParam } from "../dsl/params.ts"
-import { responseHeader } from "../dsl/response-headers.ts"
 import {
   allOf,
   anyOf,
@@ -62,185 +60,147 @@ const SortOrder = () =>
     },
   })
 
-const QueryOrderParam1 = () =>
-  queryParam({
-    name: "order",
-    description: "Направление сортировки",
-    required: false,
-    example: "desc",
-    explode: false,
-    schema: allOf([SortOrder], {
-      default: "desc",
-    }),
-  })
+const QueryOrderParam1 = {
+  description: "Направление сортировки",
+  example: "desc",
+  explode: false,
+  schema: allOf([SortOrder], {
+    default: "desc",
+  }),
+}
 
-const QueryLimitParam1 = () =>
-  queryParam({
-    name: "limit",
-    description: "Количество возвращаемых сущностей за один запрос",
-    required: false,
-    explode: false,
-    schema: int32({
-      examples: [1],
-      default: 50,
-      maximum: 50,
-      minimum: 1,
-    }),
-  })
+const QueryLimitParam1 = {
+  description: "Количество возвращаемых сущностей за один запрос",
+  example: 1,
+  explode: false,
+  schema: int32({
+    examples: [1],
+    default: 50,
+    maximum: 50,
+    minimum: 1,
+  }),
+}
 
-const QueryCursorParam1 = () =>
-  queryParam({
-    name: "cursor",
-    description: "Курсор для пагинации (из meta.paginate.next_page)",
-    required: false,
-    example: "eyJpZCI6MTAsImRpciI6ImFzYyJ9",
-    explode: false,
-    schema: string({ examples: ["eyJpZCI6MTAsImRpciI6ImFzYyJ9"] }),
-  })
+const QueryCursorParam1 = {
+  description: "Курсор для пагинации (из meta.paginate.next_page)",
+  example: "eyJpZCI6MTAsImRpciI6ImFzYyJ9",
+  explode: false,
+  schema: string({ examples: ["eyJpZCI6MTAsImRpciI6ImFzYyJ9"] }),
+}
 
-const PathIdParam1 = () =>
-  pathParam({
-    name: "id",
-    description: "Идентификатор чата",
-    schema: int32({
-      examples: [334],
-    }),
-  })
+const PathIdParam1 = {
+  description: "Идентификатор чата",
+  example: 334,
+  schema: int32({
+    examples: [334],
+  }),
+}
 
-const PathUser_idParam1 = () =>
-  pathParam({
-    name: "user_id",
-    description: "Идентификатор пользователя",
-    schema: int32({
-      examples: [186],
-    }),
-  })
+const PathUser_idParam1 = {
+  description: "Идентификатор пользователя",
+  example: 186,
+  schema: int32({
+    examples: [186],
+  }),
+}
 
-const QueryCursorParam2 = () =>
-  queryParam({
-    name: "cursor",
-    description: "Курсор для пагинации (из `meta.paginate.next_page`)",
-    required: false,
-    example: "eyJpZCI6MTAsImRpciI6ImFzYyJ9",
-    explode: false,
-    schema: string({
-      examples: ["eyJpZCI6MTAsImRpciI6ImFzYyJ9"],
-    }),
-  })
+const QueryCursorParam2 = {
+  description: "Курсор для пагинации (из `meta.paginate.next_page`)",
+  example: "eyJpZCI6MTAsImRpciI6ImFzYyJ9",
+  explode: false,
+  schema: string({
+    examples: ["eyJpZCI6MTAsImRpciI6ImFzYyJ9"],
+  }),
+}
 
-const PathIdParam2 = () =>
-  pathParam({
-    name: "id",
-    description: "Идентификатор тега",
-    schema: int32({
-      examples: [9111],
-    }),
-  })
+const PathIdParam2 = {
+  description: "Идентификатор тега",
+  example: 9111,
+  schema: int32({
+    examples: [9111],
+  }),
+}
 
-const PathIdParam3 = () =>
-  pathParam({
-    name: "id",
-    description: "Идентификатор сообщения",
-    schema: int32({
-      examples: [194275],
-    }),
-  })
+const PathIdParam3 = {
+  description: "Идентификатор сообщения",
+  example: 194275,
+  schema: int32({
+    examples: [194275],
+  }),
+}
 
-const PathIdParam4 = () =>
-  pathParam({
-    name: "id",
-    description: "Идентификатор сообщения",
-    schema: int32({
-      examples: [7231942],
-    }),
-  })
+const PathIdParam4 = {
+  description: "Идентификатор сообщения",
+  example: 7231942,
+  schema: int32({
+    examples: [7231942],
+  }),
+}
 
-const QueryOrderParam2 = () =>
-  queryParam({
-    name: "order",
-    description: "Направление сортировки",
-    required: false,
-    example: "desc",
-    explode: false,
-    schema: SortOrder,
-  })
+const QueryOrderParam2 = {
+  description: "Направление сортировки",
+  example: "desc",
+  explode: false,
+  schema: SortOrder,
+}
 
-const QueryCreated_fromParam1 = () =>
-  queryParam({
-    name: "created_from",
-    description: "Фильтр по дате создания (от)",
-    required: false,
-    example: "2025-01-01T00:00:00.000Z",
-    explode: false,
-    schema: string({
-      format: "date-time",
-      examples: ["2025-01-01T00:00:00.000Z"],
-    }),
-  })
+const QueryCreated_fromParam1 = {
+  description: "Фильтр по дате создания (от)",
+  example: "2025-01-01T00:00:00.000Z",
+  explode: false,
+  schema: string({
+    format: "date-time",
+    examples: ["2025-01-01T00:00:00.000Z"],
+  }),
+}
 
-const QueryCreated_toParam1 = () =>
-  queryParam({
-    name: "created_to",
-    description: "Фильтр по дате создания (до)",
-    required: false,
-    example: "2025-02-01T00:00:00.000Z",
-    explode: false,
-    schema: string({
-      format: "date-time",
-      examples: ["2025-02-01T00:00:00.000Z"],
-    }),
-  })
+const QueryCreated_toParam1 = {
+  description: "Фильтр по дате создания (до)",
+  example: "2025-02-01T00:00:00.000Z",
+  explode: false,
+  schema: string({
+    format: "date-time",
+    examples: ["2025-02-01T00:00:00.000Z"],
+  }),
+}
 
-const QueryActiveParam1 = () =>
-  queryParam({
-    name: "active",
-    description: "Фильтр по активности чата",
-    required: false,
-    explode: false,
-    schema: boolean({
-      examples: [true],
-    }),
-  })
+const QueryActiveParam1 = {
+  description: "Фильтр по активности чата",
+  example: true,
+  explode: false,
+  schema: boolean({
+    examples: [true],
+  }),
+}
 
-const QueryLimitParam2 = () =>
-  queryParam({
-    name: "limit",
-    description: "Количество возвращаемых результатов за один запрос",
-    required: false,
-    explode: false,
-    schema: int32({
-      examples: [10],
-      default: 200,
-      maximum: 200,
-    }),
-  })
+const QueryLimitParam2 = {
+  description: "Количество возвращаемых результатов за один запрос",
+  example: 10,
+  explode: false,
+  schema: int32({
+    examples: [10],
+    default: 200,
+    maximum: 200,
+  }),
+}
 
-const PathIdParam5 = () =>
-  pathParam({
-    name: "id",
-    description: "Идентификатор напоминания",
-    schema: int32({ examples: [22283] }),
-  })
+const PathIdParam5 = {
+  description: "Идентификатор напоминания",
+  example: 22283,
+  schema: int32({ examples: [22283] }),
+}
 
-const PathIdParam6 = () =>
-  pathParam({
-    name: "id",
-    description: "Идентификатор пользователя",
-    schema: int32({ examples: [12] }),
-  })
+const PathIdParam6 = {
+  description: "Идентификатор пользователя",
+  example: 12,
+  schema: int32({ examples: [12] }),
+}
 
-const PathUser_idParam2 = () =>
-  pathParam({
-    name: "user_id",
-    description: "Идентификатор пользователя",
-    schema: int32({ examples: [12] }),
-  })
-
-const LocationHeader = () =>
-  responseHeader({
-    required: true,
-    schema: string({ format: "uri" }),
-  })
+const PathUser_idParam2 = {
+  description: "Идентификатор пользователя",
+  example: 12,
+  schema: int32({ examples: [12] }),
+}
 
 const AccessTokenInfo = () =>
   object(
@@ -3983,8 +3943,10 @@ export default responsibleAPI({
           "Список чатов\n\nМетод для получения списка чатов по заданным параметрам.",
         tags: [tags["Chats"]],
         req: {
-          params: [QueryOrderParam1, QueryLimitParam1, QueryCursorParam1],
           query: {
+            "order?": QueryOrderParam1,
+            "limit?": QueryLimitParam1,
+            "cursor?": QueryCursorParam1,
             "sort?": {
               description: "Поле сортировки",
               example: "id",
@@ -4116,7 +4078,9 @@ export default responsibleAPI({
             "Информация о чате\n\nМетод для получения информации о чате.\n\nДля получения чата вам необходимо знать его `id` и указать его в `URL` запроса.",
           tags: [tags["Chats"]],
           req: {
-            params: [PathIdParam1],
+            pathParams: {
+              id: PathIdParam1,
+            },
           },
           res: {
             200: resp({
@@ -4150,7 +4114,9 @@ export default responsibleAPI({
             "Обновление чата\n\nМетод для обновления параметров чата.\n\nДля обновления нужно знать `id` чата и указать его в `URL`. Все обновляемые поля передаются в теле запроса.",
           tags: [tags["Chats"]],
           req: {
-            params: [PathIdParam1],
+            pathParams: {
+              id: PathIdParam1,
+            },
             body: ChatUpdateRequest,
           },
           res: {
@@ -4194,7 +4160,9 @@ export default responsibleAPI({
             "Архивация чата\n\nМетод для отправки чата в архив.\n\nДля отправки чата в архив вам необходимо знать `id` и указать его в `URL` запроса.",
           tags: [tags["Chats"]],
           req: {
-            params: [PathIdParam1],
+            pathParams: {
+              id: PathIdParam1,
+            },
           },
           res: {
             204: resp({
@@ -4225,7 +4193,9 @@ export default responsibleAPI({
               "Добавление тегов\n\nМетод для добавления тегов в состав участников беседы или канала.\n\nПосле добавления тега все его участники автоматически становятся участниками чата. Состав участников тега и чата синхронизируется автоматически: при добавлении нового участника в тег он сразу появляется в чате, при удалении из тега — удаляется из чата.",
             tags: [tags["Members"]],
             req: {
-              params: [PathIdParam1],
+              pathParams: {
+                id: PathIdParam1,
+              },
               body: AddTagsRequest,
             },
             res: {
@@ -4265,8 +4235,8 @@ export default responsibleAPI({
               "Исключение тега\n\nМетод для исключения тега из состава участников беседы или канала.\n\nДля исключения тега вам необходимо знать его `id` и указать его в `URL` запроса.",
             tags: [tags["Members"]],
             req: {
-              params: [PathIdParam1],
               pathParams: {
+                id: PathIdParam1,
                 tag_id: {
                   description: "Идентификатор тега",
                   example: 86,
@@ -4305,7 +4275,9 @@ export default responsibleAPI({
             "Выход из беседы или канала\n\nМетод для самостоятельного выхода из беседы или канала.",
           tags: [tags["Members"]],
           req: {
-            params: [PathIdParam1],
+            pathParams: {
+              id: PathIdParam1,
+            },
           },
           res: {
             204: resp({
@@ -4345,8 +4317,12 @@ export default responsibleAPI({
               "Список участников чата\n\nМетод для получения актуального списка участников чата.\n\nВладелец пространства может получить состав участников любого чата пространства. Администраторы и боты могут получить список участников только тех чатов, в которых состоят (или которые являются открытыми).",
             tags: [tags["Members"]],
             req: {
-              params: [PathIdParam1, QueryLimitParam1, QueryCursorParam1],
+              pathParams: {
+                id: PathIdParam1,
+              },
               query: {
+                "limit?": QueryLimitParam1,
+                "cursor?": QueryCursorParam1,
                 "role?": {
                   description: "Роль в чате",
                   example: "all",
@@ -4447,11 +4423,14 @@ export default responsibleAPI({
               id: "ChatMemberOperations_updateMemberRole",
               description:
                 "Редактирование роли\n\nМетод для редактирования роли пользователя или бота в беседе или канале.\n\nДля редактирования роли в беседе или канале вам необходимо знать `id` чата и пользователя (или бота) и указать их в `URL` запроса. Все редактируемые параметры роли указываются в теле запроса.\n\nВладельцу чата роль изменить нельзя. Он всегда имеет права Админа в чате.",
-              tags: [tags["Members"]],
-              req: {
-                params: [PathIdParam1, PathUser_idParam1],
-                body: UpdateMemberRoleRequest,
+            tags: [tags["Members"]],
+            req: {
+              pathParams: {
+                id: PathIdParam1,
+                user_id: PathUser_idParam1,
               },
+              body: UpdateMemberRoleRequest,
+            },
               res: {
                 204: resp({
                   description:
@@ -4489,7 +4468,10 @@ export default responsibleAPI({
                 "Исключение пользователя\n\nМетод для исключения пользователя из состава участников беседы или канала.\n\nЕсли пользователь является владельцем чата, то исключить его нельзя. Он может только самостоятельно выйти из чата, воспользовавшись методом [Выход из беседы или канала](DELETE /chats/{id}/leave).",
               tags: [tags["Members"]],
               req: {
-                params: [PathIdParam1, PathUser_idParam1],
+                pathParams: {
+                  id: PathIdParam1,
+                  user_id: PathUser_idParam1,
+                },
               },
               res: {
                 204: resp({
@@ -4521,7 +4503,9 @@ export default responsibleAPI({
             "Разархивация чата\n\nМетод для возвращения чата из архива.\n\nДля разархивации чата вам необходимо знать её `id` и указать его в `URL` запроса.",
           tags: [tags["Chats"]],
           req: {
-            params: [PathIdParam1],
+            pathParams: {
+              id: PathIdParam1,
+            },
           },
           res: {
             204: resp({
@@ -4602,7 +4586,9 @@ export default responsibleAPI({
           res: {
             302: resp({
               description: "Redirection",
-              headerParams: [LocationHeader],
+              headers: {
+                location: string({ format: "uri" }),
+              },
             }),
             401: resp({
               description: "Access is unauthorized.",
@@ -4701,8 +4687,9 @@ export default responsibleAPI({
           "Список тегов сотрудников\n\nМетод для получения актуального списка тегов сотрудников. Названия тегов являются уникальными в компании.",
         tags: [tags["Group tags"]],
         req: {
-          params: [QueryLimitParam1, QueryCursorParam2],
           query: {
+            "limit?": QueryLimitParam1,
+            "cursor?": QueryCursorParam2,
             "names?": {
               description:
                 "Массив названий тегов, по которым вы хотите отфильтровать список",
@@ -4793,7 +4780,9 @@ export default responsibleAPI({
             "Информация о теге\n\nМетод для получения информации о теге. Названия тегов являются уникальными в компании.\n\nДля получения тега вам необходимо знать его `id` и указать его в `URL` запроса.",
           tags: [tags["Group tags"]],
           req: {
-            params: [PathIdParam2],
+            pathParams: {
+              id: PathIdParam2,
+            },
           },
           res: {
             200: resp({
@@ -4827,7 +4816,9 @@ export default responsibleAPI({
             "Редактирование тега\n\nМетод для редактирования тега.\n\nДля редактирования тега вам необходимо знать его `id` и указать его в `URL` запроса. Все редактируемые параметры тега указываются в теле запроса.",
           tags: [tags["Group tags"]],
           req: {
-            params: [PathIdParam2],
+            pathParams: {
+              id: PathIdParam2,
+            },
             body: GroupTagRequest,
           },
           res: {
@@ -4871,7 +4862,9 @@ export default responsibleAPI({
             "Удаление тега\n\nМетод для удаления тега.\n\nДля удаления тега вам необходимо знать его `id` и указать его в `URL` запроса.",
           tags: [tags["Group tags"]],
           req: {
-            params: [PathIdParam2],
+            pathParams: {
+              id: PathIdParam2,
+            },
           },
           res: {
             204: resp({
@@ -4905,7 +4898,13 @@ export default responsibleAPI({
             "Список сотрудников тега\n\nМетод для получения актуального списка сотрудников тега.",
           tags: [tags["Group tags"]],
           req: {
-            params: [PathIdParam2, QueryLimitParam1, QueryCursorParam2],
+            pathParams: {
+              id: PathIdParam2,
+            },
+            query: {
+              "limit?": QueryLimitParam1,
+              "cursor?": QueryCursorParam2,
+            },
           },
           res: {
             200: resp({
@@ -4956,8 +4955,10 @@ export default responsibleAPI({
           "Список сообщений чата\n\nМетод для получения списка сообщений бесед, каналов, тредов и личных сообщений.\n\nДля получения сообщений вам необходимо знать `chat_id` требуемой беседы, канала, треда или диалога, и указать его в `URL` запроса. Сообщения будут возвращены в порядке убывания даты отправки (то есть, сначала будут идти последние сообщения чата). Для получения более ранних сообщений чата доступны параметры `limit` и `cursor`.",
         tags: [tags["Messages"]],
         req: {
-          params: [QueryOrderParam1, QueryLimitParam1, QueryCursorParam2],
           query: {
+            "order?": QueryOrderParam1,
+            "limit?": QueryLimitParam1,
+            "cursor?": QueryCursorParam2,
             chat_id: {
               description:
                 "Идентификатор чата (беседа, канал, диалог или чат треда)",
@@ -5064,7 +5065,9 @@ export default responsibleAPI({
             "Информация о сообщении\n\nМетод для получения информации о сообщении.\n\nДля получения сообщения вам необходимо знать его `id` и указать его в `URL` запроса.",
           tags: [tags["Messages"]],
           req: {
-            params: [PathIdParam3],
+            pathParams: {
+              id: PathIdParam3,
+            },
           },
           res: {
             200: resp({
@@ -5098,7 +5101,9 @@ export default responsibleAPI({
             "Редактирование сообщения\n\nМетод для редактирования сообщения или комментария.\n\nДля редактирования сообщения вам необходимо знать его `id` и указать его в `URL` запроса. Все редактируемые параметры сообщения указываются в теле запроса.",
           tags: [tags["Messages"]],
           req: {
-            params: [PathIdParam3],
+            pathParams: {
+              id: PathIdParam3,
+            },
             body: MessageUpdateRequest,
           },
           res: {
@@ -5142,7 +5147,9 @@ export default responsibleAPI({
             "Удаление сообщения\n\nМетод для удаления сообщения.\n\nУдаление сообщения доступно отправителю, админам и редакторам в чате. В личных сообщениях оба пользователя являются редакторами. Ограничений по давности отправки сообщения нет.\n\nДля удаления сообщения вам необходимо знать его `id` и указать его в `URL` запроса.",
           tags: [tags["Messages"]],
           req: {
-            params: [PathIdParam3],
+            pathParams: {
+              id: PathIdParam3,
+            },
           },
           res: {
             204: resp({
@@ -5176,7 +5183,9 @@ export default responsibleAPI({
             "Unfurl (разворачивание ссылок)\n\nМетод для создания предпросмотров ссылок в сообщениях. Доступен только для Unfurl-ботов.",
           tags: [tags["Link Previews"]],
           req: {
-            params: [PathIdParam3],
+            pathParams: {
+              id: PathIdParam3,
+            },
             body: LinkPreviewsRequest,
           },
           res: {
@@ -5217,7 +5226,9 @@ export default responsibleAPI({
               "Закрепление сообщения\n\nМетод для закрепления сообщения в чате.\n\nДля закрепления сообщения вам необходимо знать `id` сообщения и указать его в `URL` запроса.",
             tags: [tags["Messages"]],
             req: {
-              params: [PathIdParam3],
+              pathParams: {
+                id: PathIdParam3,
+              },
             },
             res: {
               204: resp({
@@ -5250,7 +5261,9 @@ export default responsibleAPI({
               "Открепление сообщения\n\nМетод для открепления сообщения из чата.\n\nДля открепления сообщения вам необходимо знать `id` сообщения и указать его в `URL` запроса.",
             tags: [tags["Messages"]],
             req: {
-              params: [PathIdParam3],
+              pathParams: {
+                id: PathIdParam3,
+              },
             },
             res: {
               204: resp({
@@ -5282,7 +5295,13 @@ export default responsibleAPI({
               "Список реакций\n\nМетод для получения актуального списка реакций на сообщение.",
             tags: [tags["Reactions"]],
             req: {
-              params: [PathIdParam3, QueryLimitParam1, QueryCursorParam2],
+              pathParams: {
+                id: PathIdParam3,
+              },
+              query: {
+                "limit?": QueryLimitParam1,
+                "cursor?": QueryCursorParam2,
+              },
             },
             res: {
               200: resp({
@@ -5326,7 +5345,9 @@ export default responsibleAPI({
               "Добавление реакции\n\nМетод для добавления реакции на сообщение.\n\nДля добавления реакции вам необходимо знать `id` сообщения и указать его в `URL` запроса. Реакции на сообщения отправляются в виде символов `Emoji`. Если пользователь уже ставил реакцию - повторно она установлена не будет. Для удаления реакции надо воспользоваться методом [Удаление реакции](DELETE /messages/{id}/reactions).\n\n**Лимиты реакций:**\n\n- Каждый пользователь может установить не более **20 уникальных** реакций\n- Сообщение может иметь не более **30 уникальных** реакций\n- Общее количество реакций на сообщение не может превышать **1000**",
             tags: [tags["Reactions"]],
             req: {
-              params: [PathIdParam4],
+              pathParams: {
+                id: PathIdParam4,
+              },
               body: ReactionRequest,
             },
             res: {
@@ -5367,7 +5388,9 @@ export default responsibleAPI({
               "Удаление реакции\n\nМетод для удаления реакции на сообщение.\n\nДля удаления реакции вам необходимо знать `id` сообщения и указать его в `URL` запроса. Реакции на сообщения хранятся в виде символов `Emoji`.\n\nУдалять можно только те реакции, которые были поставлены авторизованным пользователем.",
             tags: [tags["Reactions"]],
             req: {
-              params: [PathIdParam4],
+              pathParams: {
+                id: PathIdParam4,
+              },
               query: {
                 code: {
                   description: "Emoji символ реакции",
@@ -5426,8 +5449,11 @@ export default responsibleAPI({
             "Список прочитавших сообщение\n\nМетод для получения актуального списка пользователей, прочитавших сообщение.",
           tags: [tags["Read members"]],
           req: {
-            params: [PathIdParam3, QueryCursorParam2],
+            pathParams: {
+              id: PathIdParam3,
+            },
             query: {
+              "cursor?": QueryCursorParam2,
               "limit?": {
                 description: "Количество возвращаемых сущностей за один запрос",
                 example: 300,
@@ -5729,14 +5755,12 @@ export default responsibleAPI({
           "Поиск чатов\n\nМетод для полнотекстового поиска каналов и бесед.",
         tags: [tags["Search"]],
         req: {
-          params: [
-            QueryCursorParam1,
-            QueryOrderParam2,
-            QueryCreated_fromParam1,
-            QueryCreated_toParam1,
-            QueryActiveParam1,
-          ],
           query: {
+            "cursor?": QueryCursorParam1,
+            "order?": QueryOrderParam2,
+            "created_from?": QueryCreated_fromParam1,
+            "created_to?": QueryCreated_toParam1,
+            "active?": QueryActiveParam1,
             "query?": {
               description: "Текст поискового запроса",
               example: "Разработка",
@@ -5809,15 +5833,13 @@ export default responsibleAPI({
           "Поиск сообщений\n\nМетод для полнотекстового поиска сообщений.",
         tags: [tags["Search"]],
         req: {
-          params: [
-            QueryLimitParam2,
-            QueryCursorParam1,
-            QueryOrderParam2,
-            QueryCreated_fromParam1,
-            QueryCreated_toParam1,
-            QueryActiveParam1,
-          ],
           query: {
+            "limit?": QueryLimitParam2,
+            "cursor?": QueryCursorParam1,
+            "order?": QueryOrderParam2,
+            "created_from?": QueryCreated_fromParam1,
+            "created_to?": QueryCreated_toParam1,
+            "active?": QueryActiveParam1,
             "query?": {
               description: "Текст поискового запроса",
               example: "футболки",
@@ -5882,14 +5904,12 @@ export default responsibleAPI({
           "Поиск сотрудников\n\nМетод для полнотекстового поиска сотрудников по имени, email, должности и другим полям.",
         tags: [tags["Search"]],
         req: {
-          params: [
-            QueryLimitParam2,
-            QueryCursorParam1,
-            QueryOrderParam2,
-            QueryCreated_fromParam1,
-            QueryCreated_toParam1,
-          ],
           query: {
+            "limit?": QueryLimitParam2,
+            "cursor?": QueryCursorParam1,
+            "order?": QueryOrderParam2,
+            "created_from?": QueryCreated_fromParam1,
+            "created_to?": QueryCreated_toParam1,
             "query?": {
               description: "Текст поискового запроса",
               example: "Олег",
@@ -5954,7 +5974,10 @@ export default responsibleAPI({
           "Список напоминаний\n\nМетод для получения списка напоминаний.",
         tags: [tags["Tasks"]],
         req: {
-          params: [QueryLimitParam1, QueryCursorParam2],
+          query: {
+            "limit?": QueryLimitParam1,
+            "cursor?": QueryCursorParam2,
+          },
         },
         res: {
           200: resp({
@@ -6039,7 +6062,9 @@ export default responsibleAPI({
             "Информация о напоминании\n\nМетод для получения информации о напоминании.\n\nДля получения напоминания вам необходимо знать его `id` и указать его в `URL` запроса.",
           tags: [tags["Tasks"]],
           req: {
-            params: [PathIdParam5],
+            pathParams: {
+              id: PathIdParam5,
+            },
           },
           res: {
             200: resp({
@@ -6073,7 +6098,9 @@ export default responsibleAPI({
             "Редактирование напоминания\n\nМетод для редактирования напоминания.\n\nДля редактирования напоминания вам необходимо знать его `id` и указать его в `URL` запроса. Все редактируемые параметры напоминания указываются в теле запроса.",
           tags: [tags["Tasks"]],
           req: {
-            params: [PathIdParam5],
+            pathParams: {
+              id: PathIdParam5,
+            },
             body: TaskUpdateRequest,
           },
           res: {
@@ -6117,7 +6144,9 @@ export default responsibleAPI({
             "Удаление напоминания\n\nМетод для удаления напоминания.\n\nДля удаления напоминания вам необходимо знать его `id` и указать его в `URL` запроса.",
           tags: [tags["Tasks"]],
           req: {
-            params: [PathIdParam5],
+            pathParams: {
+              id: PathIdParam5,
+            },
           },
           res: {
             204: resp({
@@ -6226,8 +6255,9 @@ export default responsibleAPI({
           "Список сотрудников\n\nМетод для получения актуального списка сотрудников вашей компании.",
         tags: [tags["Users"]],
         req: {
-          params: [QueryLimitParam1, QueryCursorParam2],
           query: {
+            "limit?": QueryLimitParam1,
+            "cursor?": QueryCursorParam2,
             "query?": {
               description:
                 "Поисковая фраза для фильтрации результатов. Поиск работает по полям: `first_name` (имя), `last_name` (фамилия), `email` (электронная почта), `phone_number` (телефон) и `nickname` (никнейм).",
@@ -6322,7 +6352,9 @@ export default responsibleAPI({
             "Информация о сотруднике\n\nМетод для получения информации о сотруднике.\n\nДля получения сотрудника вам необходимо знать его `id` и указать его в `URL` запроса.",
           tags: [tags["Users"]],
           req: {
-            params: [PathIdParam6],
+            pathParams: {
+              id: PathIdParam6,
+            },
           },
           res: {
             200: resp({
@@ -6356,7 +6388,9 @@ export default responsibleAPI({
             "Редактирование сотрудника\n\nМетод для редактирования сотрудника.\n\nДля редактирования сотрудника вам необходимо знать его `id` и указать его в `URL` запроса. Все редактируемые параметры сотрудника указываются в теле запроса. Получить актуальный список идентификаторов дополнительных полей сотрудника вы можете в методе [Список дополнительных полей](GET /custom_properties).",
           tags: [tags["Users"]],
           req: {
-            params: [PathIdParam6],
+            pathParams: {
+              id: PathIdParam6,
+            },
             body: UserUpdateRequest,
           },
           res: {
@@ -6400,7 +6434,9 @@ export default responsibleAPI({
             "Удаление сотрудника\n\nМетод для удаления сотрудника.\n\nДля удаления сотрудника вам необходимо знать его `id` и указать его в `URL` запроса.",
           tags: [tags["Users"]],
           req: {
-            params: [PathIdParam6],
+            pathParams: {
+              id: PathIdParam6,
+            },
           },
           res: {
             204: resp({
@@ -6437,7 +6473,9 @@ export default responsibleAPI({
               "Загрузка аватара сотрудника\n\nМетод для загрузки или обновления аватара сотрудника. Файл передается в формате `multipart/form-data`.",
             tags: [tags["Users"]],
             req: {
-              params: [PathUser_idParam2],
+              pathParams: {
+                user_id: PathUser_idParam2,
+              },
               body: {
                 "multipart/form-data": object({
                   image: string({
@@ -6483,7 +6521,9 @@ export default responsibleAPI({
               "Удаление аватара сотрудника\n\nМетод для удаления аватара сотрудника.",
             tags: [tags["Users"]],
             req: {
-              params: [PathUser_idParam2],
+              pathParams: {
+                user_id: PathUser_idParam2,
+              },
             },
             res: {
               204: resp({
@@ -6519,7 +6559,9 @@ export default responsibleAPI({
               "Статус сотрудника\n\nМетод для получения информации о статусе сотрудника.",
             tags: [tags["Users"]],
             req: {
-              params: [PathUser_idParam2],
+              pathParams: {
+                user_id: PathUser_idParam2,
+              },
             },
             res: {
               200: resp({
@@ -6552,7 +6594,9 @@ export default responsibleAPI({
               "Новый статус сотрудника\n\nМетод для установки нового статуса сотруднику.",
             tags: [tags["Users"]],
             req: {
-              params: [PathUser_idParam2],
+              pathParams: {
+                user_id: PathUser_idParam2,
+              },
               body: StatusUpdateRequest,
             },
             res: {
@@ -6592,7 +6636,9 @@ export default responsibleAPI({
               "Удаление статуса сотрудника\n\nМетод для удаления статуса сотрудника.",
             tags: [tags["Users"]],
             req: {
-              params: [PathUser_idParam2],
+              pathParams: {
+                user_id: PathUser_idParam2,
+              },
             },
             res: {
               204: resp({
@@ -6672,7 +6718,10 @@ export default responsibleAPI({
             "История событий\n\nМетод для получения истории последних событий бота. Данный метод будет полезен, если вы не можете получать события в реальном времени на ваш `URL`, но вам требуется обрабатывать все события, на которые вы подписались.\n\nИстория событий сохраняется только при активном пункте «Сохранять историю событий» во вкладке «Исходящий webhook» настроек бота. При этом указывать «Webhook `URL`» не требуется.\n\nДля получения истории событий конкретного бота вам необходимо знать его `access_token` и использовать его при запросе. Каждое событие представляет `JSON` объект вебхука.",
           tags: [tags["Bots"]],
           req: {
-            params: [QueryLimitParam1, QueryCursorParam1],
+            query: {
+              "limit?": QueryLimitParam1,
+              "cursor?": QueryCursorParam1,
+            },
           },
           res: {
             200: resp({
