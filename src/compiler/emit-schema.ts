@@ -96,15 +96,17 @@ const emitDict = (
   state: ComponentRegistryState,
   schema: Dict,
 ): oas31.SchemaObject => {
+  const propertyNames =
+    "propertyNames" in schema && schema.propertyNames !== undefined
+      ? emitSchemaRefOrValue(state, schema.propertyNames)
+      : undefined
   const out: oas31.SchemaObject = {
     ...schemaBaseFields(schema),
     additionalProperties: emitSchemaRefOrValue(
       state,
       schema.additionalProperties,
     ),
-    ...("propertyNames" in schema
-      ? { propertyNames: emitSchemaRefOrValue(state, schema.propertyNames) }
-      : {}),
+    ...(propertyNames !== undefined ? { propertyNames } : {}),
   }
 
   return out
