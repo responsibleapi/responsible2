@@ -2,9 +2,9 @@ import type { NameWithOptionality } from "./dsl.ts"
 import type { HttpMethod } from "./methods.ts"
 import type { Nameable } from "./nameable.ts"
 import type {
-  InlineHeaderParam,
-  InlineQueryParam,
+  HeaderParams,
   PathParams,
+  QueryParams,
   ReusableParam,
 } from "./params.ts"
 import type { ReusableHeader } from "./response-headers.ts"
@@ -19,8 +19,8 @@ export interface GetOpReq {
   readonly "security?"?: Security
 
   readonly pathParams?: PathParams
-  readonly query?: Record<NameWithOptionality, Schema | InlineQueryParam>
-  readonly headers?: Record<NameWithOptionality, Schema | InlineHeaderParam>
+  readonly query?: QueryParams
+  readonly headers?: HeaderParams
 
   /**
    * The dedicated reuse mechanism for OpenAPI parameters. Keep one-off params

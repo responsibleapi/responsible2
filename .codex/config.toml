@@ -1,2 +1,16 @@
 [features]
 codex_hooks = true
+
+[mcp_servers.code-review-graph]
+command = "code-review-graph"
+args = ["serve"]
+type = "stdio"
+
+[mcp_servers.code-review-graph.tools.get_minimal_context_tool]
+approval_mode = "approve"
+
+[mcp_servers.code-review-graph.tools.build_or_update_graph_tool]
+approval_mode = "approve"
+
+[mcp_servers.code-review-graph.tools.list_graph_stats_tool]
+approval_mode = "approve"

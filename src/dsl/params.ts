@@ -1,29 +1,29 @@
-import type { OptionalKey } from "./dsl.ts"
+import type { NameWithOptionality, OptionalKey } from "./dsl.ts"
 import type { Nameable } from "./nameable.ts"
 import type { Schema } from "./schema.ts"
 
-interface ParamBase {
+interface ReusedParamBase {
   name: string
   description?: string
-  schema?: Schema
+  schema: Schema
   example?: string
 }
 
-export interface QueryParamRaw extends ParamBase {
+export interface QueryParamRaw extends ReusedParamBase {
   in: "query"
   required?: boolean
   style?: "form"
   explode?: boolean
 }
 
-export interface PathParamRaw extends ParamBase {
+export interface PathParamRaw extends ReusedParamBase {
   in: "path"
   required: true
   style?: "simple" | "label" | "matrix"
   explode?: boolean
 }
 
-export interface HeaderParamRaw extends ParamBase {
+export interface HeaderParamRaw extends ReusedParamBase {
   in: "header"
   required?: boolean
   style?: "simple"
@@ -53,36 +53,72 @@ export const headerParam = (r: Omit<HeaderParamRaw, "in">): HeaderParamRaw => ({
   in: "header",
 })
 
+/**
+ * **DSL**
+ *
+ * Record-style params with extra stuff, not just plain {@link Schema}
+ *
+ * **Compiler**
+ *
+ * Emits:
+ *
+ * - `name` from prop name
+ * - 'required` from prop name, depends on {@link NameWithOptionality}
+ * - `schema` from {@link schema}
+ *
+ * @dsl
+ *
+ * @see {@link GetOpReq}
+ */
 interface InlineParamBase {
+  schema: Schema
   description?: string
   example?: unknown
-  schema: Schema
 }
 
-/** @dsl */
+/** @see {@link PathParams} */
 export interface InlinePathParam extends InlineParamBase {
   style?: "simple" | "label" | "matrix"
   explode?: boolean
 }
 
-/** @dsl */
+/** @see {@link QueryParams} */
 export interface InlineQueryParam extends InlineParamBase {
   style?: "form"
   explode?: boolean
 }
 
-/** @dsl */
+/** @see {@link HeaderParams} */
 export interface InlineHeaderParam extends InlineParamBase {
   style?: "simple"
   explode?: boolean
 }
 
 /**
+ * **DSL**
+ *
  * Path params are always required to build the path, so names with the "?"
  * suffix are rejected by forcing those keys to `never`
  *
+ * **Compiler**
+ *
+ * Emits:
+ *
+ * - `name` from property name
+ * - `required: true` always
+ * - `schema` from {@link Schema} or {@link InlinePathParam.schema}
+ *
  * @dsl
+ *
+ * @see {@link PathParamRaw.required}
  */
 export interface PathParams extends Record<string, Schema | InlinePathParam> {
   readonly [name: OptionalKey]: never
 }
+
+export type QueryParams = Record<NameWithOptionality, Schema | InlineQueryParam>
+
+export type HeaderParams = Record<
+  NameWithOptionality,
+  Schema | InlineHeaderParam
+>

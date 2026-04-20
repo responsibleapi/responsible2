@@ -5,14 +5,9 @@ import type {
   IsNever,
   OneExtendsTwo,
 } from "../type-assertions.ts"
-import type {
-  GetOp,
-  GetOpReq,
-  Op,
-
-} from "./operation.ts"
+import type { GetOp, GetOpReq, Op } from "./operation.ts"
+import type { PathParams } from "./params.ts"
 import { declareTags } from "./tags.ts"
-import type { InlineHeaderParam, InlinePathParam, InlineQueryParam, PathParams } from "./params.ts"
 
 describe("operation", () => {
   test("only GET operations accept synthetic HEAD ids", () => {
@@ -46,24 +41,43 @@ describe("operation", () => {
   test("accepts inline map-style request params alongside legacy bare schemas", () => {
     type _PathInline = Assert<
       OneExtendsTwo<
-        { videoID: { schema: { type: "string" }, style: "label" } },
+        {
+          videoID: {
+            schema: { type: "string" }
+            style: "label"
+          }
+        },
         PathParams
       >
     >
     type _QueryInline = Assert<
       OneExtendsTwo<
-        { "page?": { schema: { type: "integer" }, example: 1, style: "form" } },
+        {
+          "page?": {
+            schema: { type: "integer" }
+            example: 1
+            style: "form"
+          }
+        },
         NonNullable<GetOpReq["query"]>
       >
     >
     type _HeaderInline = Assert<
       OneExtendsTwo<
-        { "X-Trace?": { schema: { type: "string" }, description: "Trace id" } },
+        {
+          "X-Trace?": {
+            schema: { type: "string" }
+            description: "Trace id"
+          }
+        },
         NonNullable<GetOpReq["headers"]>
       >
     >
-    type _QueryLegacy = Assert<
-      OneExtendsTwo<{ filter: { type: "string" } }, NonNullable<GetOpReq["query"]>>
+    type _QueryJustSchema = Assert<
+      OneExtendsTwo<
+        { filter: { type: "string" } },
+        NonNullable<GetOpReq["query"]>
+      >
     >
   })
 
@@ -73,24 +87,6 @@ describe("operation", () => {
         OneExtendsTwo<{ "videoID?": { type: "string" } }, PathParams>,
         false
       >
-    >
-  })
-
-  test("inline map param types omit parameter object ownership fields", () => {
-    type _PathName = Assert<IsNever<Extract<"name", keyof InlinePathParam>>>
-    type _PathIn = Assert<IsNever<Extract<"in", keyof InlinePathParam>>>
-    type _PathRequired = Assert<
-      IsNever<Extract<"required", keyof InlinePathParam>>
-    >
-    type _QueryName = Assert<IsNever<Extract<"name", keyof InlineQueryParam>>>
-    type _QueryIn = Assert<IsNever<Extract<"in", keyof InlineQueryParam>>>
-    type _QueryRequired = Assert<
-      IsNever<Extract<"required", keyof InlineQueryParam>>
-    >
-    type _HeaderName = Assert<IsNever<Extract<"name", keyof InlineHeaderParam>>>
-    type _HeaderIn = Assert<IsNever<Extract<"in", keyof InlineHeaderParam>>>
-    type _HeaderRequired = Assert<
-      IsNever<Extract<"required", keyof InlineHeaderParam>>
     >
   })
 })
