@@ -1,6 +1,7 @@
 import { responsibleAPI } from "../dsl/dsl.ts"
 import { DELETE, GET, POST, PUT } from "../dsl/methods.ts"
 import { resp } from "../dsl/operation.ts"
+import type { InlinePathParam, InlineQueryParam } from "../dsl/params.ts"
 import {
   allOf,
   anyOf,
@@ -81,19 +82,17 @@ const QueryLimitParam1 = {
   }),
 }
 
-const QueryCursorParam1 = {
+const paginationParam: InlineQueryParam = {
   description: "Курсор для пагинации (из meta.paginate.next_page)",
   example: "eyJpZCI6MTAsImRpciI6ImFzYyJ9",
   explode: false,
   schema: string({ examples: ["eyJpZCI6MTAsImRpciI6ImFzYyJ9"] }),
 }
 
-const PathIdParam1 = {
+const chatIDParam: InlinePathParam = {
   description: "Идентификатор чата",
   example: 334,
-  schema: int32({
-    examples: [334],
-  }),
+  schema: int32({ examples: [334] }),
 }
 
 const PathUser_idParam1 = {
@@ -3946,7 +3945,7 @@ export default responsibleAPI({
           query: {
             "order?": QueryOrderParam1,
             "limit?": QueryLimitParam1,
-            "cursor?": QueryCursorParam1,
+            "cursor?": paginationParam,
             "sort?": {
               description: "Поле сортировки",
               example: "id",
@@ -4079,7 +4078,7 @@ export default responsibleAPI({
           tags: [tags["Chats"]],
           req: {
             pathParams: {
-              id: PathIdParam1,
+              id: chatIDParam,
             },
           },
           res: {
@@ -4115,7 +4114,7 @@ export default responsibleAPI({
           tags: [tags["Chats"]],
           req: {
             pathParams: {
-              id: PathIdParam1,
+              id: chatIDParam,
             },
             body: ChatUpdateRequest,
           },
@@ -4161,7 +4160,7 @@ export default responsibleAPI({
           tags: [tags["Chats"]],
           req: {
             pathParams: {
-              id: PathIdParam1,
+              id: chatIDParam,
             },
           },
           res: {
@@ -4194,7 +4193,7 @@ export default responsibleAPI({
             tags: [tags["Members"]],
             req: {
               pathParams: {
-                id: PathIdParam1,
+                id: chatIDParam,
               },
               body: AddTagsRequest,
             },
@@ -4236,7 +4235,7 @@ export default responsibleAPI({
             tags: [tags["Members"]],
             req: {
               pathParams: {
-                id: PathIdParam1,
+                id: chatIDParam,
                 tag_id: {
                   description: "Идентификатор тега",
                   example: 86,
@@ -4276,7 +4275,7 @@ export default responsibleAPI({
           tags: [tags["Members"]],
           req: {
             pathParams: {
-              id: PathIdParam1,
+              id: chatIDParam,
             },
           },
           res: {
@@ -4318,11 +4317,11 @@ export default responsibleAPI({
             tags: [tags["Members"]],
             req: {
               pathParams: {
-                id: PathIdParam1,
+                id: chatIDParam,
               },
               query: {
                 "limit?": QueryLimitParam1,
-                "cursor?": QueryCursorParam1,
+                "cursor?": paginationParam,
                 "role?": {
                   description: "Роль в чате",
                   example: "all",
@@ -4423,14 +4422,14 @@ export default responsibleAPI({
               id: "ChatMemberOperations_updateMemberRole",
               description:
                 "Редактирование роли\n\nМетод для редактирования роли пользователя или бота в беседе или канале.\n\nДля редактирования роли в беседе или канале вам необходимо знать `id` чата и пользователя (или бота) и указать их в `URL` запроса. Все редактируемые параметры роли указываются в теле запроса.\n\nВладельцу чата роль изменить нельзя. Он всегда имеет права Админа в чате.",
-            tags: [tags["Members"]],
-            req: {
-              pathParams: {
-                id: PathIdParam1,
-                user_id: PathUser_idParam1,
+              tags: [tags["Members"]],
+              req: {
+                pathParams: {
+                  id: chatIDParam,
+                  user_id: PathUser_idParam1,
+                },
+                body: UpdateMemberRoleRequest,
               },
-              body: UpdateMemberRoleRequest,
-            },
               res: {
                 204: resp({
                   description:
@@ -4469,7 +4468,7 @@ export default responsibleAPI({
               tags: [tags["Members"]],
               req: {
                 pathParams: {
-                  id: PathIdParam1,
+                  id: chatIDParam,
                   user_id: PathUser_idParam1,
                 },
               },
@@ -4504,7 +4503,7 @@ export default responsibleAPI({
           tags: [tags["Chats"]],
           req: {
             pathParams: {
-              id: PathIdParam1,
+              id: chatIDParam,
             },
           },
           res: {
@@ -5756,7 +5755,7 @@ export default responsibleAPI({
         tags: [tags["Search"]],
         req: {
           query: {
-            "cursor?": QueryCursorParam1,
+            "cursor?": paginationParam,
             "order?": QueryOrderParam2,
             "created_from?": QueryCreated_fromParam1,
             "created_to?": QueryCreated_toParam1,
@@ -5835,7 +5834,7 @@ export default responsibleAPI({
         req: {
           query: {
             "limit?": QueryLimitParam2,
-            "cursor?": QueryCursorParam1,
+            "cursor?": paginationParam,
             "order?": QueryOrderParam2,
             "created_from?": QueryCreated_fromParam1,
             "created_to?": QueryCreated_toParam1,
@@ -5906,7 +5905,7 @@ export default responsibleAPI({
         req: {
           query: {
             "limit?": QueryLimitParam2,
-            "cursor?": QueryCursorParam1,
+            "cursor?": paginationParam,
             "order?": QueryOrderParam2,
             "created_from?": QueryCreated_fromParam1,
             "created_to?": QueryCreated_toParam1,
@@ -6720,7 +6719,7 @@ export default responsibleAPI({
           req: {
             query: {
               "limit?": QueryLimitParam1,
-              "cursor?": QueryCursorParam1,
+              "cursor?": paginationParam,
             },
           },
           res: {
