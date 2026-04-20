@@ -1,46 +1,17 @@
-import type { NameWithOptionality, OptionalKey } from "./dsl.ts"
+import type { NameWithOptionality } from "./dsl.ts"
 import type { HttpMethod } from "./methods.ts"
 import type { Nameable } from "./nameable.ts"
-import type { ReusableParam } from "./params.ts"
+import type {
+  InlineHeaderParam,
+  InlineQueryParam,
+  PathParams,
+  ReusableParam,
+} from "./params.ts"
 import type { ReusableHeader } from "./response-headers.ts"
 import type { Schema } from "./schema.ts"
 import type { Mime } from "./scope.ts"
 import type { Security } from "./security.ts"
 import type { DeclaredTags, OpTags } from "./tags.ts"
-
-interface InlineParamBase {
-  description?: string
-  example?: unknown
-  schema: Schema
-}
-
-/** @dsl */
-export interface InlinePathParam extends InlineParamBase {
-  style?: "simple" | "label" | "matrix"
-  explode?: boolean
-}
-
-/** @dsl */
-export interface InlineQueryParam extends InlineParamBase {
-  style?: "form"
-  explode?: boolean
-}
-
-/** @dsl */
-export interface InlineHeaderParam extends InlineParamBase {
-  style?: "simple"
-  explode?: boolean
-}
-
-/**
- * Path params are always required to build the path, so names with the "?"
- * suffix are rejected by forcing those keys to `never`
- *
- * @dsl
- */
-export interface PathParams extends Record<string, Schema | InlinePathParam> {
-  readonly [name: OptionalKey]: never
-}
 
 export interface GetOpReq {
   readonly security?: Security

@@ -3,12 +3,9 @@ import { isOptional, type NameWithOptionality } from "../dsl/dsl.ts"
 import type { Nameable } from "../dsl/nameable.ts"
 import { decodeNameable } from "../dsl/nameable.ts"
 import type {
-  InlineHeaderParam,
-  InlinePathParam,
-  InlineQueryParam,
   ReqAugmentation,
 } from "../dsl/operation.ts"
-import type { ReusableParam, ParamRaw } from "../dsl/params.ts"
+import type { ReusableParam, ParamRaw, InlineHeaderParam, InlineQueryParam, InlinePathParam } from "../dsl/params.ts"
 import type { Schema } from "../dsl/schema.ts"
 import type { Security } from "../dsl/security.ts"
 import { getAttachedSecuritySchemes } from "../dsl/security.ts"

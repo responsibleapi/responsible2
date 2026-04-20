@@ -6,11 +6,10 @@ import type {
   Op,
   OpBase,
   OpResponses,
-  PathParams,
   ReqAugmentation,
   RespAugmentation,
 } from "./operation.ts"
-import type { ReusableParam } from "./params.ts"
+import type { PathParams, ReusableParam } from "./params.ts"
 import type { DeclaredTags, OpTags } from "./tags.ts"
 
 export type Mime = `${string}/${string}`

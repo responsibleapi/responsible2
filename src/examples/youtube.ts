@@ -8275,10 +8275,16 @@ export default responsibleAPI({
           "Retrieves the ratings that the authorized user gave to a list of specified videos.",
         id: "youtube.videos.getRating",
         req: {
-          params: [onBehalfOfContentOwnerSchemaCms],
-          query: {
-            id: array(string()),
-          },
+          params: [
+            onBehalfOfContentOwnerSchemaCms,
+            queryParam({
+              required: true,
+              schema: array(string()),
+              explode: true,
+              style: "form",
+              name: "id",
+            }),
+          ],
         },
         res: {
           200: resp({

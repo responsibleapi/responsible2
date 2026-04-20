@@ -8,13 +8,11 @@ import type {
 import type {
   GetOp,
   GetOpReq,
-  InlineHeaderParam,
-  InlinePathParam,
-  InlineQueryParam,
   Op,
-  PathParams,
+
 } from "./operation.ts"
 import { declareTags } from "./tags.ts"
+import type { InlineHeaderParam, InlinePathParam, InlineQueryParam, PathParams } from "./params.ts"
 
 describe("operation", () => {
   test("only GET operations accept synthetic HEAD ids", () => {
