@@ -116,6 +116,7 @@ export interface PathParams extends Record<string, Schema | InlinePathParam> {
   readonly [name: OptionalKey]: never
 }
 
+/** @see {@link InlineParamBase} */
 export type QueryParams = Record<NameWithOptionality, Schema | InlineQueryParam>
 
 export type HeaderParams = Record<
