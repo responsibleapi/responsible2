@@ -531,7 +531,7 @@ export default responsibleAPI({
       },
     }),
     "/api-specification": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags["API Specification"]],
         req: {
           security: basicAuth,
@@ -587,7 +587,7 @@ export default responsibleAPI({
       },
     }),
     "/api-specification/:id": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags["API Specification"]],
         req: {
           security: basicAuth,
@@ -649,7 +649,7 @@ export default responsibleAPI({
       },
     }),
     "/apply": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags["Apply to ReadMe"]],
         req: { mime: "application/json" },
         res: { mime: "application/json" },
@@ -681,7 +681,7 @@ export default responsibleAPI({
       },
     }),
     "/categories": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.Categories],
         req: {
           mime: "application/json",
@@ -719,7 +719,7 @@ export default responsibleAPI({
       },
     }),
     "/categories/:slug": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.Categories],
         req: {
           mime: "application/json",
@@ -784,7 +784,7 @@ export default responsibleAPI({
       },
     }),
     "/changelogs": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.Changelog],
         req: {
           mime: "application/json",
@@ -823,7 +823,7 @@ export default responsibleAPI({
       },
     }),
     "/changelogs/:slug": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.Changelog],
         req: {
           mime: "application/json",
@@ -884,7 +884,7 @@ export default responsibleAPI({
       },
     }),
     "/custompages": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags["Custom Pages"]],
         req: {
           mime: "application/json",
@@ -924,7 +924,7 @@ export default responsibleAPI({
       },
     }),
     "/custompages/:slug": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags["Custom Pages"]],
         req: {
           mime: "application/json",
@@ -980,7 +980,7 @@ export default responsibleAPI({
       },
     }),
     "/docs/:slug": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.Docs],
         req: {
           mime: "application/json",
@@ -1109,7 +1109,7 @@ export default responsibleAPI({
       },
     }),
     "/version": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.Version],
         req: {
           mime: "application/json",
@@ -1156,7 +1156,7 @@ export default responsibleAPI({
       },
     }),
     "/version/:versionId": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.Version],
         req: {
           mime: "application/json",

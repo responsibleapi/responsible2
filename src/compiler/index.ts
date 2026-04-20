@@ -22,6 +22,7 @@ import type {
   ForEachPath,
   HttpPath,
   Mime,
+  Scope,
   ScopeOpts,
   ScopeRes,
 } from "../dsl/scope.ts"
@@ -376,46 +377,12 @@ function scopePathLevelReqFromRoutes(
   return undefined
 }
 
-function scopeForEachPathFromRoutes(
-  routes: Record<string, unknown>,
-): ReqAugmentation | undefined {
-  const forEachPath = routes["forEachPath"]
-
-  return isRecord(forEachPath)
-    ? scopePathLevelReqFromRoutes(forEachPath)
-    : undefined
-}
-
 function scopeForEachOpFromScopeNode(
   scopeNode: Record<string, unknown>,
 ): ScopeOpts | undefined {
   const forEachOp = scopeNode["forEachOp"]
 
-  if (isRecord(forEachOp)) {
-    return forEachOp as ScopeOpts
-  }
-
-  const forAll = scopeNode["forAll"]
-
-  if (isRecord(forAll)) {
-    return forAll as ScopeOpts
-  }
-
-  const routes = scopeNode["routes"]
-
-  if (!isRecord(routes)) {
-    return undefined
-  }
-
-  const routeForEachOp = routes["forEachOp"]
-
-  if (isRecord(routeForEachOp)) {
-    return routeForEachOp as ScopeOpts
-  }
-
-  const routeForAll = routes["forAll"]
-
-  return isRecord(routeForAll) ? (routeForAll as ScopeOpts) : undefined
+  return isRecord(forEachOp) ? (forEachOp as ScopeOpts) : undefined
 }
 
 function scopeForEachPathFromScopeNode(
@@ -423,13 +390,9 @@ function scopeForEachPathFromScopeNode(
 ): ReqAugmentation | undefined {
   const forEachPath = scopeNode["forEachPath"]
 
-  if (isRecord(forEachPath)) {
-    return scopePathLevelReqFromRoutes(forEachPath)
-  }
-
-  const routes = scopeNode["routes"]
-
-  return isRecord(routes) ? scopeForEachPathFromRoutes(routes) : undefined
+  return isRecord(forEachPath)
+    ? scopePathLevelReqFromRoutes(forEachPath)
+    : undefined
 }
 
 function normalizeReqAugmentation(
@@ -473,18 +436,22 @@ interface CompileScopeContext {
   mergedTags: ScopeOpts["tags"]
 }
 
-function compileScopeContextFromForAll(forAll: ScopeOpts): CompileScopeContext {
-  const { defaults, add, wildcard } = parseScopeRes(forAll.res)
+function compileScopeContextFromScopeOpts(
+  scopeOpts: ScopeOpts,
+): CompileScopeContext {
+  const { defaults, add, wildcard } = parseScopeRes(scopeOpts.res)
 
   return {
     mergedReq:
-      forAll.req !== undefined ? stripSecurityFields(forAll.req) : undefined,
+      scopeOpts.req !== undefined
+        ? stripSecurityFields(scopeOpts.req)
+        : undefined,
     pathReq: undefined,
-    securityLayers: securityLayerFromScopeReq(forAll.req),
+    securityLayers: securityLayerFromScopeReq(scopeOpts.req),
     resWildcardLayers: Object.keys(wildcard).length > 0 ? [wildcard] : [],
     resDefaultsLayers: Object.keys(defaults).length > 0 ? [defaults] : [],
     resAdd: add,
-    mergedTags: forAll.tags,
+    mergedTags: scopeOpts.tags,
   }
 }
 
@@ -1291,24 +1258,21 @@ function placeOperation(
 
 function compileRoutes(
   schemaState: ComponentRegistryState,
-  routes: Record<string, unknown>,
+  routes: ResponsibleApiInput["routes"] | Scope,
   ctx: CompileScopeContext,
   pathPrefix: string,
   paths: oas31.PathsObject,
   pathLevelReq: ReqAugmentation | undefined,
 ): void {
-  for (const routeKey of Object.keys(routes)) {
+  for (const [routeKey, node] of Object.entries(routes)) {
     if (
       routeKey === "params" ||
       routeKey === "pathParams" ||
       routeKey === "forEachPath" ||
-      routeKey === "forEachOp" ||
-      routeKey === "forAll"
+      routeKey === "forEachOp"
     ) {
       continue
     }
-
-    const node = routes[routeKey]
 
     if (node === undefined) {
       continue
@@ -1351,12 +1315,10 @@ function compileRoutes(
         scopeForEachOpFromScopeNode(node),
         scopeForEachPathFromScopeNode(node),
       )
-      const nextPathLevelReq = scopePathLevelReqFromRoutes(
-        node.routes as Record<string, unknown>,
-      )
+      const nextPathLevelReq = scopePathLevelReqFromRoutes(node)
       compileRoutes(
         schemaState,
-        node.routes as Record<string, unknown>,
+        node,
         nextCtx,
         fullDslPath,
         paths,
@@ -1382,7 +1344,7 @@ export function compileResponsibleAPI(
   }
 
   const schemaState = createComponentRegistryState()
-  const rootCtx = compileScopeContextFromForAll(api.forEachOp ?? {})
+  const rootCtx = compileScopeContextFromScopeOpts(api.forEachOp ?? {})
   rootCtx.pathReq = scopePathLevelReqFromRoutes(api.forEachPath ?? {})
   const paths: oas31.PathsObject = {
     ...(api.partialDoc.paths ?? {}),
@@ -1390,7 +1352,7 @@ export function compileResponsibleAPI(
 
   compileRoutes(
     schemaState,
-    api.routes as Record<string, unknown>,
+    api.routes,
     rootCtx,
     "",
     paths,

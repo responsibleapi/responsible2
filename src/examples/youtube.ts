@@ -6330,7 +6330,7 @@ export default responsibleAPI({
       tags: [tags.activities],
     }),
     "/youtube/v3/captions": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.captions],
         req: {
           security: oauthScopes(
@@ -6502,7 +6502,7 @@ export default responsibleAPI({
       tags: [tags.channelBanners],
     }),
     "/youtube/v3/channelSections": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.channelSections],
         req: {
           security: videoPartnerSecurity,
@@ -6600,7 +6600,7 @@ export default responsibleAPI({
       },
     }),
     "/youtube/v3/channels": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.channels],
         req: {
           security: videoPartnerSecurity,
@@ -6685,7 +6685,7 @@ export default responsibleAPI({
       },
     }),
     "/youtube/v3/commentThreads": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.commentThreads],
         res: {
           add: {
@@ -6794,7 +6794,7 @@ export default responsibleAPI({
       },
     }),
     "/youtube/v3/comments": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.comments],
         req: {
           security: oauthScope(
@@ -6987,7 +6987,7 @@ export default responsibleAPI({
       tags: [tags.i18nRegions],
     }),
     "/youtube/v3/liveBroadcasts": scope({
-      forAll: {
+      forEachOp: {
         tags: liveBroadcastTags,
         req: {
           security: youtubeForceSslSecurity,
@@ -7179,7 +7179,7 @@ export default responsibleAPI({
       }),
     }),
     "/youtube/v3/liveChat/bans": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.liveChatBans],
         req: {
           security: youtubeForceSslSecurity,
@@ -7219,7 +7219,7 @@ export default responsibleAPI({
       },
     }),
     "/youtube/v3/liveChat/messages": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.liveChatMessages],
         req: {
           security: youtubeForceSslSecurity,
@@ -7297,7 +7297,7 @@ export default responsibleAPI({
       },
     }),
     "/youtube/v3/liveChat/moderators": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.liveChatModerators],
         req: {
           security: youtubeForceSslSecurity,
@@ -7364,7 +7364,7 @@ export default responsibleAPI({
       },
     }),
     "/youtube/v3/liveStreams": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.liveStreams],
         req: {
           security: youtubeForceSslSecurity,
@@ -7526,7 +7526,7 @@ export default responsibleAPI({
       tags: [tags.membershipsLevels],
     }),
     "/youtube/v3/playlistItems": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.playlistItems],
         req: {
           security: videoPartnerSecurity,
@@ -7621,7 +7621,7 @@ export default responsibleAPI({
       },
     }),
     "/youtube/v3/playlists": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.playlists],
         req: {
           security: videoPartnerSecurity,
@@ -7909,7 +7909,7 @@ export default responsibleAPI({
       tags: [tags.search],
     }),
     "/youtube/v3/subscriptions": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.subscriptions],
         req: {
           security: videoPartnerSecurity,
@@ -8065,7 +8065,7 @@ export default responsibleAPI({
       tags: [tags.tests],
     }),
     "/youtube/v3/thirdPartyLinks": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.thirdPartyLinks],
         res: {
           add: {
@@ -8260,7 +8260,7 @@ export default responsibleAPI({
       tags: [tags.videoCategories],
     }),
     "/youtube/v3/videos": scope({
-      forAll: {
+      forEachOp: {
         tags: videoTags,
         req: {
           security: videoPartnerSecurity,
@@ -8566,7 +8566,7 @@ export default responsibleAPI({
       }),
     }),
     "/youtube/v3/watermarks": scope({
-      forAll: {
+      forEachOp: {
         tags: [tags.watermarks],
         res: {
           add: {

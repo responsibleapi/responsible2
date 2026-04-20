@@ -220,7 +220,7 @@ const ReverseResp = () => object({ value: boolean() })
 const NotYourShow = resp({ description: "403" })
 
 const authenticatedOps = scope({
-  forAll: {
+  forEachOp: {
     req: {
       security: AuthorizationHeader,
     },
@@ -286,7 +286,7 @@ const authenticatedOps = scope({
     res: { 201: UrlResp },
   }),
   "/show/:show_id": scope({
-    forAll: {
+    forEachOp: {
       req: {
         pathParams: { show_id: ShowID },
       },
@@ -354,7 +354,7 @@ const authenticatedOps = scope({
       res: { 200: Show2 },
     }),
     "/:item_id": scope({
-      forAll: {
+      forEachOp: {
         req: {
           pathParams: { item_id: ItemID },
         },
@@ -395,7 +395,7 @@ const authenticatedOps = scope({
 })
 
 const jsonAPI = scope({
-  forAll: {
+  forEachOp: {
     req: {
       mime: "application/json",
     },
@@ -454,7 +454,7 @@ const jsonAPI = scope({
     },
   }),
   "/show/:show_id": scope({
-    forAll: {
+    forEachOp: {
       req: {
         pathParams: { show_id: ShowID },
       },

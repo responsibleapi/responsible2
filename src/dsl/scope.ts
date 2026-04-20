@@ -38,11 +38,11 @@ export type ScopeRes<T extends object = ScopeResShape> =
         ? T
         : never
 
+export type HttpPath = `/${string}`
+
 export type ScopeOrOp<TTags extends DeclaredTags = DeclaredTags> =
   | OpBase<TTags>
   | Scope<TTags>
-
-export type HttpPath = `/${string}`
 
 /** For root level; only {@link HttpPath} keys */
 export type PathRoutes<TTags extends DeclaredTags = DeclaredTags> = Record<
@@ -50,18 +50,18 @@ export type PathRoutes<TTags extends DeclaredTags = DeclaredTags> = Record<
   ScopeOrOp<TTags>
 >
 
-type ScopeRoutes<TTags extends DeclaredTags = DeclaredTags> =
-  MethodRoutes<TTags> & Partial<PathRoutes<TTags>>
-
 export interface ForEachPath {
   readonly params?: readonly ReusableParam[]
   readonly pathParams?: PathParams
 }
 
-type ScopeInput<TTags extends DeclaredTags = DeclaredTags> = {
+export interface Scope<TTags extends DeclaredTags = DeclaredTags>
+  extends MethodRoutes<TTags>,
+    Partial<PathRoutes<TTags>>,
+    ForEachPath {
   readonly forEachOp?: ScopeOpts<TTags>
   readonly forEachPath?: ForEachPath
-} & ScopeRoutes<TTags>
+}
 
 export interface ScopeOpts<TTags extends DeclaredTags = DeclaredTags> {
   req?: ReqAugmentation
@@ -70,23 +70,10 @@ export interface ScopeOpts<TTags extends DeclaredTags = DeclaredTags> {
 }
 
 /**
- * This is a temp placeholder return type while the compiler is still TODO
- *
- * It's basically a merged context stack, since this is a tree. The only place
- * where this single pass compiler MIGHT have an "AST"
- *
- * @compiler
- */
-export interface Scope<TTags extends DeclaredTags = DeclaredTags> {
-  forAll?: ScopeOpts<TTags>
-  routes: ScopeRoutes<TTags>
-}
-
-/**
  * Scopes without nested paths are pure method collections, so require at least
  * two HTTP methods in that branch.
  *
- * `forAll` is ignored here so defaults do not affect the route-shape
+ * `forEachOp` is ignored here so defaults do not affect the route-shape
  * validation. For single methods, use DSL from {@link file://../methods.ts}
  *
  * If a scope has at least one nested path, it is valid as-is. Otherwise we
@@ -94,7 +81,7 @@ export interface Scope<TTags extends DeclaredTags = DeclaredTags> {
  *
  * @dsl
  */
-type ValidScopeArg<T extends ScopeInput> =
+type ValidScopeArg<T extends Scope> =
   Extract<keyof T, HttpPath> extends never
     ? Pick<T, Extract<keyof T, HttpMethod>> extends AtLeastTwo<
         Record<HttpMethod, Op>
@@ -109,7 +96,7 @@ type ValidScopeArg<T extends ScopeInput> =
  *
  * Scope merge behavior:
  *
- * `forAll` is inherited by every nested route and scope.
+ * `forEachOp` is inherited by every nested route and scope.
  *
  * - `req` is additive: parent defaults provide shared mime, params, security, and
  *   request fields, while children extend or narrow them locally.
@@ -118,27 +105,16 @@ type ValidScopeArg<T extends ScopeInput> =
  *   mime or headers to every `2xx` or `4xx` response.
  * - `res.add` injects whole response entries into each child operation.
  * - If an operation already declares the same status code locally, keep that
- *   response local for now. In practice, `forAll.res.add.200` is for sibling
- *   operations that do not already define their own `200`.
+ *   response local for now. In practice, `forEachOp.res.add.200` is for
+ *   sibling operations that do not already define their own `200`.
  *
  * The `const` type parameter preserves literal method and path keys so the
  * type-level route validation runs before those keys widen to generic strings.
  *
  * @dsl
  */
-export function scope<T extends ScopeInput>(arg: ValidScopeArg<T>): Scope {
-  const { forEachOp, ...routes }: ScopeInput = arg
-
-  if (forEachOp === undefined) {
-    return {
-      routes,
-    }
-  }
-
-  return {
-    forAll: forEachOp,
-    routes,
-  }
+export function scope<T extends Scope>(arg: ValidScopeArg<T>): Scope {
+  return arg
 }
 
 export function isScope<TTags extends DeclaredTags>(
@@ -147,10 +123,18 @@ export function isScope<TTags extends DeclaredTags>(
   return (
     typeof s === "object" &&
     s !== null &&
-    "routes" in s &&
-    typeof s.routes === "object" &&
-    s.routes !== null &&
-    !("method" in s)
+    !("method" in s) &&
+    Object.keys(s).some(
+      key =>
+        key === "forEachOp" ||
+        key === "forEachPath" ||
+        key.startsWith("/") ||
+        key === "GET" ||
+        key === "POST" ||
+        key === "PUT" ||
+        key === "DELETE" ||
+        key === "HEAD",
+    )
   )
 }
 

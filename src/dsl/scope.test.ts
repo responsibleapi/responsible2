@@ -37,7 +37,7 @@ describe("scope", () => {
 
   test("accepts a flat scope with defaults and at least two methods", () => {
     type PureScopeWithDefaults = {
-      forAll: ScopeOpts
+      forEachOp: ScopeOpts
       GET: TestOp
       POST: TestOp
     }
@@ -48,7 +48,9 @@ describe("scope", () => {
   })
 
   test("rejects a flat scope with defaults and only one method", () => {
-    type _Test = Assert<IsNever<ScopeInput<{ forAll: ScopeOpts; GET: TestOp }>>>
+    type _Test = Assert<
+      IsNever<ScopeInput<{ forEachOp: ScopeOpts; GET: TestOp }>>
+    >
   })
 
   test("rejects empty objects and unrelated props in scope defaults", () => {

@@ -14,21 +14,6 @@
 
 ## Findings
 
-### 2. Scope helper builds mini-AST, compiler must decode both old and new shapes
-
-- `src/dsl/scope.ts:72`
-- `src/dsl/scope.ts:129`
-- `src/compiler/index.ts:389`
-- `src/compiler/index.ts:421`
-- `scope()` rewrites input `{ forEachOp, ...routes }` into `{ forAll, routes }`.
-- Compiler then accepts all of these:
-  - `scopeNode.forEachOp`
-  - `scopeNode.forAll`
-  - `scopeNode.routes.forEachOp`
-  - `scopeNode.routes.forAll`
-- This is explicit non-raw intermediate shape. It is AST-ish even if small.
-- Severity: high.
-
 ### 3. Operation request parsing is heuristic, not structural
 
 - `src/dsl/operation.ts:173`
@@ -41,21 +26,6 @@
   `properties`, `body`, `query`, `headers`.
 - This is fragile. Every new DSL field risks changing parser behavior.
 - Severity: high.
-
-### 4. Security composition mutates raw requirement objects with hidden symbol metadata
-
-- `src/dsl/security.ts:4`
-- `src/dsl/security.ts:52`
-- `src/dsl/security.ts:100`
-- `src/dsl/security.ts:187`
-- `src/compiler/request.ts:173`
-- `securityAND`, `securityOR`, and `oauth2Requirement` are not raw OpenAPI
-  values.
-- They attach non-enumerable `Symbol("securitySchemes")` metadata so compiler
-  can recover component registrations later.
-- Output looks raw when serialized, but runtime value is not raw.
-- This side channel leaks compiler concerns into DSL layer.
-- Severity: medium-high.
 
 ### 5. Method helpers and route keys duplicate same information
 
@@ -125,18 +95,6 @@
   - `string()` stringifies `RegExp`.
 - This file should be reference model for rest of DSL.
 
-### `src/dsl/security.ts`
-
-- Constructors like `querySecurity`, `headerSecurity`, `httpSecurity`,
-  `oauth2Security` are good. They return raw scheme objects.
-- Problem starts with composition helpers that need hidden attachment state.
-- Better model:
-  - keep raw scheme constructors
-  - keep raw requirement objects
-  - make composition helpers return explicit compiler-owned wrapper type, or
-    require caller to list reusable schemes separately
-- Current hidden mutation is wrong boundary.
-
 ### `src/dsl/tags.ts`
 
 - User direction makes sense.
@@ -169,16 +127,6 @@
 - `headID` is acceptable as narrow extension if kept explicit.
 - `body?` and `security?` are useful ergonomically, but they force special
   parsing and merging semantics.
-
-### `src/dsl/scope.ts`
-
-- Cannot be fully raw because recursive route tree is compile input, not OpenAPI
-  output.
-- Still should be raw relative to its own domain:
-  - one runtime shape
-  - no `forEachOp` to `forAll` rewrite
-  - no alternate keys accepted by compiler
-- `Scope` should just be declared input shape, not compiler placeholder AST.
 
 ### `src/dsl/methods.ts`
 
