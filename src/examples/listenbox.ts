@@ -30,7 +30,10 @@ const SubmitReq = () => object({ url: HttpURL })
 const UrlResp = () => object({ url: HttpURL })
 
 const Plan = () => string({ enum: ["free", "basic", "creator"] })
+
 const AudioVideo = () => string({ enum: ["audio", "video"] })
+
+const StripeCheckoutID = () => string({ minLength: 1 })
 
 const UserResp = () =>
   object({
@@ -593,6 +596,7 @@ export default responsibleAPI({
       },
     },
   },
+  missingSchemas: [StripeCheckoutID],
   routes: {
     "/api/health": GET({
       id: "getHealth",

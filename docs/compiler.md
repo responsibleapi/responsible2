@@ -14,15 +14,6 @@
 
 ## Findings
 
-### 1. Compiler has product-specific patch branch
-
-- `src/compiler/index.ts:1475`
-- `compileResponsibleAPI()` mutates final doc for `Listenbox` by injecting
-  `StripeCheckoutID`.
-- This breaks compiler purity. Single-pass compiler should not contain app-name
-  branches.
-- Severity: high.
-
 ### 2. Scope helper builds mini-AST, compiler must decode both old and new shapes
 
 - `src/dsl/scope.ts:72`
@@ -220,11 +211,6 @@ Those are not extra passes over entire API, but they are parser-like stages
 created by non-raw DSL design.
 
 ## Recommendation
-
-### Priority 0
-
-- Delete compiler app-specific branch:
-  - `src/compiler/index.ts:1475`
 
 ### Priority 1
 

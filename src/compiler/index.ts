@@ -1472,15 +1472,5 @@ export function compileResponsibleAPI(
     ...(webhooks !== undefined ? { webhooks } : {}),
   }
 
-  if (api.partialDoc.info?.title === "Listenbox") {
-    doc.components = {
-      ...doc.components,
-      schemas: {
-        ...doc.components?.schemas,
-        StripeCheckoutID: { minLength: 1, type: "string" },
-      },
-    }
-  }
-
   return doc
 }
