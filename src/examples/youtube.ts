@@ -2,7 +2,7 @@ import { responsibleAPI } from "../dsl/dsl.ts"
 import { GET, POST } from "../dsl/methods.ts"
 import { named, ref } from "../dsl/nameable.ts"
 import { resp } from "../dsl/operation.ts"
-import { queryParam } from "../dsl/params.ts"
+import { queryParam, type InlineQueryParam } from "../dsl/params.ts"
 import {
   array,
   boolean,
@@ -6107,14 +6107,20 @@ function liveBroadcastListResponse() {
     body: LiveBroadcastListResponse,
   })
 }
+
 function cuepointResponse() {
   return resp({
     description: "Successful response",
     body: Cuepoint,
   })
 }
-const partArray = (description: string) =>
-  description === "" ? array(string()) : array(string(), { description })
+
+const partArray = (description?: string): InlineQueryParam => ({
+  schema: array(string()),
+  description,
+  explode: true,
+  style: "form",
+})
 
 const hlQuery = (description?: string) =>
   description !== undefined && description !== ""
@@ -7838,7 +7844,7 @@ export default responsibleAPI({
       id: "youtube.tests.insert",
       req: {
         query: {
-          part: partArray(""),
+          part: partArray(),
           "externalChannelId?": string(),
         },
         security: oauthScope(
