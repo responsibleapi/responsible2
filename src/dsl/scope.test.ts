@@ -1,4 +1,4 @@
-import { describe, test } from "vitest"
+import { describe, expect, test } from "vitest"
 import type {
   Assert,
   IsEqual,
@@ -7,8 +7,8 @@ import type {
 } from "../type-assertions.ts"
 import type { GetOpWithMethod } from "./methods.ts"
 import type { OpWithMethod } from "./operation.ts"
-import type { ScopeOpts, ScopeRes } from "./scope.ts"
-import type { scope } from "./scope.ts"
+import type { CanonicalScope, ScopeOpts, ScopeRes } from "./scope.ts"
+import { scope } from "./scope.ts"
 import { declareTags } from "./tags.ts"
 
 type TestOp = {
@@ -118,5 +118,27 @@ describe("scope", () => {
         readonly (typeof tags.videos | typeof tags.channels)[]
       >
     >
+  })
+
+  test("returns canonical runtime shape", () => {
+    const scoped = scope({
+      forEachOp: { tags: [] },
+      pathParams: { id: {} },
+      params: [],
+      GET: { res: { 200: {} } },
+      "/logs": { res: { 200: {} } },
+    }) as CanonicalScope
+
+    expect(scoped).toEqual({
+      forEachOp: { tags: [] },
+      forEachPath: {
+        pathParams: { id: {} },
+        params: [],
+      },
+      routes: {
+        GET: { res: { 200: {} } },
+        "/logs": { res: { 200: {} } },
+      },
+    })
   })
 })

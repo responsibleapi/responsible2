@@ -50,6 +50,18 @@ export type PathRoutes<TTags extends DeclaredTags = DeclaredTags> = Record<
   ScopeOrOp<TTags>
 >
 
+export type ScopeRoutes<TTags extends DeclaredTags = DeclaredTags> =
+  MethodRoutes<TTags> & Partial<PathRoutes<TTags>>
+
+const isHttpMethodKey = (key: string): key is HttpMethod =>
+  key === "GET" ||
+  key === "POST" ||
+  key === "PUT" ||
+  key === "DELETE" ||
+  key === "HEAD"
+
+const isHttpPathKey = (key: string): key is HttpPath => key.startsWith("/")
+
 export interface ForEachPath {
   readonly params?: readonly ReusableParam[]
   readonly pathParams?: PathParams
@@ -61,6 +73,12 @@ export interface Scope<TTags extends DeclaredTags = DeclaredTags>
     ForEachPath {
   readonly forEachOp?: ScopeOpts<TTags>
   readonly forEachPath?: ForEachPath
+  readonly routes?: ScopeRoutes<TTags>
+}
+
+export interface CanonicalScope<TTags extends DeclaredTags = DeclaredTags>
+  extends Scope<TTags> {
+  readonly routes: ScopeRoutes<TTags>
 }
 
 export interface ScopeOpts<TTags extends DeclaredTags = DeclaredTags> {
@@ -114,28 +132,90 @@ type ValidScopeArg<T extends Scope> =
  * @dsl
  */
 export function scope<T extends Scope>(arg: ValidScopeArg<T>): Scope {
-  return arg
+  return normalizeScope(arg)
 }
 
 export function isScope<TTags extends DeclaredTags>(
-  s: ScopeOrOp<TTags>,
-): s is Scope<TTags> {
+  s: ScopeOrOp<TTags> | CanonicalScope<TTags>,
+): s is CanonicalScope<TTags> {
   return (
     typeof s === "object" &&
     s !== null &&
     !("method" in s) &&
     Object.keys(s).some(
       key =>
+        key === "routes" ||
         key === "forEachOp" ||
         key === "forEachPath" ||
-        key.startsWith("/") ||
-        key === "GET" ||
-        key === "POST" ||
-        key === "PUT" ||
-        key === "DELETE" ||
-        key === "HEAD",
+        key === "params" ||
+        key === "pathParams" ||
+        isHttpPathKey(key) ||
+        isHttpMethodKey(key),
     )
   )
+}
+
+export function normalizeScope<TTags extends DeclaredTags>(
+  scopeNode: Scope<TTags> | CanonicalScope<TTags>,
+): CanonicalScope<TTags> {
+  const routesSource = scopeNode.routes ?? scopeNode
+  const routes: ScopeRoutes<TTags> = {}
+
+  for (const key of Object.keys(routesSource)) {
+    if (
+      key === "routes" ||
+      key === "forEachOp" ||
+      key === "forEachPath" ||
+      key === "params" ||
+      key === "pathParams"
+    ) {
+      continue
+    }
+
+    if (isHttpMethodKey(key)) {
+      routes[key] = routesSource[key]
+      continue
+    }
+
+    if (isHttpPathKey(key)) {
+      routes[key] = routesSource[key]
+    }
+  }
+
+  const forEachOp = scopeNode.forEachOp
+  const explicitForEachPath = scopeNode.forEachPath
+  const legacyParams = scopeNode.params
+  const legacyPathParams = scopeNode.pathParams
+  const forEachPath =
+    explicitForEachPath === undefined &&
+    legacyParams === undefined &&
+    legacyPathParams === undefined
+      ? undefined
+      : {
+          ...(explicitForEachPath ?? {}),
+          ...(legacyParams !== undefined
+            ? {
+                params: [
+                  ...(explicitForEachPath?.params ?? []),
+                  ...legacyParams,
+                ],
+              }
+            : {}),
+          ...(legacyPathParams !== undefined
+            ? {
+                pathParams: {
+                  ...(explicitForEachPath?.pathParams ?? {}),
+                  ...legacyPathParams,
+                },
+              }
+            : {}),
+        }
+
+  return {
+    ...(forEachOp !== undefined ? { forEachOp } : {}),
+    ...(forEachPath !== undefined ? { forEachPath } : {}),
+    routes,
+  }
 }
 
 function _scopeToPaths(_: Scope): oas31.PathsObject {

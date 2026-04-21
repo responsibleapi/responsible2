@@ -19,14 +19,14 @@ import type { InlineHeaderParam } from "../dsl/params.ts"
 import type { HeaderRaw, ReusableHeader } from "../dsl/response-headers.ts"
 import type { RawSchema, Schema } from "../dsl/schema.ts"
 import type {
+  CanonicalScope,
   ForEachPath,
   HttpPath,
   Mime,
-  Scope,
   ScopeOpts,
   ScopeRes,
 } from "../dsl/scope.ts"
-import { isScope } from "../dsl/scope.ts"
+import { isScope, normalizeScope } from "../dsl/scope.ts"
 import { deepEqual } from "../help/deep-equal.ts"
 import {
   createComponentRegistryState,
@@ -352,11 +352,11 @@ function scopePathLevelReqFromRoutes(
   } = {}
 
   if (Array.isArray(params)) {
-    req.params = params as ReqAugmentation["params"]
+    req.params = params
   }
 
-  if (isRecord(pathParams)) {
-    req.pathParams = pathParams as ReqAugmentation["pathParams"]
+  if (pathParams !== undefined) {
+    req.pathParams = pathParams
   }
 
   if ("params" in req && "pathParams" in req) {
@@ -378,21 +378,15 @@ function scopePathLevelReqFromRoutes(
 }
 
 function scopeForEachOpFromScopeNode(
-  scopeNode: Record<string, unknown>,
+  scopeNode: CanonicalScope,
 ): ScopeOpts | undefined {
-  const forEachOp = scopeNode["forEachOp"]
-
-  return isRecord(forEachOp) ? (forEachOp as ScopeOpts) : undefined
+  return scopeNode.forEachOp
 }
 
 function scopeForEachPathFromScopeNode(
-  scopeNode: Record<string, unknown>,
+  scopeNode: CanonicalScope,
 ): ReqAugmentation | undefined {
-  const forEachPath = scopeNode["forEachPath"]
-
-  return isRecord(forEachPath)
-    ? scopePathLevelReqFromRoutes(forEachPath)
-    : undefined
+  return scopePathLevelReqFromRoutes(scopeNode.forEachPath ?? {})
 }
 
 function normalizeReqAugmentation(
@@ -1258,22 +1252,12 @@ function placeOperation(
 
 function compileRoutes(
   schemaState: ComponentRegistryState,
-  routes: ResponsibleApiInput["routes"] | Scope,
+  routes: ResponsibleApiInput["routes"] | CanonicalScope["routes"],
   ctx: CompileScopeContext,
   pathPrefix: string,
   paths: oas31.PathsObject,
-  pathLevelReq: ReqAugmentation | undefined,
 ): void {
   for (const [routeKey, node] of Object.entries(routes)) {
-    if (
-      routeKey === "params" ||
-      routeKey === "pathParams" ||
-      routeKey === "forEachPath" ||
-      routeKey === "forEachOp"
-    ) {
-      continue
-    }
-
     if (node === undefined) {
       continue
     }
@@ -1297,7 +1281,7 @@ function compileRoutes(
           ? (assertRouteMethodOp(node), node)
           : ({ ...(node as OpBase), method } satisfies RouteMethodOp)
 
-      placeOperation(schemaState, paths, pathPrefix, ctx, op, pathLevelReq)
+      placeOperation(schemaState, paths, pathPrefix, ctx, op, undefined)
       continue
     }
 
@@ -1310,20 +1294,13 @@ function compileRoutes(
     const fullDslPath = joinHttpPaths(pathPrefix, routeKey)
 
     if (isScope(node)) {
+      const normalizedScope = normalizeScope(node)
       const nextCtx = mergeCompileScope(
         ctx,
-        scopeForEachOpFromScopeNode(node),
-        scopeForEachPathFromScopeNode(node),
+        scopeForEachOpFromScopeNode(normalizedScope),
+        scopeForEachPathFromScopeNode(normalizedScope),
       )
-      const nextPathLevelReq = scopePathLevelReqFromRoutes(node)
-      compileRoutes(
-        schemaState,
-        node,
-        nextCtx,
-        fullDslPath,
-        paths,
-        nextPathLevelReq,
-      )
+      compileRoutes(schemaState, normalizedScope.routes, nextCtx, fullDslPath, paths)
     } else {
       assertRouteMethodOp(node)
       placeOperation(schemaState, paths, fullDslPath, ctx, node, undefined)
@@ -1356,7 +1333,6 @@ export function compileResponsibleAPI(
     rootCtx,
     "",
     paths,
-    undefined,
   )
 
   const dummyOpForComponents = { method: "GET" } as RouteMethodOp

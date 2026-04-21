@@ -5,33 +5,4 @@ codex_hooks = true
 command = "code-review-graph"
 args = ["serve"]
 type = "stdio"
-
-[mcp_servers.code-review-graph.tools.get_minimal_context_tool]
-approval_mode = "approve"
-
-[mcp_servers.code-review-graph.tools.build_or_update_graph_tool]
-approval_mode = "approve"
-
-[mcp_servers.code-review-graph.tools.list_graph_stats_tool]
-approval_mode = "approve"
-
-[mcp_servers.code-review-graph.tools.semantic_search_nodes_tool]
-approval_mode = "approve"
-
-[mcp_servers.code-review-graph.tools.query_graph_tool]
-approval_mode = "approve"
-
-[mcp_servers.code-review-graph.tools.detect_changes_tool]
-approval_mode = "approve"
-
-[mcp_servers.code-review-graph.tools.refactor_tool]
-approval_mode = "approve"
-
-[mcp_servers.code-review-graph.tools.find_large_functions_tool]
-approval_mode = "approve"
-
-[mcp_servers.code-review-graph.tools.get_architecture_overview_tool]
-approval_mode = "approve"
-
-[mcp_servers.code-review-graph.tools.get_impact_radius_tool]
-approval_mode = "approve"
+default_tools_approval_mode = "approve"

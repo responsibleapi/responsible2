@@ -147,9 +147,6 @@
 
 ### What still feels non-single-pass
 
-- Scope normalization layer:
-  - `scope()` rewrites shape
-  - compiler re-normalizes it back
 - Operation parsing layer:
   - compiler classifies request/response payloads by heuristic shape tests
 - Security attachment layer:

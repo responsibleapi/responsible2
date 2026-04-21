@@ -144,7 +144,7 @@ describe("compiler scope and path", () => {
     ).toThrow(/Duplicate operation/)
   })
 
-  test("emits scope params and pathParams at exact path item only", async () => {
+  test("scope path defaults apply to current and nested path items", async () => {
     const Version = named(
       "version",
       headerParam({
@@ -167,7 +167,6 @@ describe("compiler scope and path", () => {
             res: { 200: object({}) },
           },
           "/logs": GET({
-            req: { pathParams: { userId: int32() } },
             res: { 200: object({}) },
           }),
         }),
@@ -186,14 +185,16 @@ describe("compiler scope and path", () => {
       { $ref: "#/components/parameters/version" },
     ])
     expect(doc.paths?.["/users/{userId}"]?.get?.parameters).toBeUndefined()
-    expect(doc.paths?.["/users/{userId}/logs"]?.get?.parameters).toEqual([
+    expect(doc.paths?.["/users/{userId}/logs"]?.parameters).toEqual([
       {
         name: "userId",
         in: "path",
         required: true,
         schema: { type: "integer", format: "int32" },
       },
+      { $ref: "#/components/parameters/version" },
     ])
+    expect(doc.paths?.["/users/{userId}/logs"]?.get?.parameters).toBeUndefined()
   })
 
   test("inherits forEachPath onto every nested path item", async () => {
