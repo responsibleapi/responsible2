@@ -46,7 +46,6 @@ Single pass compiler design:
 - `rg`
 - `jq`
 - `xq`
-- `ast-grep`
 - `scc`
 - `bun`
 - `pkgx` for calling any CLI in existence

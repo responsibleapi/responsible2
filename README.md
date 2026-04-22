@@ -98,15 +98,4 @@ Keep auth in environment or user config. Do not commit repo-local `.npmrc`.
 
 ## Development
 
-### CLI
-
-To work on this repo, keep these CLI tools available:
-
-- `bun`: required
-- `git`: required for the normal contribution workflow.
-- `rg` (`ripgrep`): required for code and file search.
-- `jq`: required for JSON inspection from the shell.
-- `awk`: required for the productivity helper command documented in
-  [AGENTS.md](AGENTS.md).
-- `scc`: required for file or directory size/count checks; use it instead of
-  `wc`.
+Use `bun`
