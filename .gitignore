@@ -6,6 +6,7 @@ coverage/
 
 .env
 .env.*
+.npmrc
 
 .idea/
 .DS_Store
