@@ -21,7 +21,7 @@
   - current `tsconfig.json` is typecheck-only
   - publish build should not reuse repo-wide `include`
   - full-repo emit currently gets pulled into `src/examples/**`
-- [`src/index.ts`](../../src/index.ts) exists, empty, untracked.
+- [`src/index.ts`](../../src/index.ts) exists and is empty right now.
 - Public usage today depends on deep imports from [`src/dsl/`](../../src/dsl/).
 - Large real examples live under [`src/examples/`](../../src/examples/) and are
   test fixtures, not library surface.
@@ -101,9 +101,9 @@ README decision:
 
 - Rename package to `@responsibleapi/ts`.
 - Set `version` to `1.0.0`.
+- Set `license` to `UNLICENSE`.
 - Add publish metadata:
   - `description`
-  - `license`
   - `repository`
   - `homepage`
   - `bugs`
@@ -111,14 +111,14 @@ README decision:
   - `engines`
 - Add publish/build fields:
   - `files`
-  - `type: "module"`
   - `exports`
   - `types`
   - no `main`
   - root export only; no subpath exports in `1.0.0`
   - root `exports` should expose ESM import + types only
   - `publishConfig.access: "public"`
-  - `publishConfig.tag` only if non-`latest` release flow is desired
+  - leave `publishConfig.tag` absent for default `latest` flow
+  - use CLI `--tag` only for explicit prerelease flows
 - Add build scripts for publish artifacts.
 - Add `Taskfile.yaml` pipeline for check, build, pack dry-run, and publish
   steps.
@@ -129,9 +129,9 @@ Use allowlist. Safer than blacklist.
 
 Planned publish content:
 
-- `dist/**`
+- `dist/**`, including emitted `.js`, `.d.ts`, and `.js.map` files
 - `README.md`
-- `LICENSE*`
+- `UNLICENSE`
 - root `package.json` manifest
 
 Explicitly do not publish:
@@ -146,6 +146,9 @@ Reason:
 - examples are heavy fixtures
 - examples contain large generated specs
 - fixtures inflate tarball and blur package surface
+- self-contained JS sourcemaps help issue reports and exact-version debugging
+  from installed package
+- declaration maps are lower-value than runtime sourcemaps in `1.0.0`
 - Bun publish dry-runs and tarballs should follow same allowlist
 
 ## Task Runner Plan
@@ -163,6 +166,8 @@ Minimum task coverage:
 - `check`: run repo validation needed before publish
 - `build`: emit publish artifacts into `dist/`
 - `pack` or `publish:dry-run`: verify packaged output before release
+- `publish:guard`: fail if branch is not `master`, git worktree is dirty, or
+  current package version already exists on npm
 - `publish`: run real release command
 
 Recommendation:
@@ -173,6 +178,9 @@ Recommendation:
 - make Taskfile the canonical human entrypoint
 - make README and release notes point at task commands, not raw one-off shell
   sequences
+- make `publish` depend on `publish:guard`
+- do not auto-increment or rewrite version in Taskfile; publish should fail fast
+  on already-published version
 
 Canonical release flow:
 
@@ -183,7 +191,7 @@ Canonical release flow:
 
 Dependency graph:
 
-- `check -> build -> publish:dry-run -> publish`
+- `check -> build -> publish:dry-run -> publish:guard -> publish`
 
 ## Registry Config Plan
 
@@ -229,6 +237,8 @@ Reason:
 ### Recommendation
 
 - Emit compiled JS + declarations into `dist/`.
+- Emit JS sourcemaps with embedded source text for exact-version debugging.
+- Do not emit declaration maps.
 - Do not publish raw `src/` as runtime entry.
 - Use `tsc` as single publish build tool.
 
@@ -237,15 +247,19 @@ Reason:
 - current source imports `.ts` files directly
 - npm consumers should not depend on TS-aware resolution in dependency graph
 - package needs stable JS entrypoints plus `.d.ts`
+- sourcemaps with embedded source text preserve exact-version stacktrace context
+  without expanding package entry surface
 - declarations should point at emitted surface, not deep source tree
 
 ### Output shape
 
 - `dist/index.js`
+- `dist/index.js.map`
 - `dist/index.d.ts`
 - compiled internal JS and declaration files under `dist/**` for modules
   reachable from [`src/index.ts`](../../src/index.ts)
-- optionally sourcemaps and declaration maps
+- compiled internal `.js.map` files under `dist/**` for reachable modules
+- no `.d.ts.map` files
 - public package entry stays root-only even if internal compiled files exist in
   tarball
 
@@ -278,7 +292,8 @@ Recommended `tsconfig.build.json` shape:
   "compilerOptions": {
     "noEmit": false,
     "declaration": true,
-    "declarationMap": true,
+    "sourceMap": true,
+    "inlineSources": true,
     "rootDir": "./src",
     "outDir": "./dist",
     "rewriteRelativeImportExtensions": true
@@ -289,9 +304,11 @@ Recommended `tsconfig.build.json` shape:
 
 Implications:
 
-- `tsc -p tsconfig.build.json` emits package JS + `.d.ts`
+- `tsc -p tsconfig.build.json` emits package JS + `.d.ts` + `.js.map`
 - only files reachable from [`src/index.ts`](../../src/index.ts) are emitted
 - `src/examples/**` stays out of publish output
+- sourcemaps carry embedded TS source for exact-version runtime debugging
+- declaration maps stay out of tarball
 - root `tsconfig.json` stays optimized for editor and `bun check` workflows
 
 ### Build tool decision
@@ -334,6 +351,7 @@ task publish
 Useful variants:
 
 - underlying publish command is still `bun publish` from repo root
+- stable `task publish` should use plain `bun publish` and land on npm `latest`
 - `bun publish --tag next` for prerelease channel
 - `bun publish --otp 123456` if npm 2FA code should be passed directly
 - `bun publish --auth-type legacy` if CLI OTP prompt is preferred over web flow
@@ -352,6 +370,8 @@ Important note:
 - lifecycle scripts do not run when publishing prebuilt `.tgz`
 - `bun publish` from repo root is underlying publisher for `1.0.0`
 - `bun publish dist` only makes sense if `dist/` becomes standalone publish root
+- keeping `publishConfig.tag` absent preserves default npm `latest` behavior
+- prerelease tags should stay explicit at command level, not baked into manifest
 
 ## Execution Model
 
@@ -492,6 +512,21 @@ Re-export public types that appear in examples or are natural extension points:
 - Prefer explicit export list in `src/index.ts`.
 - Do not use `export *` from every module.
 
+Exact root `package.json` `exports` object:
+
+```json
+{
+  ".": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "default": "./dist/index.js"
+  }
+}
+```
+
+Keep top-level `"types": "./dist/index.d.ts"` too. Do not export
+`./package.json`.
+
 Reason:
 
 - public surface stays intentional
@@ -557,16 +592,22 @@ Before first publish:
 11. Confirm publish auth comes from env or user-level `~/.npmrc`, not committed
     repo file.
 
+Taskfile publish guardrails:
+
+- fail `task publish` if current branch is not `master`
+- fail `task publish` if `git status --short` is non-empty
+- fail `task publish` if current `package.json` version already exists on npm
+- never auto-bump version in Taskfile
+
 ## Suggested Execution Order
 
 1. Lock remaining packed manifest details:
-   - exact root `exports` object
    - exact `types` path
-   - exact `files` allowlist entries for sourcemaps and declaration maps, if any
-   - whether `publishConfig.tag` stays absent for default `latest` flow
+   - exact `files` allowlist entries for sourcemaps
 2. Add build pipeline and package manifest fields.
 3. Add Taskfile pipeline in [`Taskfile.yaml`](../../Taskfile.yaml) for check,
-   build, pack dry-run, and publish.
+   build, pack dry-run, and publish. Add publish guardrails for branch, dirty
+   git state, and already-published version.
 4. Add `~/.npmrc` guidance for publish auth.
 5. Implement [`src/index.ts`](../../src/index.ts) explicit export barrel.
 6. Update README for install/import/JSON+YAML serialization usage and Node
@@ -609,12 +650,17 @@ Before first publish:
   for YAML path.
 - Set minimum Node version to `22.18.0+`.
 - Treat root export list as semver contract from first publish.
+- Set root `exports` to ESM-only `.` entry with `types`, `import`, and `default`
+  pointing at `dist/index`.
+- Keep top-level `types` field and omit `./package.json` export.
+- Leave `publishConfig.tag` absent so default stable publish lands on npm
+  `latest`.
+- Put release guardrails in [`Taskfile.yaml`](../../Taskfile.yaml): `publish`
+  must fail on non-`master`, dirty git state, or already-published version.
 
-## Remaining Decision For Next Session
+## Resolved Dist-Tag Decision
 
-Lock exact packed `package.json` contract:
-
-- exact root `exports` object
-- exact `types` path
-- exact `files` allowlist entries for sourcemaps and declaration maps, if any
-- whether `publishConfig.tag` stays absent for default `latest` flow
+- Keep `publishConfig.tag` absent.
+- `task publish` targets stable npm `latest`.
+- Any prerelease channel stays explicit via CLI tag such as
+  `bun publish --tag next`.
