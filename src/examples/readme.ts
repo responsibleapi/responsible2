@@ -1,21 +1,24 @@
-import { responsibleAPI } from "../dsl/dsl.ts"
-import { GET, POST } from "../dsl/methods.ts"
-import { named } from "../dsl/nameable.ts"
-import { resp } from "../dsl/operation.ts"
-import { headerParam, pathParam, queryParam } from "../dsl/params.ts"
-import { responseHeader } from "../dsl/response-headers.ts"
 import {
+  GET,
+  POST,
   allOf,
   array,
   boolean,
+  declareTags,
+  headerParam,
+  httpSecurity,
   integer,
+  named,
   object,
   oneOf,
+  pathParam,
+  queryParam,
+  resp,
+  responseHeader,
+  responsibleAPI,
+  scope,
   string,
-} from "../dsl/schema.ts"
-import { scope } from "../dsl/scope.ts"
-import { httpSecurity } from "../dsl/security.ts"
-import { declareTags } from "../dsl/tags.ts"
+} from "../index.ts"
 
 const apply = () =>
   object({

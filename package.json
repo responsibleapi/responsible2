@@ -1,7 +1,35 @@
 {
-  "name": "responsibleapi",
+  "name": "@responsibleapi/ts",
+  "version": "1.0.0",
+  "description": "TypeScript DSL for compiling OpenAPI 3.1 documents.",
+  "license": "Unlicense",
   "type": "module",
+  "homepage": "https://github.com/responsibleapi/responsible2#readme",
+  "bugs": {
+    "url": "https://github.com/responsibleapi/responsible2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/responsibleapi/responsible2.git"
+  },
+  "keywords": ["openapi", "openapi-3.1", "typescript", "dsl", "api"],
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "files": ["dist/**", "README.md", "UNLICENSE"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
     "check": "bun run --parallel typecheck lint test",
     "check:full": "bun run --parallel --no-exit-on-error typecheck lint test",
     "fmt": "oxfmt",

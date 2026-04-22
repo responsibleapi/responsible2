@@ -8,3 +8,61 @@ tasks:
     cmd: code-review-graph build
     sources:
       - "src/**/*"
+
+  check:
+    desc: Run publish-safe repo validation
+    cmd: bun check
+    sources:
+      - "src/**/*.ts"
+
+  build:
+    desc: Emit publish artifacts into dist/
+    deps: [check]
+    cmd: bun run build
+    sources:
+      - "src/**/*.ts"
+      - "package.json"
+      - "tsconfig.json"
+      - "tsconfig.build.json"
+    generates:
+      - "dist/**/*"
+
+  publish:dry-run:
+    desc: Build and inspect publish payload
+    deps: [build]
+    cmd: bun publish --dry-run --access public
+
+  publish:guard:
+    desc: Refuse publish on wrong branch dirty tree or existing npm version
+    deps: [publish:dry-run]
+    cmds:
+      - |
+        test "$(git branch --show-current)" = "master" ||
+          { echo "publish blocked: branch must be master"; exit 1; }
+      - |
+        test -z "$(git status --short)" ||
+          { echo "publish blocked: git worktree must be clean"; git status --short; exit 1; }
+      - |
+        package_name="$(jq -r '.name' package.json)"
+        package_version="$(jq -r '.version' package.json)"
+        package_spec="$package_name@$package_version"
+        output_file="$(mktemp)"
+        if bun pm view "$package_spec" version >"$output_file" 2>&1; then
+          echo "publish blocked: $package_spec already exists on npm"
+          cat "$output_file"
+          rm -f "$output_file"
+          exit 1
+        fi
+        if rg -qi "(404|not found|No version matching|error code E404)" "$output_file"; then
+          rm -f "$output_file"
+          exit 0
+        fi
+        echo "publish blocked: could not verify npm version status for $package_spec"
+        cat "$output_file"
+        rm -f "$output_file"
+        exit 1
+
+  publish:
+    desc: Publish current version to npm latest
+    deps: [publish:guard]
+    cmd: bun publish --access public
