@@ -41,8 +41,6 @@ tasks:
   publish:guard:
     desc: Refuse publish on wrong branch dirty tree
     cmd: bun scripts/publish-guard.ts
-    sources:
-      - "scripts/publish-guard.ts"
 
   publish:
     desc: Publish current version to npm latest

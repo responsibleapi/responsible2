@@ -2,21 +2,29 @@
   "name": "@responsibleapi/ts",
   "version": "1.0.0",
   "description": "TypeScript DSL for compiling OpenAPI 3.1 documents.",
-  "license": "Unlicense",
-  "type": "module",
+  "keywords": [
+    "api",
+    "dsl",
+    "openapi",
+    "openapi-3.1",
+    "typescript"
+  ],
   "homepage": "https://github.com/responsibleapi/responsible2#readme",
   "bugs": {
     "url": "https://github.com/responsibleapi/responsible2/issues"
   },
+  "license": "Unlicense",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/responsibleapi/responsible2.git"
   },
-  "keywords": ["openapi", "openapi-3.1", "typescript", "dsl", "api"],
-  "engines": {
-    "node": ">=22.18.0"
-  },
-  "files": ["dist/**", "README.md", "UNLICENSE"],
+  "files": [
+    "dist/**",
+    "README.md",
+    "UNLICENSE"
+  ],
+  "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -24,7 +32,6 @@
       "default": "./dist/index.js"
     }
   },
-  "types": "./dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -42,19 +49,22 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "fast-deep-equal": "^3.1.3",
-    "openapi3-ts": "^4.5.0"
+    "fast-deep-equal": "^3.1.3"
   },
   "devDependencies": {
     "@seriousme/openapi-schema-validator": "^2.9.0",
     "@types/bun": "^1.3.12",
     "ajv": "^8.18.0",
     "openapi-format": "^1.31.0",
+    "openapi3-ts": "^4.5.0",
     "oxfmt": "^0.46.0",
     "oxlint": "^1.61.0",
     "oxlint-tsgolint": "^0.21.1",
     "typescript": "^6.0.3",
     "vitest": "4.1.5"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   },
   "x-package-json-docs": "docs/package.jsonc"
 }
