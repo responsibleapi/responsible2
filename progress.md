@@ -6,6 +6,7 @@
   defining an inline query param in `query` but some other random named param in
   `params`
 - we have "legacy" stuff already in `src/compiler/`. wtf
+- SKILL.md
 
 ## Someday
 
