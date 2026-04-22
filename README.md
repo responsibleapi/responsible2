@@ -76,24 +76,6 @@ console.log(YAML.stringify(api))
 
 Bun YAML docs: <https://bun.com/docs/runtime/yaml>
 
-## Release
-
-Canonical release flow:
-
-- `task check`
-- `task build`
-- `task publish:dry-run`
-- `task publish`
-
-User-level `~/.npmrc`:
-
-```ini
-@responsibleapi:registry=https://registry.npmjs.org/
-//registry.npmjs.org/:_authToken=${NPM_CONFIG_TOKEN}
-```
-
-Keep auth in environment or user config. Do not commit repo-local `.npmrc`.
-
 ## Development
 
 Use `bun`
