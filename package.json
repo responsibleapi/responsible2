@@ -53,8 +53,8 @@
   },
   "devDependencies": {
     "@seriousme/openapi-schema-validator": "^2.9.0",
-    "@types/bun": "^1.3.12",
-    "ajv": "^8.18.0",
+    "@types/bun": "^1.3.13",
+    "ajv": "^8.20.0",
     "openapi-format": "^1.31.0",
     "openapi3-ts": "^4.5.0",
     "oxfmt": "^0.46.0",
