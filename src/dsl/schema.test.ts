@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { validateSchema } from "../help/validate-schema.ts"
+import { validateSchema, validates } from "../help/validate-schema.ts"
 import {
   allOf,
   anyOf,
@@ -517,6 +517,25 @@ describe("schema", () => {
       type: "string",
       format: "duration",
       examples: ["P1W", "P1M", "P1Y"],
+    })
+
+    expect(validates(schema, "P1D")).toEqual(true)
+    expect(validates(schema, "Pfoo")).toEqual(false)
+  })
+
+  test("isoDuration with opts", () => {
+    const schema = isoDuration({
+      description: "How long the token remains valid",
+      maxLength: 32,
+      examples: ["PT1H"],
+    })
+
+    expect(validateSchema(schema)).toEqual({
+      type: "string",
+      format: "duration",
+      examples: ["PT1H"],
+      description: "How long the token remains valid",
+      maxLength: 32,
     })
   })
 })

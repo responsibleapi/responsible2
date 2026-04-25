@@ -1,3 +1,6 @@
+import { formatNames, fullFormats } from "ajv-formats/dist/formats"
+import Ajv2020, { type SchemaObject } from "ajv/dist/2020"
+
 /**
  * Validates standalone OpenAPI 3.1 schema objects synchronously.
  *
@@ -5,9 +8,11 @@
  * this helper uses {@link Ajv2020}. `strict: false` keeps OpenAPI-style
  * extension fields such as `x-*` acceptable during schema validation.
  */
-import Ajv2020, { type SchemaObject } from "ajv/dist/2020"
-
 const VALIDATOR = new Ajv2020({ strict: false })
+
+for (const formatName of formatNames) {
+  VALIDATOR.addFormat(formatName, fullFormats[formatName])
+}
 
 function assertValid<T extends SchemaObject>(
   schema: T,
@@ -30,3 +35,6 @@ export const validateSchema = <T extends SchemaObject>(schema: T): T => {
 
   return schema
 }
+
+export const validates = (schema: SchemaObject, data: unknown): boolean =>
+  VALIDATOR.validate(schema, data)

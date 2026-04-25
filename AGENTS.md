@@ -23,17 +23,41 @@ Single pass compiler design:
   stack, you merge the generated OpenAPI paths. No AST needed - just function
   calls and return values
 
+## Custom commands
+
+### Release
+
+- `task check`
+- bump `package.json` version
+- stage everything
+- commit
+- `task publish`
+- `git push --follow-tags`
+
+### %day%'s productivity
+
+```sh
+git log --all --since='%day% 00:00:00' --until='%day% 23:59:59' --numstat --format=tformat: | awk 'NF==3 { if ($1 ~ /^[0-9]+$/) add += $1; if ($2 ~ /^[0-9]+$/) del += $2 } END { printf("+%d\n-%d\n", add, del) }'
+```
+
+### Commit
+
+- `git add` files from current session
+- `git commit` current session with extremely concise yet precise msg
+
 ## Rules
 
 - before making changes to `src/**/*` run `task reindex`
 - verify changes to `src/**/*` with `task check`
 - never add `oxlint-disable-next-line` without asking a human
-- never edit [package.json](package.json) without asking a human
+- never edit [package.json](package.json) without asking a human. You can bump
+  version yourself though, when doing a release
 - never edit [bunfig.toml](bunfig.toml) without asking a human
 - never disable or skip or ignore tests
 - never edit `src/examples/*.json` without asking a human
 - never edit `scripts/publish-guard.ts` without asking a human
-- never call `bun` for project tasks like check or publish, call [Taskfile](Taskfile.yaml) tasks instead
+- never call `bun` for project tasks like check or publish, call
+  [Taskfile](Taskfile.yaml) tasks instead
 
 ## Imports from packages
 
@@ -69,16 +93,3 @@ Single pass compiler design:
 ## Docs
 
 - Field-by-field rationale for `package.json` lives in `docs/package.jsonc`
-
-## Custom commands
-
-### %day%'s productivity
-
-```sh
-git log --all --since='%day% 00:00:00' --until='%day% 23:59:59' --numstat --format=tformat: | awk 'NF==3 { if ($1 ~ /^[0-9]+$/) add += $1; if ($2 ~ /^[0-9]+$/) del += $2 } END { printf("+%d\n-%d\n", add, del) }'
-```
-
-### Commit
-
-- `git add` files from current session
-- `git commit` current session with extremely concise yet precise msg

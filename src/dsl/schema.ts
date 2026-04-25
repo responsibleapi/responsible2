@@ -327,8 +327,12 @@ export const unknown = (): Unknown => ({})
 export const email = (): Str => string({ format: "email" })
 
 /** ISO 8601 / RFC 3339 duration string. */
-export const isoDuration = (): Str =>
-  string({ format: "duration", examples: ["P1W", "P1M", "P1Y"] })
+export const isoDuration = (opts?: Omit<StringsOpts, "format">): Str =>
+  string({
+    examples: ["P1W", "P1M", "P1Y"],
+    ...opts,
+    format: "duration",
+  })
 
 export const httpURL = (): Str =>
   string({
