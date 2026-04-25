@@ -26,12 +26,13 @@ Single pass compiler design:
 ## Rules
 
 - before making changes to `src/**/*` run `task reindex`
-- verify changes to `src/**/*` with `bun check`
-- never add `oxlint-disable-next-line` unless explicitly asked
-- never edit [package.json](package.json) unless explicitly asked
-- never edit [bunfig.toml](bunfig.toml) unless explicitly asked
+- verify changes to `src/**/*` with `task check`
+- never add `oxlint-disable-next-line` without asking a human
+- never edit [package.json](package.json) without asking a human
+- never edit [bunfig.toml](bunfig.toml) without asking a human
 - never disable or skip or ignore tests
-- never edit `src/examples/*.json` files unless explicitly asked
+- never edit `src/examples/*.json` without asking a human
+- never edit `scripts/publish-guard.ts` without asking a human
 
 ## Imports from packages
 
