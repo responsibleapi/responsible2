@@ -68,16 +68,15 @@ export interface ForEachPath {
 }
 
 export interface Scope<TTags extends DeclaredTags = DeclaredTags>
-  extends MethodRoutes<TTags>,
-    Partial<PathRoutes<TTags>>,
-    ForEachPath {
+  extends MethodRoutes<TTags>, Partial<PathRoutes<TTags>>, ForEachPath {
   readonly forEachOp?: ScopeOpts<TTags>
   readonly forEachPath?: ForEachPath
   readonly routes?: ScopeRoutes<TTags>
 }
 
-export interface CanonicalScope<TTags extends DeclaredTags = DeclaredTags>
-  extends Scope<TTags> {
+export interface CanonicalScope<
+  TTags extends DeclaredTags = DeclaredTags,
+> extends Scope<TTags> {
   readonly routes: ScopeRoutes<TTags>
 }
 
@@ -123,8 +122,8 @@ type ValidScopeArg<T extends Scope> =
  *   mime or headers to every `2xx` or `4xx` response.
  * - `res.add` injects whole response entries into each child operation.
  * - If an operation already declares the same status code locally, keep that
- *   response local for now. In practice, `forEachOp.res.add.200` is for
- *   sibling operations that do not already define their own `200`.
+ *   response local for now. In practice, `forEachOp.res.add.200` is for sibling
+ *   operations that do not already define their own `200`.
  *
  * The `const` type parameter preserves literal method and path keys so the
  * type-level route validation runs before those keys widen to generic strings.
