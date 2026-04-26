@@ -895,7 +895,7 @@ describe("request", () => {
   test("appends security requirements per scope and operation", async () => {
     const Bearer = named("bearerAuth", httpSecurity({ scheme: "bearer" }))
     const ApiKey = named("apiKeyAuth", headerSecurity({ name: "X-Api-Key" }))
-    const Digest = named("digestAuth", httpSecurity({ scheme: "digest" }))
+    const Basic = named("basicAuth", httpSecurity({ scheme: "basic" }))
 
     const api = responsibleAPI({
       partialDoc: {
@@ -915,7 +915,7 @@ describe("request", () => {
           },
           "/r": GET({
             req: {
-              security: Digest,
+              security: Basic,
             },
             res: { 200: object({}) },
           }),
@@ -937,7 +937,7 @@ describe("request", () => {
     expect(doc.paths!["/v1/r"]?.get?.security).toEqual([
       { bearerAuth: [] },
       { apiKeyAuth: [] },
-      { digestAuth: [] },
+      { basicAuth: [] },
     ] satisfies oas31.SecurityRequirementObject[])
   })
 

@@ -14,12 +14,19 @@ type OAuth2SecurityScheme<
   TFlows extends oas31.OAuthFlowsObject = oas31.OAuthFlowsObject,
 > = Nameable<OAuth2SecuritySchemeObject<TFlows>>
 
-type HttpSecuritySchemeObject<TScheme extends string = string> = Omit<
+type HttpAuthSchemeName = "basic" | "bearer"
+
+type HttpAuthScheme =
+  | Lowercase<HttpAuthSchemeName>
+  | Capitalize<HttpAuthSchemeName>
+  | Uppercase<HttpAuthSchemeName>
+
+type HttpSecuritySchemeObject = Omit<
   oas31.SecuritySchemeObject,
   "type" | "scheme"
 > & {
   type: "http"
-  scheme: TScheme
+  scheme: HttpAuthScheme
 }
 
 /**
@@ -163,6 +170,14 @@ export const querySecurity = (param: {
   ...param,
 })
 
+/**
+ * Builds an OpenAPI 3.1 API key security scheme for named header credentials.
+ * Use this for credentials carried in a header with its own name, such as
+ * `X-Api-Key`. For standard `Authorization` header schemes like `Bearer`, use
+ * {@link httpSecurity}.
+ *
+ * @see https://spec.openapis.org/oas/v3.1.2.html#security-scheme-object
+ */
 export const headerSecurity = (param: {
   name: string
   description?: string
@@ -172,11 +187,18 @@ export const headerSecurity = (param: {
   ...param,
 })
 
-export const httpSecurity = <const TScheme extends string>(param: {
-  scheme: TScheme
+/**
+ * Builds an OpenAPI 3.1 HTTP security scheme for Authorization header auth. Use
+ * this for standard HTTP auth schemes such as `Basic` and `Bearer`. For
+ * credentials carried in a custom named header, use {@link headerSecurity}.
+ *
+ * @see https://spec.openapis.org/oas/v3.1.2.html#security-scheme-object
+ */
+export const httpSecurity = (param: {
+  scheme: HttpAuthScheme
   description?: string
   bearerFormat?: string
-}): HttpSecuritySchemeObject<TScheme> => ({
+}): HttpSecuritySchemeObject => ({
   type: "http",
   ...param,
 })

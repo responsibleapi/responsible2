@@ -36,14 +36,21 @@ describe("security", () => {
   })
 
   test("builds http security schemes", () => {
+    type _HttpAuthSchemeCases = Assert<
+      IsEqual<
+        Parameters<typeof httpSecurity>[0]["scheme"],
+        "basic" | "bearer" | "Basic" | "Bearer" | "BASIC" | "BEARER"
+      >
+    >
+
     expect(
       httpSecurity({
-        scheme: "basic",
+        scheme: "Basic",
         description: "Basic auth",
       }),
     ).toEqual({
       type: "http",
-      scheme: "basic",
+      scheme: "Basic",
       description: "Basic auth",
     })
   })
